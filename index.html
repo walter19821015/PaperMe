@@ -77,10 +77,11 @@
       direction: ltr !important;
     }
 
+    /* 图 1：5 个按钮一行排列 */
     .export-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
     }
     .btn-export {
       display: flex;
@@ -88,19 +89,21 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      padding: 9px 4px;
+      padding: 9px 2px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       color: #ffffff;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .btn-export:hover { opacity: 0.92; transform: translateY(-1px); }
     .btn-pdf { background: #236c42; }
     .btn-svg { background: #457877; }
     .btn-png { background: #4f8ba3; }
+    .btn-docx { background: #2b579a; }
     .btn-print { background: #496788; }
 
     .form-section {
@@ -325,7 +328,6 @@
       padding: 40px;
     }
 
-    /* 纸张容器与 Canvas 采用纯绝对尺寸由 JS 精确驱动，杜绝默认 300x150 坍塌 */
     .paper-sheet {
       background: #ffffff;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
@@ -339,14 +341,45 @@
       height: 100%;
     }
 
+    /* 图 2：修复打印排版问题，避免跨页与缩放失真 */
     @media print {
-      body * { visibility: hidden; }
-      #renderCanvas, .paper-sheet {
-        visibility: visible;
-        position: absolute;
-        left: 0;
-        top: 0;
-        box-shadow: none;
+      @page {
+        size: auto;
+        margin: 0mm;
+      }
+      body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+      header, .sidebar, .viewport-toolbar {
+        display: none !important;
+      }
+      main {
+        background: #ffffff !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+      .preview-viewport, .canvas-scroll-container {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+      .paper-sheet {
+        box-shadow: none !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        page-break-after: avoid !important;
+      }
+      #renderCanvas {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 100vh !important;
+        object-fit: contain !important;
       }
     }
   </style>
@@ -372,7 +405,7 @@
 
   <main>
     <aside class="sidebar" id="mainSidebar">
-      <!-- 导出按钮栏 -->
+      <!-- 图 1：5 个按钮一行排开 -->
       <div class="export-grid">
         <button class="btn-export btn-pdf" id="btnExportPDF">
           <span>📄</span><span data-i18n="export_pdf">导出 PDF</span>
@@ -382,6 +415,9 @@
         </button>
         <button class="btn-export btn-png" id="btnExportPNG">
           <span>🖼️</span><span data-i18n="export_png">导出 PNG</span>
+        </button>
+        <button class="btn-export btn-docx" id="btnExportDOCX">
+          <span>📝</span><span>导出 DOCX</span>
         </button>
         <button class="btn-export btn-print" id="btnPrint">
           <span>🖨️</span><span data-i18n="print_now">直接打印</span>
@@ -573,14 +609,39 @@
             <input type="number" id="inputLineWidth" value="0.6" step="0.05" min="0.1" max="5" />
           </div>
         </div>
-        <div style="display:flex; gap:10px; margin-top:4px;">
-          <div class="form-row" style="flex:1;">
-            <span class="form-label" id="labelSpacing">格距 (mm)</span>
-            <input type="number" id="inputGridSpacing" value="15" step="0.5" min="1" max="100" />
+
+        <div class="form-row" style="margin-top:4px;" id="rowGridSpacing">
+          <span class="form-label" id="labelSpacing">格距 (mm)</span>
+          <input type="number" id="inputGridSpacing" value="15" step="0.5" min="1" max="100" />
+        </div>
+
+        <!-- 图 3：基础纸张选项（右上角日期行） -->
+        <div class="sub-settings-box" id="boxBaseOptions" style="display:none;">
+          <span class="form-label" style="font-weight:600;">基础纸张选项</span>
+          <label class="checkbox-item"><input type="checkbox" id="chkShowDateLine" /> <span>右上角日期行</span></label>
+        </div>
+
+        <!-- 图 7、8、9：五线谱选项 -->
+        <div class="sub-settings-box" id="boxMusicOptions" style="display:none;">
+          <span class="form-label" style="font-weight:600;">五线谱选项</span>
+          <div class="form-row">
+            <span class="form-label">每行开头的谱号</span>
+            <select id="selectClef">
+              <option value="none">不要谱号（只留空白五线）</option>
+              <option value="treble" selected>高音谱号（常用，小提琴等）</option>
+              <option value="bass">低音谱号</option>
+            </select>
+            <span class="sub-hint">需要「拿来就能写」时打开；空白练习可保持不要谱号。</span>
           </div>
-          <div class="form-row" style="flex:1;">
-            <span class="form-label" data-i18n="bold_step">每 N 格加粗</span>
-            <input type="number" id="inputBoldStep" value="0" step="1" min="0" max="20" />
+          <div class="form-row">
+            <span class="form-label">一页放几组五线谱</span>
+            <input type="number" id="inputStaveCount" value="10" min="4" max="25" />
+            <span class="sub-hint">组数越多越密；放不下时会自动少放几组。</span>
+          </div>
+          <div class="form-row">
+            <span class="form-label">组与组之间的间距 (毫米) (mm)</span>
+            <input type="number" id="inputStaveGap" value="8" min="2" max="30" />
+            <span class="sub-hint">这是最小间距；多出来的空白会均匀分到各组之间。</span>
           </div>
         </div>
       </div>
@@ -881,7 +942,7 @@
         printer_hint: '全彩：可以使用主题和取色器。', printer_hint_mono: '黑白：自动强制纯黑/纯灰线条输出。',
         paper_type: '纸张类型', paper_size_title: '纸张尺寸', portrait: '纵向', landscape: '横向', theme_color: '主题',
         line_style: '线条样式', line_type: '线条类型', solid: '实线', dashed: '虚线', dotted: '点线',
-        line_width: '线条粗细 (px)', bold_step: '每 N 格加粗', margin_settings: '边距设置',
+        line_width: '线条粗细 (px)', margin_settings: '边距设置',
         punch_marker: '打孔定位标记',
         punch_us3: '美式 3 孔活页夹 (左侧, 孔距 4.25 英寸)', punch_iso2: '2 孔 (左侧, 孔距 80 毫米)', punch_iso4: '4 孔 (左侧, 孔距 80 毫米)',
         punch_5hole: '5 孔 (左侧, 兼容 3 孔和 2 孔)', punch_top2: '顶部 2 孔 (顶部夹子文件夹, 孔距 2.75 英寸)', punch_single: '单环 (左上角)',
@@ -894,7 +955,7 @@
         printer_hint: 'Color: Themes and color pickers available.', printer_hint_mono: 'Mono: Black & white output only.',
         paper_type: 'Paper Type', paper_size_title: 'Paper Size', portrait: 'Portrait', landscape: 'Landscape', theme_color: 'Theme',
         line_style: 'Line Styles', line_type: 'Line Type', solid: 'Solid', dashed: 'Dashed', dotted: 'Dotted',
-        line_width: 'Line Width (px)', bold_step: 'Major Line Every N', margin_settings: 'Margins',
+        line_width: 'Line Width (px)', margin_settings: 'Margins',
         punch_marker: 'Hole Punch Marks',
         punch_us3: 'US 3-Hole Binder (Left, 4.25")', punch_iso2: '2-Hole (Left, 80mm)', punch_iso4: '4-Hole (Left, 80mm)',
         punch_5hole: '5-Hole (Left, 3 & 2 Compatible)', punch_top2: 'Top 2-Hole (2.75")', punch_single: 'Single Ring (Top-Left)',
@@ -907,7 +968,7 @@
         printer_hint: 'Color: Usa temas y selector de color libremente.', printer_hint_mono: 'Monocromo: Salida en negro/escala de grises.',
         paper_type: 'Tipo de Papel', paper_size_title: 'Tamaño de Papel', portrait: 'Vertical', landscape: 'Horizontal', theme_color: 'Tema',
         line_style: 'Estilo de Línea', line_type: 'Tipo', solid: 'Continua', dashed: 'Discontinua', dotted: 'Punteada',
-        line_width: 'Grosor (px)', bold_step: 'Resaltar cada N', margin_settings: 'Márgenes',
+        line_width: 'Grosor (px)', margin_settings: 'Márgenes',
         punch_marker: 'Marcas de Perforación',
         punch_us3: '3 Taladros EE.UU. (4.25")', punch_iso2: '2 Taladros ISO (80 mm)', punch_iso4: '4 Taladros ISO (80 mm)',
         punch_5hole: '5 Taladros (Compatible 3 y 2)', punch_top2: 'Superior 2 Taladros (2.75")', punch_single: 'Anilla única',
@@ -920,7 +981,7 @@
         printer_hint: 'ألوان كاملة: منتقي الألوان والسمات مفعل.', printer_hint_mono: 'أبيض وأسود: إخراج أحادي اللون.',
         paper_type: 'نوع الورق', paper_size_title: 'حجم الورق', portrait: 'عمودي', landscape: 'أفقي', theme_color: 'السمة',
         line_style: 'نمط الخطوط', line_type: 'النوع', solid: 'متصل', dashed: 'متقطع', dotted: 'منقط',
-        line_width: 'سماكة الخط (px)', bold_step: 'تغميق كل N', margin_settings: 'الهوامش',
+        line_width: 'سماكة الخط (px)', margin_settings: 'الهوامش',
         punch_marker: 'علامات التثقيب',
         punch_us3: '3 ثقوب أمريكية (4.25 بوصة)', punch_iso2: 'ثقبان (80 ملم)', punch_iso4: '4 ثقوب (80 ملم)',
         punch_5hole: '5 ثقوب (متوافق مع 3 و 2)', punch_top2: 'ثقبان علويان (2.75 بوصة)', punch_single: 'حلقة فردية',
@@ -932,8 +993,8 @@
         printer_type: 'プリンターの種類', color_printer: 'カラー印刷', mono_printer: 'モノクロレーザー',
         printer_hint: 'フルカラー：テーマおよびカラーパレットが利用可能。', printer_hint_mono: 'モノクロ：黒とグレー階調のみを出力。',
         paper_type: '用紙タイプ', paper_size_title: '用紙サイズ', portrait: '縦向き', landscape: '横向き', theme_color: 'テーマ',
-        line_style: '罫線のスタイル', line_type: '線の種類', solid: '実線', dashed: '破線', dotted: '点线',
-        line_width: '線の太さ (px)', bold_step: '太線の間隔 (Nマスごと)', margin_settings: '余白設定',
+        line_style: '罫線のスタイル', line_type: '線の種類', solid: '実線', dashed: '破線', dotted: '点線',
+        line_width: '線の太さ (px)', margin_settings: '余白設定',
         punch_marker: 'パンチ穴ガイド',
         punch_us3: 'US 3穴バインダー (4.25")', punch_iso2: '2穴 (80mm)', punch_iso4: '4穴 (80mm)',
         punch_5hole: '5穴 (3穴・2穴互換)', punch_top2: '天綴じ2穴 (2.75")', punch_single: '単環リング',
@@ -946,7 +1007,7 @@
         printer_hint: '컬러: 테마 및 색상 추출기를 자유롭게 사용 가능.', printer_hint_mono: '흑백: 흑백 및 그레이스케일로 강제 출력.',
         paper_type: '용지 서식', paper_size_title: '용지 규격', portrait: '세로', landscape: '가로', theme_color: '테마',
         line_style: '선 스타일', line_type: '선 형태', solid: '실선', dashed: '파선', dotted: '점선',
-        line_width: '선 굵기 (px)', bold_step: 'N칸마다 굵은 선', margin_settings: '여백 설정',
+        line_width: '선 굵기 (px)', margin_settings: '여백 설정',
         punch_marker: '타공 위치 마크',
         punch_us3: '미국식 3공 바인더 (4.25")', punch_iso2: '2공 (80mm)', punch_iso4: '4공 (80mm)',
         punch_5hole: '5공 (3공 및 2공 호환)', punch_top2: '상단 2공 (2.75")', punch_single: '단일 링',
@@ -996,7 +1057,6 @@
       lineDash: 'solid',
       lineWidth: 0.6,
       gridSpacingMm: 15,
-      boldStep: 0,
       marginTopMm: 10,
       marginBottomMm: 10,
       marginLeftMm: 10,
@@ -1004,6 +1064,13 @@
       texture: 'none',
       textureColor: '#d1d5db',
       textureOpacity: 0.35,
+      showDateLine: false,
+      music: {
+        clef: 'treble',
+        staveCount: 10,
+        staveGapMm: 8,
+        lineGapMm: 3
+      },
       enableSidebar: false,
       sidebarPos: 'left',
       sidebarWidthMm: 25,
@@ -1035,7 +1102,7 @@
         style: 'dot',
         offsetMm: 12
       },
-      zoom: 0.39 // 严格默认 39%
+      zoom: 0.39 // 默认缩放 39%
     };
 
     const canvas = document.getElementById('renderCanvas');
@@ -1066,11 +1133,9 @@
       const widthPx = Math.round(rawW_mm * MM_TO_PX);
       const heightPx = Math.round(rawH_mm * MM_TO_PX);
 
-      // 设置真实内部高清分辨率
       canvas.width = widthPx;
       canvas.height = heightPx;
 
-      // 设置显示缩放尺寸 (严格按 zoom 比例计算)
       const displayW = Math.round(widthPx * state.zoom);
       const displayH = Math.round(heightPx * state.zoom);
 
@@ -1081,7 +1146,7 @@
       ctx.fillStyle = state.bgColor;
       ctx.fillRect(0, 0, widthPx, heightPx);
 
-      // 2. 纹理层渲染 (支持实心底色全屏变色)
+      // 2. 纹理层渲染 (实心底色全铺)
       if (state.texture !== 'none') {
         drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
       }
@@ -1137,7 +1202,23 @@
       renderPaperTemplateCentered(ctx, state.paperType, leftPx, topPx, rightPx, bottomPx, stepPx, baseLineColor, boldLineColor);
       ctx.restore();
 
-      // 6. 水印 (完整支持文字、不透明度、角度、字体大小、颜色)
+      // 图 3：右上角日期行绘制
+      if (state.showDateLine && (state.paperType === 'lined' || state.paperType === 'grid' || state.paperType === 'dot')) {
+        ctx.save();
+        ctx.strokeStyle = baseLineColor;
+        ctx.fillStyle = baseLineColor;
+        ctx.lineWidth = state.lineWidth * 1.5;
+        const dateW = 60 * MM_TO_PX;
+        const dateY = topPx - 4 * MM_TO_PX;
+        if (dateY > 10) {
+          ctx.font = `${Math.round(11 * (RENDER_DPI / 72))}px sans-serif`;
+          ctx.textAlign = 'right';
+          ctx.fillText('Date: ___________', rightPx, dateY);
+        }
+        ctx.restore();
+      }
+
+      // 6. 水印
       if (state.enableWatermark && state.watermarkText.trim()) {
         ctx.save();
         ctx.globalAlpha = state.watermarkOpacity;
@@ -1152,7 +1233,7 @@
         ctx.restore();
       }
 
-      // 7. Logo 渲染 (完整支持图片、位置、尺寸、不透明度)
+      // 7. Logo 渲染
       if (state.enableLogo && state.logoImg) {
         ctx.save();
         ctx.globalAlpha = state.logoOpacity;
@@ -1191,10 +1272,91 @@
 
     // 左右留白绝对均摊对称渲染引擎
     function renderPaperTemplateCentered(ctx, type, left, top, right, bottom, step, baseColor, boldColor) {
+      // 图 6：空白纸纯白，直接返回不画任何内部线条
+      if (type === 'blank') {
+        return;
+      }
+
       const availW = right - left;
       const availH = bottom - top;
       if (availW <= 10 || availH <= 10 || step <= 1) return;
 
+      // 图 5：粉色毫米方格纸独立高精度绘制
+      if (type === 'pink_grid') {
+        const mmStep = Math.max(1, state.gridSpacingMm) * MM_TO_PX;
+        const pinkLight = '#fbcfe8';
+        const pinkMajor = '#f43f5e';
+        const cols = Math.floor(availW / mmStep);
+        const rows = Math.floor(availH / mmStep);
+        const offsetX = (availW - cols * mmStep) / 2;
+        const offsetY = (availH - rows * mmStep) / 2;
+        const startX = left + offsetX;
+        const startY = top + offsetY;
+
+        for (let i = 0; i <= cols; i++) {
+          const x = startX + i * mmStep;
+          const isMajor = (i % 5 === 0);
+          ctx.strokeStyle = isMajor ? pinkMajor : pinkLight;
+          ctx.lineWidth = isMajor ? 1.4 : 0.6;
+          ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, startY + rows * mmStep); ctx.stroke();
+        }
+        for (let j = 0; j <= rows; j++) {
+          const y = startY + j * mmStep;
+          const isMajor = (j % 5 === 0);
+          ctx.strokeStyle = isMajor ? pinkMajor : pinkLight;
+          ctx.lineWidth = isMajor ? 1.4 : 0.6;
+          ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(startX + cols * mmStep, y); ctx.stroke();
+        }
+        return;
+      }
+
+      // 图 7、8、9：乐谱纸按原版规范绘制（含谱号选择与组间距分配）
+      if (type === 'music_stave') {
+        const staveCount = state.music.staveCount;
+        const lineGapPx = state.music.lineGapMm * MM_TO_PX;
+        const staveHeightPx = lineGapPx * 4;
+        const minGapPx = state.music.staveGapMm * MM_TO_PX;
+        
+        let actualGapPx = minGapPx;
+        if (staveCount > 1) {
+          const remainingSpace = availH - (staveCount * staveHeightPx);
+          actualGapPx = Math.max(minGapPx, remainingSpace / (staveCount - 1));
+        }
+
+        ctx.setLineDash([]);
+        ctx.lineWidth = state.lineWidth * 1.4;
+        ctx.strokeStyle = baseColor;
+        ctx.fillStyle = baseColor;
+
+        let curY = top;
+        for (let s = 0; s < staveCount; s++) {
+          if (curY + staveHeightPx > bottom + 2) break;
+
+          // 绘制 5 根水平谱线
+          for (let l = 0; l < 5; l++) {
+            const y = curY + l * lineGapPx;
+            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+          }
+
+          // 绘制两端封口竖线
+          ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(left, curY + staveHeightPx); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(right, curY); ctx.lineTo(right, curY + staveHeightPx); ctx.stroke();
+
+          // 绘制谱号
+          if (state.music.clef === 'treble') {
+            ctx.font = `${Math.round(lineGapPx * 4.2)}px serif`;
+            ctx.fillText('𝄞', left + 8, curY + staveHeightPx - lineGapPx * 0.8);
+          } else if (state.music.clef === 'bass') {
+            ctx.font = `${Math.round(lineGapPx * 3.4)}px serif`;
+            ctx.fillText('𝄢', left + 8, curY + staveHeightPx - lineGapPx * 1.1);
+          }
+
+          curY += staveHeightPx + actualGapPx;
+        }
+        return;
+      }
+
+      // 其他常规网格与练字纸对称均摊计算
       const cols = Math.floor(availW / step);
       const rows = Math.floor(availH / step);
       const offsetX = (availW - cols * step) / 2;
@@ -1208,23 +1370,12 @@
       switch (type) {
         case 'grid':
         case 'sewing':
-        case 'pink_grid':
         case 'knitting_grid': {
-          let col = 0;
           for (let x = cLeft; x <= cRight + 0.5; x += step) {
-            const isMajor = state.boldStep > 0 && (col % state.boldStep === 0);
-            ctx.lineWidth = isMajor ? state.lineWidth * 3.2 : state.lineWidth * 1.4;
-            ctx.strokeStyle = isMajor ? boldColor : (type === 'pink_grid' ? '#f59e0b' : baseColor);
             ctx.beginPath(); ctx.moveTo(x, cTop); ctx.lineTo(x, cBottom); ctx.stroke();
-            col++;
           }
-          let row = 0;
           for (let y = cTop; y <= cBottom + 0.5; y += step) {
-            const isMajor = state.boldStep > 0 && (row % state.boldStep === 0);
-            ctx.lineWidth = isMajor ? state.lineWidth * 3.2 : state.lineWidth * 1.4;
-            ctx.strokeStyle = isMajor ? boldColor : (type === 'pink_grid' ? '#f59e0b' : baseColor);
             ctx.beginPath(); ctx.moveTo(cLeft, y); ctx.lineTo(cRight, y); ctx.stroke();
-            row++;
           }
           break;
         }
@@ -1317,115 +1468,6 @@
           break;
         }
 
-        case 'slant_guide_55': {
-          for (let y = cTop; y <= cBottom; y += step) {
-            ctx.setLineDash([]);
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          ctx.setLineDash([6, 6]);
-          const angleRad = 55 * Math.PI / 180;
-          const slantDx = (bottom - top) / Math.tan(angleRad);
-          for (let x = left - slantDx; x <= right + slantDx; x += step * 1.5) {
-            ctx.beginPath(); ctx.moveTo(x, bottom); ctx.lineTo(x + slantDx, top); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'slant_grid_koca': {
-          for (let y = cTop; y <= cBottom; y += step) {
-            ctx.setLineDash([]);
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          ctx.setLineDash([4, 6]);
-          const angleRad = 65 * Math.PI / 180;
-          const slantDx = (bottom - top) / Math.tan(angleRad);
-          for (let x = left - slantDx; x <= right + slantDx; x += step) {
-            ctx.beginPath(); ctx.moveTo(x, bottom); ctx.lineTo(x + slantDx, top); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'pinyin_tian':
-        case 'pinyin_homework': {
-          const cellSize = step;
-          const pinyinH = cellSize * 0.45;
-          let curY = top;
-          while (curY + pinyinH + cellSize <= bottom) {
-            ctx.setLineDash([]);
-            ctx.lineWidth = state.lineWidth * 1.5;
-            for (let i = 0; i <= 3; i++) {
-              const py = curY + (pinyinH / 3) * i;
-              ctx.beginPath(); ctx.moveTo(left, py); ctx.lineTo(right, py); ctx.stroke();
-            }
-            const gridTop = curY + pinyinH;
-            for (let x = cLeft; x + cellSize <= cRight + 1; x += cellSize) {
-              ctx.strokeRect(x, gridTop, cellSize, cellSize);
-              ctx.setLineDash([6, 6]);
-              ctx.beginPath();
-              ctx.moveTo(x + cellSize / 2, gridTop); ctx.lineTo(x + cellSize / 2, gridTop + cellSize);
-              ctx.moveTo(x, gridTop + cellSize / 2); ctx.lineTo(x + cellSize, gridTop + cellSize / 2);
-              ctx.stroke();
-              ctx.setLineDash([]);
-            }
-            curY += pinyinH + cellSize + (step * 0.35);
-          }
-          break;
-        }
-
-        case 'composition':
-        case 'genko_yoshi': {
-          const cellSize = step;
-          const isGenko = type === 'genko_yoshi';
-          const midX = (left + right) / 2;
-          for (let x = cLeft; x + cellSize <= cRight + 1; x += cellSize) {
-            if (isGenko && Math.abs(x - midX) < cellSize * 1.5) continue;
-            for (let y = cTop; y + cellSize <= cBottom + 1; y += cellSize) {
-              ctx.strokeRect(x, y, cellSize, cellSize);
-            }
-          }
-          if (isGenko) {
-            ctx.save();
-            ctx.font = `${Math.round(step * 0.6)}px serif`;
-            ctx.textAlign = 'center';
-            ctx.fillStyle = boldColor;
-            ctx.fillText('【 魚尾 】', midX, top + step * 2);
-            ctx.fillText('20 × 20', midX, bottom - step * 2);
-            ctx.restore();
-          }
-          break;
-        }
-
-        case 'german_lineatur1':
-        case 'german_lineatur3':
-        case 'german_lineatur_border':
-        case 'english_homework':
-        case 'english_calligraphy':
-        case 'us_kindergarten':
-        case 'brazilian_calligraphy': {
-          let curY = top;
-          const blockH = step * 1.8;
-          const subH = blockH / 3;
-          while (curY + blockH <= bottom) {
-            ctx.setLineDash([]);
-            ctx.lineWidth = state.lineWidth * 2.0;
-            ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(right, curY); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(left, curY + blockH); ctx.lineTo(right, curY + blockH); ctx.stroke();
-
-            ctx.lineWidth = state.lineWidth * 1.0;
-            ctx.setLineDash([6, 6]);
-            ctx.beginPath(); ctx.moveTo(left, curY + subH); ctx.lineTo(right, curY + subH); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(left, curY + subH * 2); ctx.lineTo(right, curY + subH * 2); ctx.stroke();
-
-            if (type === 'german_lineatur_border') {
-              ctx.setLineDash([]);
-              ctx.strokeRect(left, curY, right - left, blockH);
-            }
-            curY += blockH + (step * 0.4);
-          }
-          break;
-        }
-
-        case 'music_stave':
         case 'guitar_tab':
         case 'bass_tab':
         case 'ukulele_tab':
@@ -1435,13 +1477,6 @@
           const groupGap = step * 1.8;
           let curY = top;
           while (curY + staveGap * (linesCount - 1) <= bottom) {
-            if (type === 'guitar_chord') {
-              const chordW = 40; const chordH = 50;
-              for (let cx = left; cx + chordW <= right; cx += chordW + 35) {
-                ctx.setLineDash([]);
-                ctx.strokeRect(cx, curY - chordH - 10, chordW, chordH);
-              }
-            }
             ctx.setLineDash([]);
             ctx.lineWidth = state.lineWidth * 1.4;
             for (let i = 0; i < linesCount; i++) {
@@ -1453,189 +1488,6 @@
           break;
         }
 
-        case 'cornell': {
-          const cueWidth = (right - left) * 0.3;
-          const summaryHeight = (bottom - top) * 0.22;
-          const mainBottom = bottom - summaryHeight;
-          ctx.setLineDash([]);
-          ctx.lineWidth = state.lineWidth * 2.8;
-          ctx.beginPath(); ctx.moveTo(left + cueWidth, top); ctx.lineTo(left + cueWidth, mainBottom); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(left, mainBottom); ctx.lineTo(right, mainBottom); ctx.stroke();
-          ctx.lineWidth = state.lineWidth * 1.2;
-          for (let y = top + step; y < mainBottom - 5; y += step) {
-            ctx.beginPath(); ctx.moveTo(left + cueWidth, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'swot': {
-          const midX = (left + right) / 2;
-          const midY = (top + bottom) / 2;
-          ctx.setLineDash([]);
-          ctx.lineWidth = state.lineWidth * 3.0;
-          ctx.beginPath(); ctx.moveTo(midX, top); ctx.lineTo(midX, bottom); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(left, midY); ctx.lineTo(right, midY); ctx.stroke();
-          ctx.font = `bold ${Math.round(step * 0.8)}px sans-serif`;
-          ctx.fillStyle = boldColor;
-          ctx.fillText('S (Strengths)', left + 20, top + 40);
-          ctx.fillText('W (Weaknesses)', midX + 20, top + 40);
-          ctx.fillText('O (Opportunities)', left + 20, midY + 40);
-          ctx.fillText('T (Threats)', midX + 20, midY + 40);
-          break;
-        }
-
-        case 'polar': {
-          const cx = (left + right) / 2;
-          const cy = (top + bottom) / 2;
-          const maxR = Math.min((right - left), (bottom - top)) / 2;
-          ctx.setLineDash([]);
-          for (let r = step; r <= maxR; r += step) {
-            ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-          }
-          for (let deg = 0; deg < 360; deg += 30) {
-            const rad = deg * Math.PI / 180;
-            ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(rad) * maxR, cy + Math.sin(rad) * maxR); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'iso_grid': {
-          const h = step * Math.sqrt(3) / 2;
-          for (let y = top; y <= bottom; y += h) {
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          for (let x = left - (bottom - top); x <= right + (bottom - top); x += step) {
-            ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x + (bottom - top) / Math.sqrt(3), bottom); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x - (bottom - top) / Math.sqrt(3), bottom); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'hex_grid': {
-          const r = step * 0.7;
-          const dx = r * 1.5;
-          const dy = r * Math.sqrt(3);
-          for (let x = cLeft; x <= cRight; x += dx) {
-            for (let y = cTop; y <= cBottom; y += dy) {
-              drawHexagon(ctx, x, y, r);
-            }
-          }
-          break;
-        }
-
-        case 'semi_log':
-        case 'log_log': {
-          ctx.setLineDash([]);
-          for (let cycle = 0; cycle < 3; cycle++) {
-            const cycleH = (bottom - top) / 3;
-            const cTopLog = top + cycle * cycleH;
-            for (let v = 1; v <= 10; v++) {
-              const y = cTopLog + (1 - Math.log10(v)) * cycleH;
-              ctx.lineWidth = (v === 1 || v === 10) ? state.lineWidth * 2.5 : state.lineWidth * 0.8;
-              ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-            }
-          }
-          for (let x = cLeft; x <= cRight; x += step) {
-            ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'number_line': {
-          let curY = top + step;
-          while (curY <= bottom) {
-            ctx.lineWidth = state.lineWidth * 2;
-            ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(right, curY); ctx.stroke();
-            for (let x = cLeft; x <= cRight; x += step) {
-              ctx.beginPath(); ctx.moveTo(x, curY - 12); ctx.lineTo(x, curY + 12); ctx.stroke();
-            }
-            curY += step * 3;
-          }
-          break;
-        }
-
-        case 'hundred_board': {
-          const cellW = (right - left) / 10;
-          const cellH = (bottom - top) / 10;
-          for (let i = 0; i <= 10; i++) {
-            ctx.beginPath(); ctx.moveTo(left + i * cellW, top); ctx.lineTo(left + i * cellW, bottom); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(left, top + i * cellH); ctx.lineTo(right, top + i * cellH); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'habit_tracker': {
-          const colW = (right - left - 180) / 31;
-          for (let y = top; y <= bottom; y += step * 1.2) {
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          ctx.beginPath(); ctx.moveTo(left + 180, top); ctx.lineTo(left + 180, bottom); ctx.stroke();
-          for (let d = 1; d <= 31; d++) {
-            const x = left + 180 + (d * colW);
-            ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'target_thermometer': {
-          const midX = (left + right) / 2;
-          const tubeW = 80;
-          ctx.strokeRect(midX - tubeW / 2, top + 50, tubeW, bottom - top - 180);
-          ctx.beginPath(); ctx.arc(midX, bottom - 100, 60, 0, Math.PI * 2); ctx.stroke();
-          for (let y = top + 80; y <= bottom - 180; y += 40) {
-            ctx.beginPath(); ctx.moveTo(midX + tubeW / 2, y); ctx.lineTo(midX + tubeW / 2 + 25, y); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'weekly_plan':
-        case 'weekly_meal': {
-          const dayW = (right - left) / 7;
-          for (let i = 0; i <= 7; i++) {
-            const x = left + i * dayW;
-            ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
-          }
-          const headerH = 60;
-          ctx.beginPath(); ctx.moveTo(left, top + headerH); ctx.lineTo(right, top + headerH); ctx.stroke();
-          for (let y = top + headerH + step; y < bottom; y += step) {
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'task_planner':
-        case 'chore_list': {
-          for (let y = cTop; y <= cBottom; y += step) {
-            ctx.strokeRect(left + 10, y + 5, 20, 20);
-            ctx.beginPath(); ctx.moveTo(left + 45, y + 25); ctx.lineTo(right, y + 25); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'storyboard': {
-          const boxW = (right - left - 40) / 2;
-          const boxH = boxW * 9 / 16;
-          for (let y = top; y + boxH + 60 <= bottom; y += boxH + 80) {
-            ctx.strokeRect(left, y, boxW, boxH);
-            ctx.strokeRect(left + boxW + 40, y, boxW, boxH);
-            ctx.strokeRect(left, y + boxH + 10, boxW, 40);
-            ctx.strokeRect(left + boxW + 40, y + boxH + 10, boxW, 40);
-          }
-          break;
-        }
-
-        case 'clock_practice': {
-          const rad = Math.min(step * 2, 80);
-          for (let x = cLeft + rad; x + rad <= cRight; x += rad * 2 + 40) {
-            for (let y = cTop + rad; y + rad <= cBottom; y += rad * 2 + 40) {
-              ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.stroke();
-              ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
-            }
-          }
-          break;
-        }
-
-        case 'blank':
         default: {
           for (let y = cTop; y <= cBottom; y += step) {
             ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
@@ -1643,19 +1495,6 @@
           break;
         }
       }
-    }
-
-    function drawHexagon(ctx, cx, cy, r) {
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const a = (i * 60 + 30) * Math.PI / 180;
-        const x = cx + r * Math.cos(a);
-        const y = cy + r * Math.sin(a);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.stroke();
     }
 
     function drawBackgroundTexture(ctx, w, h, texType, color, opacity) {
@@ -1811,8 +1650,8 @@
     function updateToolbarInfo(w_mm, h_mm) {
       if (!w_mm) {
         const def = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-        w_mm = state.isLandscape ? def.h : def.w;
-        h_mm = state.isLandscape ? def.w : def.h;
+        w_mm = state.isLandscape ? def.h : sizeDef.w;
+        h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
       }
       const typeName = document.getElementById('paperTypeSelect').selectedOptions[0].text;
       const orientName = state.isLandscape ? '横向' : '纵向';
@@ -1861,6 +1700,17 @@
       link.click();
     };
 
+    // 导出 DOCX (包装当前高清画布图为 Word 规范文档)
+    document.getElementById('btnExportDOCX').onclick = function() {
+      const imgData = canvas.toDataURL('image/png');
+      const htmlContent = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Paper Export</title></head><body style="margin:0;padding:0;text-align:center;"><img src="${imgData}" style="width:100%;max-width:210mm;height:auto;" /></body></html>`;
+      const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Paper-${state.paperType}-${state.standardSize}.doc`;
+      link.click();
+    };
+
     document.getElementById('btnPrint').onclick = function() { window.print(); };
 
     // 交互事件
@@ -1877,15 +1727,58 @@
       state.isMono = true; setLanguage(state.lang); drawPaper();
     };
 
-    document.getElementById('paperTypeSelect').onchange = (e) => {
+    // 纸张类型切换联动
+    const paperTypeSelect = document.getElementById('paperTypeSelect');
+    const boxBaseOptions = document.getElementById('boxBaseOptions');
+    const boxMusicOptions = document.getElementById('boxMusicOptions');
+    const labelSpacing = document.getElementById('labelSpacing');
+    const rowGridSpacing = document.getElementById('rowGridSpacing');
+
+    paperTypeSelect.onchange = (e) => {
       state.paperType = e.target.value;
-      const labelSpacing = document.getElementById('labelSpacing');
       const unitStr = state.unit === 'in' ? 'in' : 'mm';
+
+      // 显隐右上角日期行选项
+      const isBaseLined = ['lined', 'grid', 'dot'].includes(state.paperType);
+      boxBaseOptions.style.display = isBaseLined ? 'flex' : 'none';
+
+      // 显隐五线谱独立配置
+      const isMusic = state.paperType === 'music_stave';
+      boxMusicOptions.style.display = isMusic ? 'flex' : 'none';
+
+      if (state.paperType === 'blank') {
+        rowGridSpacing.style.display = 'none';
+      } else {
+        rowGridSpacing.style.display = 'flex';
+      }
+
       if (state.paperType.includes('mi_zi') || state.paperType.includes('tian_zi')) {
         labelSpacing.textContent = `格子大小 (${unitStr})`;
+      } else if (state.paperType === 'pink_grid') {
+        labelSpacing.textContent = `小格边长 (${unitStr})`;
+      } else if (state.paperType === 'music_stave') {
+        labelSpacing.textContent = `五线之间的间距 (${unitStr})`;
       } else {
         labelSpacing.textContent = `格距 (${unitStr})`;
       }
+      drawPaper();
+    };
+
+    document.getElementById('chkShowDateLine').onchange = (e) => {
+      state.showDateLine = e.target.checked;
+      drawPaper();
+    };
+
+    document.getElementById('selectClef').onchange = (e) => {
+      state.music.clef = e.target.value;
+      drawPaper();
+    };
+    document.getElementById('inputStaveCount').oninput = (e) => {
+      state.music.staveCount = parseInt(e.target.value) || 10;
+      drawPaper();
+    };
+    document.getElementById('inputStaveGap').oninput = (e) => {
+      state.music.staveGapMm = parseFloat(e.target.value) || 8;
       drawPaper();
     };
 
@@ -1914,9 +1807,12 @@
         : `孔中心距纸边 (${unitStr})`;
       document.getElementById('punchWarnText').textContent = `⚠️ 标记可能与线条重叠，建议左/上边距至少 ${isMm ? '18 mm' : '0.709 in'}。`;
 
-      const labelSpacing = document.getElementById('labelSpacing');
       if (state.paperType.includes('mi_zi') || state.paperType.includes('tian_zi')) {
         labelSpacing.textContent = `格子大小 (${unitStr})`;
+      } else if (state.paperType === 'pink_grid') {
+        labelSpacing.textContent = `小格边长 (${unitStr})`;
+      } else if (state.paperType === 'music_stave') {
+        labelSpacing.textContent = `五线之间的间距 (${unitStr})`;
       } else {
         labelSpacing.textContent = `格距 (${unitStr})`;
       }
@@ -1968,9 +1864,11 @@
     document.getElementById('inputGridSpacing').oninput = (e) => {
       const val = parseFloat(e.target.value) || 15;
       state.gridSpacingMm = state.unit === 'in' ? val * 25.4 : val;
+      if (state.paperType === 'music_stave') {
+        state.music.lineGapMm = state.gridSpacingMm;
+      }
       drawPaper();
     };
-    document.getElementById('inputBoldStep').oninput = (e) => { state.boldStep = parseInt(e.target.value) || 0; drawPaper(); };
 
     document.getElementById('marginTop').oninput = (e) => {
       const val = parseFloat(e.target.value) || 0;
@@ -2208,7 +2106,7 @@
       drawPaper();
     };
 
-    // 确保外层 flex 容器计算完成后再执行首次渲染
+    // 确保外层加载完毕后渲染
     window.addEventListener('load', () => {
       setLanguage('zh');
       requestAnimationFrame(() => {
