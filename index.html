@@ -249,7 +249,8 @@
       height: 14px;
     }
 
-    .punch-sub-box {
+    /* 二级控制卡片通用样式 */
+    .sub-settings-box {
       background: #f8faf8;
       border: 1px solid #d8e2d9;
       border-radius: 8px;
@@ -259,24 +260,13 @@
       flex-direction: column;
       gap: 8px;
     }
-    .punch-warn-text {
+    .warn-hint-text {
       font-size: 11px;
       color: #b45309;
       line-height: 1.4;
       background: #fef3c7;
       padding: 4px 8px;
       border-radius: 4px;
-    }
-
-    .texture-sub-box {
-      background: #f8faf8;
-      border: 1px solid #d8e2d9;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-top: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
     }
     .range-row {
       display: flex;
@@ -619,7 +609,7 @@
           <label class="checkbox-item"><input type="checkbox" id="chkPunchSingle" /> <span data-i18n="punch_single">单环 (左上角)</span></label>
         </div>
 
-        <div class="punch-sub-box" id="punchSubBox" style="display:none;">
+        <div class="sub-settings-box" id="punchSubBox" style="display:none;">
           <div class="form-row">
             <span class="form-label">标记样式</span>
             <select id="punchStyleSelect">
@@ -632,7 +622,7 @@
             <span class="form-label" id="labelPunchOffset">孔中心距纸边 (mm)</span>
             <input type="number" id="inputPunchOffset" value="12" step="0.5" min="1" />
           </div>
-          <div class="punch-warn-text" id="punchWarnText">
+          <div class="warn-hint-text" id="punchWarnText">
             ⚠️ 标记可能与线条重叠，建议左/上边距至少 18 mm。
           </div>
         </div>
@@ -681,7 +671,7 @@
         </div>
       </div>
 
-      <!-- 背景设置 (标准 8 个色块排布) -->
+      <!-- 背景设置 (标准 8 色块 + 实心底色全铺) -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="bg_watermark">背景设置</span>
@@ -721,8 +711,8 @@
           </select>
         </div>
 
-        <!-- 纹理二级联动选项框 (标准 8 个色块排布) -->
-        <div class="texture-sub-box" id="textureSubBox" style="display:none;">
+        <!-- 纹理二级联动选项框 (图 4、图 5) -->
+        <div class="sub-settings-box" id="textureSubBox" style="display:none;">
           <div class="form-row">
             <span class="form-label">纹理颜色</span>
             <div class="color-palette-8" id="texColorPalette">
@@ -750,21 +740,90 @@
         </div>
       </div>
 
-      <!-- 水印与 Logo -->
+      <!-- 水印设置 (图 3 二级参数展开) -->
       <div class="form-section">
         <div class="section-title"><span>🩸</span><span>水印设置</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableWatermark" /> <span>启用水印</span></label>
-        <div id="watermarkBox" style="display:none; margin-top:4px;">
-          <input type="text" id="txtWatermark" value="CONFIDENTIAL" placeholder="水印文字..." />
+        <div class="sub-settings-box" id="watermarkBox" style="display:none;">
+          <div class="form-row">
+            <span class="form-label">水印文字</span>
+            <input type="text" id="txtWatermark" value="" placeholder="输入水印文字" />
+          </div>
+          <div class="form-row">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="form-label">不透明度</span>
+              <span class="sub-hint" id="wmOpacityText">15%</span>
+            </div>
+            <div class="range-row">
+              <input type="range" id="inputWmOpacity" min="1" max="100" value="15" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="form-label">角度</span>
+              <span class="sub-hint" id="wmAngleText">-45°</span>
+            </div>
+            <div class="range-row">
+              <input type="range" id="inputWmAngle" min="-90" max="90" value="-45" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="form-label">字体大小</span>
+              <span class="sub-hint" id="wmFontSizeText">48px</span>
+            </div>
+            <div class="range-row">
+              <input type="range" id="inputWmFontSize" min="12" max="120" value="48" />
+            </div>
+          </div>
+          <div class="form-row">
+            <span class="form-label">颜色</span>
+            <div class="color-picker-row">
+              <div class="color-swatch-box"><input type="color" id="wmColorPicker" value="#000000" /></div>
+              <input type="text" id="wmColorText" value="#000000" style="flex:1;" />
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Logo / 标识设置 (图 1、图 2 二级参数展开) -->
       <div class="form-section">
         <div class="section-title"><span>🖼️</span><span>Logo / 标识</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableLogo" /> <span>启用 Logo</span></label>
+        <div class="sub-settings-box" id="logoBox" style="display:none;">
+          <div class="form-row">
+            <span class="form-label">上传 Logo 图片</span>
+            <input type="file" id="inputLogoFile" accept="image/*" />
+          </div>
+          <div class="form-row">
+            <span class="form-label">位置</span>
+            <select id="selectLogoPos">
+              <option value="br" selected>右下</option>
+              <option value="bl">左下</option>
+              <option value="tr">右上</option>
+              <option value="tl">左上</option>
+              <option value="center">居中</option>
+            </select>
+            <span class="sub-hint">在预览区拖动可移动位置</span>
+          </div>
+          <div class="form-row">
+            <span class="form-label">大小 (mm)</span>
+            <input type="number" id="inputLogoSize" value="20" min="5" max="150" />
+            <span class="sub-hint">mm</span>
+          </div>
+          <div class="form-row">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="form-label">不透明度</span>
+              <span class="sub-hint" id="logoOpacityText">80%</span>
+            </div>
+            <div class="range-row">
+              <input type="range" id="inputLogoOpacity" min="1" max="100" value="80" />
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- 页面设置 -->
+      <!-- 页面设置 (图 1 二级起始页码联动) -->
       <div class="form-section">
         <div class="section-title"><span>📄</span><span>页面设置</span></div>
         <div class="form-row">
@@ -773,6 +832,10 @@
         </div>
         <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
           <label class="checkbox-item"><input type="checkbox" id="chkShowPageNum" /> <span>显示页码</span></label>
+          <div id="startPageBox" style="display:none; flex-direction:column; gap:4px; margin-left:22px;">
+            <span class="form-label">起始页码</span>
+            <input type="number" id="inputStartPage" value="1" min="1" />
+          </div>
           <label class="checkbox-item"><input type="checkbox" id="chkDuplex" /> <span>双面打印 (正面 + 背面)</span></label>
         </div>
         <div style="display:flex; gap:10px; margin-top:10px;">
@@ -792,7 +855,7 @@
         </div>
         <div class="toolbar-right">
           <button class="btn-tool" id="btnZoomOut">🔍 -</button>
-          <span id="zoomPercentText">58%</span>
+          <span id="zoomPercentText">39%</span>
           <button class="btn-tool" id="btnZoomIn">🔍 +</button>
           <button class="btn-tool" id="btnFitWindow" data-i18n="fit_window">适应视口</button>
         </div>
@@ -870,7 +933,7 @@
         punch_marker: 'パンチ穴ガイド',
         punch_us3: 'US 3穴バインダー (4.25")', punch_iso2: '2穴 (80mm)', punch_iso4: '4穴 (80mm)',
         punch_5hole: '5穴 (3穴・2穴互換)', punch_top2: '天綴じ2穴 (2.75")', punch_single: '単環リング',
-        sidebar_settings: 'サイドバー', enable_sidebar: 'サイドバーを有効化', position: '配置位置', pos_left: '左側', pos_right: '右側',
+        sidebar_settings: 'サイドバー', enable_sidebar: 'サイドバーを有効化', position: '配置位置', pos_left: '左側', pos_right: '右侧',
         bg_watermark: '背景設定', bg_color: '用紙カラー', bg_texture: '用紙テクスチャ', fit_window: '全体表示'
       },
       ko: {
@@ -917,7 +980,7 @@
       creative: { line: '#d90429', bg: '#fffafa' }
     };
 
-    // 状态对象：单位统一使用 mm 保证物理基准稳定，避免除零或边界越界
+    // 状态对象：默认缩放 39%
     const state = {
       lang: 'zh',
       isMono: false,
@@ -945,7 +1008,20 @@
       sidebarDash: 'solid',
       sidebarBgColor: '#fcfaf2',
       enableWatermark: false,
-      watermarkText: 'CONFIDENTIAL',
+      watermarkText: '',
+      watermarkOpacity: 0.15,
+      watermarkAngle: -45,
+      watermarkFontSize: 48,
+      watermarkColor: '#000000',
+      enableLogo: false,
+      logoImg: null,
+      logoPos: 'br',
+      logoSizeMm: 20,
+      logoOpacity: 0.8,
+      pageCount: 1,
+      showPageNum: false,
+      startPage: 1,
+      duplex: false,
       punch: {
         us3: false,
         iso2: false,
@@ -956,7 +1032,7 @@
         style: 'dot',
         offsetMm: 12
       },
-      zoom: 0.58
+      zoom: 0.39 // 严格默认 39%
     };
 
     const canvas = document.getElementById('renderCanvas');
@@ -979,7 +1055,6 @@
       updateToolbarInfo();
     }
 
-    // 画布主渲染函数
     function drawPaper() {
       const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
       const rawW_mm = state.isLandscape ? sizeDef.h : sizeDef.w;
@@ -1000,7 +1075,7 @@
       ctx.fillStyle = state.bgColor;
       ctx.fillRect(0, 0, widthPx, heightPx);
 
-      // 2. 纹理层渲染
+      // 2. 纹理层渲染 (支持实心底色全屏变色)
       if (state.texture !== 'none') {
         drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
       }
@@ -1056,20 +1131,50 @@
       renderPaperTemplateCentered(ctx, state.paperType, leftPx, topPx, rightPx, bottomPx, stepPx, baseLineColor, boldLineColor);
       ctx.restore();
 
-      // 6. 水印
+      // 6. 水印 (完整支持文字、不透明度、角度、字体大小、颜色)
       if (state.enableWatermark && state.watermarkText.trim()) {
         ctx.save();
-        ctx.font = `bold ${Math.round(widthPx * 0.08)}px sans-serif`;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+        ctx.globalAlpha = state.watermarkOpacity;
+        ctx.fillStyle = state.watermarkColor;
+        const fontPx = Math.round(state.watermarkFontSize * (RENDER_DPI / 72));
+        ctx.font = `bold ${fontPx}px -apple-system, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.translate(widthPx / 2, heightPx / 2);
-        ctx.rotate(-Math.PI / 4);
+        ctx.rotate((state.watermarkAngle * Math.PI) / 180);
         ctx.fillText(state.watermarkText, 0, 0);
         ctx.restore();
       }
 
-      // 7. 打孔定位标记
+      // 7. Logo 渲染 (完整支持图片、位置、尺寸、不透明度)
+      if (state.enableLogo && state.logoImg) {
+        ctx.save();
+        ctx.globalAlpha = state.logoOpacity;
+        const logoSizePx = state.logoSizeMm * MM_TO_PX;
+        const padPx = 15 * MM_TO_PX;
+        let lx = widthPx - logoSizePx - padPx;
+        let ly = heightPx - logoSizePx - padPx;
+
+        if (state.logoPos === 'tl') { lx = padPx; ly = padPx; }
+        else if (state.logoPos === 'tr') { lx = widthPx - logoSizePx - padPx; ly = padPx; }
+        else if (state.logoPos === 'bl') { lx = padPx; ly = heightPx - logoSizePx - padPx; }
+        else if (state.logoPos === 'center') { lx = (widthPx - logoSizePx) / 2; ly = (heightPx - logoSizePx) / 2; }
+
+        ctx.drawImage(state.logoImg, lx, ly, logoSizePx, logoSizePx);
+        ctx.restore();
+      }
+
+      // 8. 页码渲染
+      if (state.showPageNum) {
+        ctx.save();
+        ctx.fillStyle = '#666666';
+        ctx.font = `${Math.round(12 * (RENDER_DPI / 72))}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`- ${state.startPage} -`, widthPx / 2, heightPx - 10 * MM_TO_PX);
+        ctx.restore();
+      }
+
+      // 9. 打孔定位标记
       const hasPunch = Object.values(state.punch).some(v => v === true);
       if (hasPunch) {
         drawPunchMarkers(ctx, widthPx, heightPx);
@@ -1078,7 +1183,7 @@
       updateToolbarInfo(rawW_mm, rawH_mm);
     }
 
-    // 左右留白绝对对称均摊算法
+    // 左右留白绝对均摊对称渲染引擎
     function renderPaperTemplateCentered(ctx, type, left, top, right, bottom, step, baseColor, boldColor) {
       const availW = right - left;
       const availH = bottom - top;
@@ -1547,7 +1652,7 @@
       ctx.stroke();
     }
 
-    // 背景微纹理渲染
+    // 背景微纹理渲染（含实心底色整面变色）
     function drawBackgroundTexture(ctx, w, h, texType, color, opacity) {
       ctx.save();
       ctx.globalAlpha = opacity;
@@ -1555,7 +1660,10 @@
       ctx.fillStyle = color;
       ctx.lineWidth = 1;
 
-      if (texType === 'v_lines') {
+      // 实心底色：全屏平铺色块
+      if (texType === 'solid') {
+        ctx.fillRect(0, 0, w, h);
+      } else if (texType === 'v_lines') {
         const gap = 16;
         for (let x = 0; x < w; x += gap) {
           ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
@@ -1622,7 +1730,7 @@
       ctx.restore();
     }
 
-    // 打孔定位记号真实几何绘制（清晰大黑点）
+    // 打孔定位记号真实几何绘制（饱满实心黑圆点）
     function drawPunchMarkers(ctx, w, h) {
       ctx.save();
       ctx.fillStyle = '#111111';
@@ -1700,8 +1808,8 @@
     function updateToolbarInfo(w_mm, h_mm) {
       if (!w_mm) {
         const def = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-        w_mm = state.isLandscape ? def.h : def.w;
-        h_mm = state.isLandscape ? def.w : def.h;
+        w_mm = state.isLandscape ? def.h : sizeDef.w;
+        h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
       }
       const typeName = document.getElementById('paperTypeSelect').selectedOptions[0].text;
       const orientName = state.isLandscape ? '横向' : '纵向';
@@ -1942,7 +2050,7 @@
     document.getElementById('sidebarBgColorPicker').oninput = (e) => { state.sidebarBgColor = e.target.value; drawPaper(); };
     document.getElementById('btnSidebarBgClear').onclick = () => { state.sidebarBgColor = null; drawPaper(); };
 
-    // 背景颜色 8 色块交互联动 (第1自选，第2纯白，后6柔和浅色)
+    // 背景颜色 8 色块交互联动
     const bgCustomInput = document.getElementById('bgCustomInput');
     const bgCustomBox = document.getElementById('bgCustomBox');
     const bgPaletteItems = document.querySelectorAll('#bgColorPalette .palette-item');
@@ -1965,7 +2073,7 @@
       };
     });
 
-    // 纹理颜色 8 色块交互联动 (第1自选，第2灰度，后6纯色色块)
+    // 纹理颜色 8 色块交互联动
     const bgTextureSelect = document.getElementById('bgTextureSelect');
     const textureSubBox = document.getElementById('textureSubBox');
     const inputTexOpacity = document.getElementById('inputTexOpacity');
@@ -2006,19 +2114,94 @@
       drawPaper();
     };
 
-    // 水印
+    // 水印二级展开交互 (图 3)
     const chkWatermark = document.getElementById('chkEnableWatermark');
     const watermarkBox = document.getElementById('watermarkBox');
     chkWatermark.onchange = (e) => {
       state.enableWatermark = e.target.checked;
-      watermarkBox.style.display = e.target.checked ? 'block' : 'none';
+      watermarkBox.style.display = e.target.checked ? 'flex' : 'none';
       drawPaper();
     };
     document.getElementById('txtWatermark').oninput = (e) => { state.watermarkText = e.target.value; drawPaper(); };
+    document.getElementById('inputWmOpacity').oninput = (e) => {
+      state.watermarkOpacity = parseInt(e.target.value) / 100;
+      document.getElementById('wmOpacityText').textContent = `${e.target.value}%`;
+      drawPaper();
+    };
+    document.getElementById('inputWmAngle').oninput = (e) => {
+      state.watermarkAngle = parseInt(e.target.value);
+      document.getElementById('wmAngleText').textContent = `${e.target.value}°`;
+      drawPaper();
+    };
+    document.getElementById('inputWmFontSize').oninput = (e) => {
+      state.watermarkFontSize = parseInt(e.target.value);
+      document.getElementById('wmFontSizeText').textContent = `${e.target.value}px`;
+      drawPaper();
+    };
+    document.getElementById('wmColorPicker').oninput = (e) => {
+      state.watermarkColor = e.target.value;
+      document.getElementById('wmColorText').value = e.target.value;
+      drawPaper();
+    };
+    document.getElementById('wmColorText').onchange = (e) => {
+      state.watermarkColor = e.target.value;
+      document.getElementById('wmColorPicker').value = e.target.value;
+      drawPaper();
+    };
+
+    // Logo 二级展开交互 (图 1、图 2)
+    const chkLogo = document.getElementById('chkEnableLogo');
+    const logoBox = document.getElementById('logoBox');
+    chkLogo.onchange = (e) => {
+      state.enableLogo = e.target.checked;
+      logoBox.style.display = e.target.checked ? 'flex' : 'none';
+      drawPaper();
+    };
+    document.getElementById('inputLogoFile').onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const img = new Image();
+          img.onload = () => { state.logoImg = img; drawPaper(); };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    document.getElementById('selectLogoPos').onchange = (e) => { state.logoPos = e.target.value; drawPaper(); };
+    document.getElementById('inputLogoSize').oninput = (e) => {
+      state.logoSizeMm = parseFloat(e.target.value) || 20;
+      drawPaper();
+    };
+    document.getElementById('inputLogoOpacity').oninput = (e) => {
+      state.logoOpacity = parseInt(e.target.value) / 100;
+      document.getElementById('logoOpacityText').textContent = `${e.target.value}%`;
+      drawPaper();
+    };
+
+    // 页面设置二级起始页码联动 (图 1)
+    const chkPageNum = document.getElementById('chkShowPageNum');
+    const startPageBox = document.getElementById('startPageBox');
+    chkPageNum.onchange = (e) => {
+      state.showPageNum = e.target.checked;
+      startPageBox.style.display = e.target.checked ? 'flex' : 'none';
+      drawPaper();
+    };
+    document.getElementById('inputStartPage').oninput = (e) => {
+      state.startPage = parseInt(e.target.value) || 1;
+      drawPaper();
+    };
+    document.getElementById('chkDuplex').onchange = (e) => {
+      state.duplex = e.target.checked;
+    };
+    document.getElementById('pageCountInput').oninput = (e) => {
+      state.pageCount = parseInt(e.target.value) || 1;
+    };
 
     // 缩放
     document.getElementById('btnZoomIn').onclick = () => { state.zoom = Math.min(1.5, state.zoom + 0.05); drawPaper(); };
-    document.getElementById('btnZoomOut').onclick = () => { state.zoom = Math.max(0.2, state.zoom - 0.05); drawPaper(); };
+    document.getElementById('btnZoomOut').onclick = () => { state.zoom = Math.max(0.15, state.zoom - 0.05); drawPaper(); };
     document.getElementById('btnFitWindow').onclick = () => {
       const container = document.getElementById('scrollContainer');
       const availW = container.clientWidth - 80;
