@@ -207,7 +207,7 @@
       flex: 1;
       height: 34px;
       border-radius: 6px;
-      border: 1px solid rgba(0, 0, 0, 0.12);
+      border: 1px solid #cbd5cc;
       cursor: pointer;
       transition: transform 0.1s, border-color 0.1s;
       position: relative;
@@ -341,7 +341,6 @@
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
       position: relative;
       transform-origin: top center;
-      transition: transform 0.15s ease-out;
     }
     #renderCanvas { display: block; }
 
@@ -533,10 +532,10 @@
           <span>🎨</span><span data-i18n="theme_color">主题</span>
         </div>
         <select id="themeSelect">
+          <option value="vintage" selected>复古风</option>
           <option value="default">默认主题</option>
           <option value="dark">夜间主题</option>
           <option value="vintage_brown">复古棕</option>
-          <option value="vintage" selected>复古风</option>
           <option value="soft">柔和色</option>
           <option value="classic">经典风</option>
           <option disabled>---- 新增主题 ----</option>
@@ -596,12 +595,12 @@
         <div class="section-title">
           <span>🔲</span><span data-i18n="margin_settings">边距设置</span>
         </div>
-        <div class="sub-hint" id="labelMarginHint" style="margin-bottom:2px;">边距 (in)</div>
+        <div class="sub-hint" id="labelMarginHint" style="margin-bottom:2px;">边距 (mm)</div>
         <div class="margin-grid">
-          <div class="form-row"><input type="number" id="marginTop" value="0.354" step="0.01" min="0" /></div>
-          <div class="form-row"><input type="number" id="marginRight" value="0.354" step="0.01" min="0" /></div>
-          <div class="form-row"><input type="number" id="marginBottom" value="0.354" step="0.01" min="0" /></div>
-          <div class="form-row"><input type="number" id="marginLeft" value="0.354" step="0.01" min="0" /></div>
+          <div class="form-row"><input type="number" id="marginTop" value="10" step="1" min="0" /></div>
+          <div class="form-row"><input type="number" id="marginRight" value="10" step="1" min="0" /></div>
+          <div class="form-row"><input type="number" id="marginBottom" value="10" step="1" min="0" /></div>
+          <div class="form-row"><input type="number" id="marginLeft" value="10" step="1" min="0" /></div>
         </div>
       </div>
 
@@ -630,11 +629,11 @@
             </select>
           </div>
           <div class="form-row">
-            <span class="form-label" id="labelPunchOffset">孔中心距纸边 (in)</span>
-            <input type="number" id="inputPunchOffset" value="0.472" step="0.01" min="0.1" />
+            <span class="form-label" id="labelPunchOffset">孔中心距纸边 (mm)</span>
+            <input type="number" id="inputPunchOffset" value="12" step="0.5" min="1" />
           </div>
           <div class="punch-warn-text" id="punchWarnText">
-            ⚠️ 标记可能与线条重叠，建议左/上边距至少 0.709 in。
+            ⚠️ 标记可能与线条重叠，建议左/上边距至少 18 mm。
           </div>
         </div>
       </div>
@@ -654,8 +653,8 @@
             </select>
           </div>
           <div class="form-row">
-            <span class="form-label" id="labelSidebarWidth">宽度 (in)</span>
-            <input type="number" id="sidebarWidth" value="0.984" step="0.01" min="0.1" />
+            <span class="form-label" id="labelSidebarWidth">宽度 (mm)</span>
+            <input type="number" id="sidebarWidth" value="25" step="1" min="5" />
           </div>
           <div class="form-row">
             <span class="form-label">颜色</span>
@@ -682,14 +681,13 @@
         </div>
       </div>
 
-      <!-- 背景设置 (严格标准 8 色块排布) -->
+      <!-- 背景设置 (标准 8 个色块排布) -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="bg_watermark">背景设置</span>
         </div>
         <div class="form-row">
           <span class="form-label" data-i18n="bg_color">背景颜色</span>
-          <!-- 8 个色块：第1自选取色器，第2纯白，后6柔和浅色 -->
           <div class="color-palette-8" id="bgColorPalette">
             <div class="palette-item" id="bgCustomBox" style="background:#ffffff;" title="自选背景颜色">
               <input type="color" class="palette-custom-input" id="bgCustomInput" value="#ffffff" />
@@ -723,11 +721,10 @@
           </select>
         </div>
 
-        <!-- 纹理二级联动选项框 (严格标准 8 色块排布) -->
+        <!-- 纹理二级联动选项框 (标准 8 个色块排布) -->
         <div class="texture-sub-box" id="textureSubBox" style="display:none;">
           <div class="form-row">
             <span class="form-label">纹理颜色</span>
-            <!-- 8 个色块：第1自选取色器，第2灰度，后6原图纯色色块 -->
             <div class="color-palette-8" id="texColorPalette">
               <div class="palette-item" id="texCustomBox" style="background:#e2e8f0;" title="自选纹理颜色">
                 <input type="color" class="palette-custom-input" id="texCustomInput" value="#94a3b8" />
@@ -905,10 +902,10 @@
     };
 
     const THEME_PRESETS = {
+      vintage: { line: '#8b5a2b', bg: '#ffffff' },
       default: { line: '#4a5b5c', bg: '#ffffff' },
       dark: { line: '#1f2421', bg: '#f5f5f5' },
       vintage_brown: { line: '#5c3a21', bg: '#fcf8ee' },
-      vintage: { line: '#8b5a2b', bg: '#fcfaf2' },
       soft: { line: '#8a7d74', bg: '#fbfaf8' },
       classic: { line: '#2c4a6f', bg: '#ffffff' },
       minimal: { line: '#111111', bg: '#ffffff' },
@@ -920,29 +917,30 @@
       creative: { line: '#d90429', bg: '#fffafa' }
     };
 
+    // 状态对象：单位统一使用 mm 保证物理基准稳定，避免除零或边界越界
     const state = {
       lang: 'zh',
       isMono: false,
       paperType: 'mi_zi_ge',
       standardSize: 'A4',
       isLandscape: false,
-      unit: 'in',
+      unit: 'mm',
       lineColor: '#8b5a2b',
       bgColor: '#ffffff',
       lineDash: 'solid',
       lineWidth: 0.6,
-      gridSpacingVal: 0.787,
+      gridSpacingMm: 15,
       boldStep: 0,
-      marginTop: 0.354,
-      marginBottom: 0.354,
-      marginLeft: 0.354,
-      marginRight: 0.354,
+      marginTopMm: 10,
+      marginBottomMm: 10,
+      marginLeftMm: 10,
+      marginRightMm: 10,
       texture: 'none',
       textureColor: '#d1d5db',
       textureOpacity: 0.35,
       enableSidebar: false,
       sidebarPos: 'left',
-      sidebarWidth: 0.984,
+      sidebarWidthMm: 25,
       sidebarColor: '#8b5a2b',
       sidebarDash: 'solid',
       sidebarBgColor: '#fcfaf2',
@@ -956,7 +954,7 @@
         top2: false,
         single: false,
         style: 'dot',
-        offsetVal: 0.472
+        offsetMm: 12
       },
       zoom: 0.58
     };
@@ -967,13 +965,7 @@
 
     const RENDER_DPI = 300;
     const MM_TO_INCH = 1 / 25.4;
-    const INCH_TO_MM = 25.4;
-    const INCH_TO_PX = RENDER_DPI;
     const MM_TO_PX = (RENDER_DPI * MM_TO_INCH);
-
-    function toPixels(val) {
-      return state.unit === 'in' ? val * INCH_TO_PX : val * MM_TO_PX;
-    }
 
     function setLanguage(langKey) {
       state.lang = langKey;
@@ -987,6 +979,7 @@
       updateToolbarInfo();
     }
 
+    // 画布主渲染函数
     function drawPaper() {
       const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
       const rawW_mm = state.isLandscape ? sizeDef.h : sizeDef.w;
@@ -1003,24 +996,24 @@
       canvas.style.width = (widthPx * state.zoom) + 'px';
       canvas.style.height = (heightPx * state.zoom) + 'px';
 
-      // 1. 背景底色
+      // 1. 底色
       ctx.fillStyle = state.bgColor;
       ctx.fillRect(0, 0, widthPx, heightPx);
 
-      // 2. 纹理层渲染 (支持自定义颜色与透明度)
+      // 2. 纹理层渲染
       if (state.texture !== 'none') {
         drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
       }
 
       // 3. 边距与绝对对称居中
-      const topPx = toPixels(state.marginTop);
-      const bottomPx = heightPx - toPixels(state.marginBottom);
-      let leftPx = toPixels(state.marginLeft);
-      let rightPx = widthPx - toPixels(state.marginRight);
+      const topPx = state.marginTopMm * MM_TO_PX;
+      const bottomPx = heightPx - (state.marginBottomMm * MM_TO_PX);
+      let leftPx = state.marginLeftMm * MM_TO_PX;
+      let rightPx = widthPx - (state.marginRightMm * MM_TO_PX);
 
       // 4. 侧边栏
       if (state.enableSidebar) {
-        const sideW_Px = toPixels(state.sidebarWidth);
+        const sideW_Px = state.sidebarWidthMm * MM_TO_PX;
         ctx.save();
         ctx.strokeStyle = state.isMono ? '#333333' : state.sidebarColor;
         ctx.lineWidth = Math.max(1.8, state.lineWidth * 2.5);
@@ -1051,7 +1044,7 @@
       // 5. 核心线条与居中平摊
       const baseLineColor = state.isMono ? '#444444' : state.lineColor;
       const boldLineColor = state.isMono ? '#111111' : state.lineColor;
-      const stepPx = toPixels(state.gridSpacingVal);
+      const stepPx = state.gridSpacingMm * MM_TO_PX;
 
       ctx.save();
       ctx.strokeStyle = baseLineColor;
@@ -1076,7 +1069,7 @@
         ctx.restore();
       }
 
-      // 7. 打孔定位标记 (饱满黑点)
+      // 7. 打孔定位标记
       const hasPunch = Object.values(state.punch).some(v => v === true);
       if (hasPunch) {
         drawPunchMarkers(ctx, widthPx, heightPx);
@@ -1085,7 +1078,7 @@
       updateToolbarInfo(rawW_mm, rawH_mm);
     }
 
-    // 左右留白绝对均摊对称渲染引擎
+    // 左右留白绝对对称均摊算法
     function renderPaperTemplateCentered(ctx, type, left, top, right, bottom, step, baseColor, boldColor) {
       const availW = right - left;
       const availH = bottom - top;
@@ -1629,16 +1622,16 @@
       ctx.restore();
     }
 
-    // 打孔定位记号真实几何绘制（饱满实心黑圆点）
+    // 打孔定位记号真实几何绘制（清晰大黑点）
     function drawPunchMarkers(ctx, w, h) {
       ctx.save();
       ctx.fillStyle = '#111111';
       ctx.strokeStyle = '#111111';
       ctx.lineWidth = 2.5;
 
-      const offsetPx = toPixels(state.punch.offsetVal);
+      const offsetPx = state.punch.offsetMm * MM_TO_PX;
       const style = state.punch.style;
-      const punchHoleRadius = 3.0 * MM_TO_PX; 
+      const punchHoleRadius = 3.0 * MM_TO_PX;
 
       function renderMark(x, y) {
         if (style === 'dot') {
@@ -1707,8 +1700,8 @@
     function updateToolbarInfo(w_mm, h_mm) {
       if (!w_mm) {
         const def = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-        w_mm = state.isLandscape ? def.h : sizeDef.w;
-        h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
+        w_mm = state.isLandscape ? def.h : def.w;
+        h_mm = state.isLandscape ? def.w : def.h;
       }
       const typeName = document.getElementById('paperTypeSelect').selectedOptions[0].text;
       const orientName = state.isLandscape ? '横向' : '纵向';
@@ -1789,35 +1782,29 @@
 
     document.getElementById('paperStandardSelect').onchange = (e) => { state.standardSize = e.target.value; drawPaper(); };
 
-    // 公制 / 英制单位切换
+    // 单位切换
     const btnUnitMm = document.getElementById('btnUnitMm');
     const btnUnitIn = document.getElementById('btnUnitIn');
 
-    function switchUnit(newUnit) {
-      if (state.unit === newUnit) return;
-      const factor = newUnit === 'mm' ? INCH_TO_MM : MM_TO_INCH;
-      state.unit = newUnit;
+    function updateUnitDisplay() {
+      const isMm = state.unit === 'mm';
+      const factor = isMm ? 1 : (1 / 25.4);
+      const unitStr = isMm ? 'mm' : 'in';
 
-      state.gridSpacingVal = parseFloat((state.gridSpacingVal * factor).toFixed(3));
-      state.marginTop = parseFloat((state.marginTop * factor).toFixed(3));
-      state.marginBottom = parseFloat((state.marginBottom * factor).toFixed(3));
-      state.marginLeft = parseFloat((state.marginLeft * factor).toFixed(3));
-      state.marginRight = parseFloat((state.marginRight * factor).toFixed(3));
-      state.sidebarWidth = parseFloat((state.sidebarWidth * factor).toFixed(3));
-      state.punch.offsetVal = parseFloat((state.punch.offsetVal * factor).toFixed(3));
+      document.getElementById('inputGridSpacing').value = (state.gridSpacingMm * factor).toFixed(isMm ? 1 : 3);
+      document.getElementById('marginTop').value = (state.marginTopMm * factor).toFixed(isMm ? 1 : 3);
+      document.getElementById('marginBottom').value = (state.marginBottomMm * factor).toFixed(isMm ? 1 : 3);
+      document.getElementById('marginLeft').value = (state.marginLeftMm * factor).toFixed(isMm ? 1 : 3);
+      document.getElementById('marginRight').value = (state.marginRightMm * factor).toFixed(isMm ? 1 : 3);
+      document.getElementById('sidebarWidth').value = (state.sidebarWidthMm * factor).toFixed(isMm ? 1 : 3);
+      document.getElementById('inputPunchOffset').value = (state.punch.offsetMm * factor).toFixed(isMm ? 1 : 3);
 
-      document.getElementById('inputGridSpacing').value = state.gridSpacingVal;
-      document.getElementById('marginTop').value = state.marginTop;
-      document.getElementById('marginBottom').value = state.marginBottom;
-      document.getElementById('marginLeft').value = state.marginLeft;
-      document.getElementById('marginRight').value = state.marginRight;
-      document.getElementById('sidebarWidth').value = state.sidebarWidth;
-      document.getElementById('inputPunchOffset').value = state.punch.offsetVal;
-
-      const unitStr = newUnit === 'mm' ? 'mm' : 'in';
       document.getElementById('labelMarginHint').textContent = `边距 (${unitStr})`;
       document.getElementById('labelSidebarWidth').textContent = `宽度 (${unitStr})`;
-      updatePunchLabel();
+      document.getElementById('labelPunchOffset').textContent = state.punch.single
+        ? `角孔中心距顶边和左边 (${unitStr})`
+        : `孔中心距纸边 (${unitStr})`;
+      document.getElementById('punchWarnText').textContent = `⚠️ 标记可能与线条重叠，建议左/上边距至少 ${isMm ? '18 mm' : '0.709 in'}。`;
 
       const labelSpacing = document.getElementById('labelSpacing');
       if (state.paperType.includes('mi_zi') || state.paperType.includes('tian_zi')) {
@@ -1825,17 +1812,19 @@
       } else {
         labelSpacing.textContent = `格距 (${unitStr})`;
       }
-
-      drawPaper();
     }
 
     btnUnitMm.onclick = () => {
-      btnUnitMm.classList.add('active'); btnUnitIn.classList.remove('active');
-      switchUnit('mm');
+      btnUnitMm.classList.add('active');
+      btnUnitIn.classList.remove('active');
+      state.unit = 'mm';
+      updateUnitDisplay();
     };
     btnUnitIn.onclick = () => {
-      btnUnitIn.classList.add('active'); btnUnitMm.classList.remove('active');
-      switchUnit('in');
+      btnUnitIn.classList.add('active');
+      btnUnitMm.classList.remove('active');
+      state.unit = 'in';
+      updateUnitDisplay();
     };
 
     // 纸张方向
@@ -1869,15 +1858,36 @@
 
     document.getElementById('lineDashSelect').onchange = (e) => { state.lineDash = e.target.value; drawPaper(); };
     document.getElementById('inputLineWidth').oninput = (e) => { state.lineWidth = parseFloat(e.target.value) || 0.6; drawPaper(); };
-    document.getElementById('inputGridSpacing').oninput = (e) => { state.gridSpacingVal = parseFloat(e.target.value) || 15; drawPaper(); };
+
+    document.getElementById('inputGridSpacing').oninput = (e) => {
+      const val = parseFloat(e.target.value) || 15;
+      state.gridSpacingMm = state.unit === 'in' ? val * 25.4 : val;
+      drawPaper();
+    };
     document.getElementById('inputBoldStep').oninput = (e) => { state.boldStep = parseInt(e.target.value) || 0; drawPaper(); };
 
-    document.getElementById('marginTop').oninput = (e) => { state.marginTop = parseFloat(e.target.value) || 0; drawPaper(); };
-    document.getElementById('marginBottom').oninput = (e) => { state.marginBottom = parseFloat(e.target.value) || 0; drawPaper(); };
-    document.getElementById('marginLeft').oninput = (e) => { state.marginLeft = parseFloat(e.target.value) || 0; drawPaper(); };
-    document.getElementById('marginRight').oninput = (e) => { state.marginRight = parseFloat(e.target.value) || 0; drawPaper(); };
+    document.getElementById('marginTop').oninput = (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      state.marginTopMm = state.unit === 'in' ? val * 25.4 : val;
+      drawPaper();
+    };
+    document.getElementById('marginBottom').oninput = (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      state.marginBottomMm = state.unit === 'in' ? val * 25.4 : val;
+      drawPaper();
+    };
+    document.getElementById('marginLeft').oninput = (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      state.marginLeftMm = state.unit === 'in' ? val * 25.4 : val;
+      drawPaper();
+    };
+    document.getElementById('marginRight').oninput = (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      state.marginRightMm = state.unit === 'in' ? val * 25.4 : val;
+      drawPaper();
+    };
 
-    // 打孔定位逻辑及展开二级配置抽屉
+    // 打孔定位逻辑
     const punchCheckboxes = {
       us3: document.getElementById('chkPunchUS3'),
       iso2: document.getElementById('chkPunchISO2'),
@@ -1887,25 +1897,13 @@
       single: document.getElementById('chkPunchSingle')
     };
     const punchSubBox = document.getElementById('punchSubBox');
-    const labelPunchOffset = document.getElementById('labelPunchOffset');
-    const punchWarnText = document.getElementById('punchWarnText');
-
-    function updatePunchLabel() {
-      const unitStr = state.unit === 'in' ? 'in' : 'mm';
-      if (state.punch.single) {
-        labelPunchOffset.textContent = `角孔中心距顶边和左边 (${unitStr})`;
-      } else {
-        labelPunchOffset.textContent = `孔中心距纸边 (${unitStr})`;
-      }
-      punchWarnText.textContent = `⚠️ 标记可能与线条重叠，建议左/上边距至少 ${state.unit === 'in' ? '0.709 in' : '18 mm'}。`;
-    }
 
     Object.keys(punchCheckboxes).forEach(k => {
       punchCheckboxes[k].onchange = (e) => {
         state.punch[k] = e.target.checked;
         const anyChecked = Object.values(state.punch).some(v => v === true);
         punchSubBox.style.display = anyChecked ? 'flex' : 'none';
-        updatePunchLabel();
+        updateUnitDisplay();
         drawPaper();
       };
     });
@@ -1915,7 +1913,8 @@
       drawPaper();
     };
     document.getElementById('inputPunchOffset').oninput = (e) => {
-      state.punch.offsetVal = parseFloat(e.target.value) || 0;
+      const val = parseFloat(e.target.value) || 12;
+      state.punch.offsetMm = state.unit === 'in' ? val * 25.4 : val;
       drawPaper();
     };
 
@@ -1928,7 +1927,11 @@
       drawPaper();
     };
     document.getElementById('sidebarPosSelect').onchange = (e) => { state.sidebarPos = e.target.value; drawPaper(); };
-    document.getElementById('sidebarWidth').oninput = (e) => { state.sidebarWidth = parseFloat(e.target.value) || 0.984; drawPaper(); };
+    document.getElementById('sidebarWidth').oninput = (e) => {
+      const val = parseFloat(e.target.value) || 25;
+      state.sidebarWidthMm = state.unit === 'in' ? val * 25.4 : val;
+      drawPaper();
+    };
 
     const sidebarColorPicker = document.getElementById('sidebarColorPicker');
     const sidebarColorText = document.getElementById('sidebarColorText');
@@ -1939,9 +1942,7 @@
     document.getElementById('sidebarBgColorPicker').oninput = (e) => { state.sidebarBgColor = e.target.value; drawPaper(); };
     document.getElementById('btnSidebarBgClear').onclick = () => { state.sidebarBgColor = null; drawPaper(); };
 
-    // ==========================================
-    // 背景颜色 8 色块交互联动 (第1自选，第2纯白，后6柔和色)
-    // ==========================================
+    // 背景颜色 8 色块交互联动 (第1自选，第2纯白，后6柔和浅色)
     const bgCustomInput = document.getElementById('bgCustomInput');
     const bgCustomBox = document.getElementById('bgCustomBox');
     const bgPaletteItems = document.querySelectorAll('#bgColorPalette .palette-item');
@@ -1964,9 +1965,7 @@
       };
     });
 
-    // ==========================================
-    // 纹理颜色 8 色块交互联动 (第1自选，第2灰度，后6原色色块)
-    // ==========================================
+    // 纹理颜色 8 色块交互联动 (第1自选，第2灰度，后6纯色色块)
     const bgTextureSelect = document.getElementById('bgTextureSelect');
     const textureSubBox = document.getElementById('textureSubBox');
     const inputTexOpacity = document.getElementById('inputTexOpacity');
