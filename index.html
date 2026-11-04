@@ -9,12 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       direction: ltr !important;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -37,7 +32,6 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       flex-shrink: 0;
     }
-
     .brand-area {
       display: flex;
       align-items: center;
@@ -48,13 +42,7 @@
       user-select: none;
     }
     .brand-icon { font-size: 18px; }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .header-actions { display: flex; align-items: center; gap: 12px; }
     .lang-select {
       background: rgba(0, 0, 0, 0.25);
       color: #ffffff;
@@ -65,10 +53,7 @@
       outline: none;
       cursor: pointer;
     }
-    .lang-select option {
-      background: #233928;
-      color: #ffffff;
-    }
+    .lang-select option { background: #233928; color: #ffffff; }
 
     main {
       flex: 1;
@@ -97,7 +82,6 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
     }
-
     .btn-export {
       display: flex;
       flex-direction: column;
@@ -136,17 +120,8 @@
       align-items: center;
       gap: 6px;
     }
-
-    .form-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .form-label {
-      font-size: 12px;
-      color: #555555;
-    }
+    .form-row { display: flex; flex-direction: column; gap: 4px; }
+    .form-label { font-size: 12px; color: #555555; }
 
     select, input[type="text"], input[type="number"] {
       width: 100%;
@@ -188,19 +163,13 @@
       color: #ffffff;
       font-weight: 500;
     }
-
-    .sub-hint {
-      font-size: 11px;
-      color: #7a887e;
-      line-height: 1.4;
-    }
+    .sub-hint { font-size: 11px; color: #7a887e; line-height: 1.4; }
 
     .margin-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
-
     .color-picker-row {
       display: flex;
       align-items: center;
@@ -258,7 +227,6 @@
       height: 14px;
     }
 
-    /* 打孔二级参数设置盒 */
     .punch-sub-box {
       background: #f8faf8;
       border: 1px solid #d8e2d9;
@@ -278,6 +246,28 @@
       border-radius: 4px;
     }
 
+    /* 纹理二级参数面板 */
+    .texture-sub-box {
+      background: #f8faf8;
+      border: 1px solid #d8e2d9;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    input[type="range"] {
+      flex: 1;
+      accent-color: #236c42;
+      cursor: pointer;
+    }
+
     .preview-viewport {
       flex: 1;
       display: flex;
@@ -287,7 +277,6 @@
       position: relative;
       direction: ltr !important;
     }
-
     .viewport-toolbar {
       background: #ffffff;
       padding: 8px 16px;
@@ -300,11 +289,7 @@
       flex-shrink: 0;
       direction: ltr !important;
     }
-    .toolbar-left, .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 12px; }
     .badge-info {
       background: #eff3f0;
       padding: 3px 8px;
@@ -312,7 +297,6 @@
       border: 1px solid #d6ded8;
       font-weight: 500;
     }
-
     .btn-tool {
       background: #f4f6f5;
       border: 1px solid #ced6cf;
@@ -331,7 +315,6 @@
       justify-content: center;
       padding: 40px;
     }
-
     .paper-sheet {
       background: #ffffff;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
@@ -339,10 +322,7 @@
       transform-origin: top center;
       transition: transform 0.15s ease-out;
     }
-
-    #renderCanvas {
-      display: block;
-    }
+    #renderCanvas { display: block; }
 
     @media print {
       body * { visibility: hidden; }
@@ -405,7 +385,7 @@
         <div class="sub-hint" id="printerHint" data-i18n="printer_hint">全彩：可以使用主题和取色器。</div>
       </div>
 
-      <!-- 纸张类型 (已完全移除月度气候追踪) -->
+      <!-- 纸张类型 -->
       <div class="form-section">
         <div class="section-title">
           <span>📋</span><span data-i18n="paper_type">纸张类型</span>
@@ -497,7 +477,7 @@
         </select>
       </div>
 
-      <!-- 纸张尺寸 (公制 / 英制双向响应) -->
+      <!-- 纸张尺寸 -->
       <div class="form-section">
         <div class="section-title">
           <span>📐</span><span data-i18n="paper_size_title">纸张尺寸</span>
@@ -597,22 +577,14 @@
         </div>
         <div class="sub-hint" id="labelMarginHint" style="margin-bottom:2px;">边距 (in)</div>
         <div class="margin-grid">
-          <div class="form-row">
-            <input type="number" id="marginTop" value="0.354" step="0.01" min="0" />
-          </div>
-          <div class="form-row">
-            <input type="number" id="marginRight" value="0.354" step="0.01" min="0" />
-          </div>
-          <div class="form-row">
-            <input type="number" id="marginBottom" value="0.354" step="0.01" min="0" />
-          </div>
-          <div class="form-row">
-            <input type="number" id="marginLeft" value="0.354" step="0.01" min="0" />
-          </div>
+          <div class="form-row"><input type="number" id="marginTop" value="0.354" step="0.01" min="0" /></div>
+          <div class="form-row"><input type="number" id="marginRight" value="0.354" step="0.01" min="0" /></div>
+          <div class="form-row"><input type="number" id="marginBottom" value="0.354" step="0.01" min="0" /></div>
+          <div class="form-row"><input type="number" id="marginLeft" value="0.354" step="0.01" min="0" /></div>
         </div>
       </div>
 
-      <!-- 打孔定位标记 (含展开抽屉及警告) -->
+      <!-- 打孔定位标记 -->
       <div class="form-section">
         <div class="section-title">
           <span>🔘</span><span data-i18n="punch_marker">打孔定位标记</span>
@@ -627,7 +599,7 @@
           <label class="checkbox-item"><input type="checkbox" id="chkPunchSingle" /> <span data-i18n="punch_single">单环 (左上角)</span></label>
         </div>
 
-        <!-- 嵌套配置卡片 -->
+        <!-- 展开式打孔参数卡片 -->
         <div class="punch-sub-box" id="punchSubBox" style="display:none;">
           <div class="form-row">
             <span class="form-label">标记样式</span>
@@ -690,7 +662,7 @@
         </div>
       </div>
 
-      <!-- 背景设置 -->
+      <!-- 背景设置 (含二级纹理联动控制) -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="bg_watermark">背景设置</span>
@@ -728,6 +700,30 @@
             <option value="solid">实心底色</option>
             <option value="custom_img">自定义图像</option>
           </select>
+        </div>
+
+        <!-- 纹理二级联动选项框 (图 2) -->
+        <div class="texture-sub-box" id="textureSubBox" style="display:none;">
+          <div class="form-row">
+            <span class="form-label">纹理颜色</span>
+            <div class="color-preset-list" style="margin-top:2px;">
+              <div class="preset-dot" style="background:#86efac;" data-texcolor="#86efac"></div>
+              <div class="preset-dot" style="background:#94a3b8;" data-texcolor="#94a3b8"></div>
+              <div class="preset-dot" style="background:#6ee7b7;" data-texcolor="#6ee7b7"></div>
+              <div class="preset-dot" style="background:#fca5a5;" data-texcolor="#fca5a5"></div>
+              <div class="preset-dot" style="background:#c4b5fd;" data-texcolor="#c4b5fd"></div>
+              <div class="preset-dot" style="background:#fde047;" data-texcolor="#fde047"></div>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="form-label">纹理不透明度</span>
+              <span class="sub-hint" id="texOpacityValText">25%</span>
+            </div>
+            <div class="range-row">
+              <input type="range" id="inputTexOpacity" min="1" max="100" value="25" />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -904,7 +900,7 @@
       paperType: 'mi_zi_ge',
       standardSize: 'A4',
       isLandscape: false,
-      unit: 'in', // 默认按原图英制模式
+      unit: 'in',
       lineColor: '#8b5a2b',
       bgColor: '#ffffff',
       lineDash: 'solid',
@@ -916,6 +912,8 @@
       marginLeft: 0.354,
       marginRight: 0.354,
       texture: 'none',
+      textureColor: '#86efac',
+      textureOpacity: 0.25,
       enableSidebar: false,
       sidebarPos: 'left',
       sidebarWidth: 0.984,
@@ -983,9 +981,9 @@
       ctx.fillStyle = state.bgColor;
       ctx.fillRect(0, 0, widthPx, heightPx);
 
-      // 2. 纹理
+      // 2. 纹理层渲染 (支持自定义颜色与透明度)
       if (state.texture !== 'none') {
-        drawBackgroundTexture(ctx, widthPx, heightPx, state.texture);
+        drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
       }
 
       // 3. 边距与绝对对称居中
@@ -1024,7 +1022,7 @@
         ctx.restore();
       }
 
-      // 5. 核心线条与居中平摊算法
+      // 5. 核心线条与居中平摊
       const baseLineColor = state.isMono ? '#444444' : state.lineColor;
       const boldLineColor = state.isMono ? '#111111' : state.lineColor;
       const stepPx = toPixels(state.gridSpacingVal);
@@ -1052,7 +1050,7 @@
         ctx.restore();
       }
 
-      // 7. 打孔定位标记
+      // 7. 打孔定位标记 (按原图大圆斑饱满渲染)
       const hasPunch = Object.values(state.punch).some(v => v === true);
       if (hasPunch) {
         drawPunchMarkers(ctx, widthPx, heightPx);
@@ -1067,7 +1065,6 @@
       const availH = bottom - top;
       if (availW <= 10 || availH <= 10 || step <= 1) return;
 
-      // 计算可容纳的整网格数，余数平摊给两侧以确保左右留白绝对对称
       const cols = Math.floor(availW / step);
       const rows = Math.floor(availH / step);
       const offsetX = (availW - cols * step) / 2;
@@ -1531,13 +1528,25 @@
       ctx.stroke();
     }
 
-    function drawBackgroundTexture(ctx, w, h, texType) {
+    // 背景微纹理渲染（支持自定义色与透明度）
+    function drawBackgroundTexture(ctx, w, h, texType, color, opacity) {
       ctx.save();
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.04)';
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+      ctx.globalAlpha = opacity;
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
       ctx.lineWidth = 1;
 
-      if (texType === 'slash') {
+      if (texType === 'v_lines') {
+        const gap = 16;
+        for (let x = 0; x < w; x += gap) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+      } else if (texType === 'lines') {
+        const gap = 16;
+        for (let y = 0; y < h; y += gap) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+      } else if (texType === 'slash') {
         const gap = 24;
         for (let x = -h; x < w; x += gap) {
           ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + h, h); ctx.stroke();
@@ -1551,7 +1560,7 @@
         const gap = texType === 'dense_dots' ? 14 : 30;
         for (let x = 10; x < w; x += gap) {
           for (let y = 10; y < h; y += gap) {
-            ctx.fillRect(x, y, 2, 2);
+            ctx.fillRect(x, y, 2.5, 2.5);
           }
         }
       } else if (texType === 'grid') {
@@ -1561,17 +1570,6 @@
         }
         for (let y = 0; y < h; y += gap) {
           ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-        }
-      } else if (texType === 'lines' || texType === 'v_lines') {
-        const gap = 18;
-        if (texType === 'lines') {
-          for (let y = 0; y < h; y += gap) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-          }
-        } else {
-          for (let x = 0; x < w; x += gap) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-          }
         }
       } else if (texType === 'cross') {
         const gap = 26;
@@ -1593,31 +1591,48 @@
             toggle = !toggle;
           }
         }
+      } else if (texType === 'chart') {
+        const gap = 28;
+        for (let x = 0; x < w; x += gap) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for (let y = 0; y < h; y += gap * 2) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
       }
       ctx.restore();
     }
 
-    // 打孔定位记号真实几何绘制
+    // 打孔定位记号真实几何绘制（修复为物理尺寸饱满大圆黑点）
     function drawPunchMarkers(ctx, w, h) {
       ctx.save();
-      ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
-      ctx.strokeStyle = 'rgba(20, 20, 20, 0.9)';
-      ctx.lineWidth = 1.8;
+      ctx.fillStyle = '#111111';
+      ctx.strokeStyle = '#111111';
+      ctx.lineWidth = 2.5;
 
       const offsetPx = toPixels(state.punch.offsetVal);
       const style = state.punch.style;
-      const punchR = 4 * (RENDER_DPI / 72);
+      // 真实物理孔洞半径（约 6mm / 0.24in 打孔器孔径）
+      const punchHoleRadius = 3.0 * MM_TO_PX; 
 
       function renderMark(x, y) {
         if (style === 'dot') {
-          ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill();
-        } else if (style === 'circle') {
-          ctx.beginPath(); ctx.arc(x, y, punchR, 0, Math.PI * 2); ctx.stroke();
-          ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI * 2); ctx.fill();
-        } else if (style === 'cross') {
+          // 渲染饱满实心黑圆点（物理直径约 4mm）
           ctx.beginPath();
-          ctx.moveTo(x - 6, y); ctx.lineTo(x + 6, y);
-          ctx.moveTo(x, y - 6); ctx.lineTo(x, y + 6);
+          ctx.arc(x, y, 2.2 * MM_TO_PX, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (style === 'circle') {
+          ctx.beginPath();
+          ctx.arc(x, y, punchHoleRadius, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(x, y, 2.0, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (style === 'cross') {
+          const crossLen = 4.5 * MM_TO_PX;
+          ctx.beginPath();
+          ctx.moveTo(x - crossLen, y); ctx.lineTo(x + crossLen, y);
+          ctx.moveTo(x, y - crossLen); ctx.lineTo(x, y + crossLen);
           ctx.stroke();
         }
       }
@@ -1759,7 +1774,6 @@
       const factor = newUnit === 'mm' ? INCH_TO_MM : MM_TO_INCH;
       state.unit = newUnit;
 
-      // 批量转换当前界面上的数值输入框
       state.gridSpacingVal = parseFloat((state.gridSpacingVal * factor).toFixed(3));
       state.marginTop = parseFloat((state.marginTop * factor).toFixed(3));
       state.marginBottom = parseFloat((state.marginBottom * factor).toFixed(3));
@@ -1768,7 +1782,6 @@
       state.sidebarWidth = parseFloat((state.sidebarWidth * factor).toFixed(3));
       state.punch.offsetVal = parseFloat((state.punch.offsetVal * factor).toFixed(3));
 
-      // 同步 DOM 显示
       document.getElementById('inputGridSpacing').value = state.gridSpacingVal;
       document.getElementById('marginTop').value = state.marginTop;
       document.getElementById('marginBottom').value = state.marginBottom;
@@ -1793,13 +1806,11 @@
     }
 
     btnUnitMm.onclick = () => {
-      btnUnitMm.classList.add('active');
-      btnUnitIn.classList.remove('active');
+      btnUnitMm.classList.add('active'); btnUnitIn.classList.remove('active');
       switchUnit('mm');
     };
     btnUnitIn.onclick = () => {
-      btnUnitIn.classList.add('active');
-      btnUnitMm.classList.remove('active');
+      btnUnitIn.classList.add('active'); btnUnitMm.classList.remove('active');
       switchUnit('in');
     };
 
@@ -1907,7 +1918,7 @@
 
     // 背景色与预设色块
     document.getElementById('bgColorPicker').oninput = (e) => { state.bgColor = e.target.value; drawPaper(); };
-    document.querySelectorAll('.preset-dot').forEach(dot => {
+    document.querySelectorAll('.preset-dot[data-color]').forEach(dot => {
       dot.onclick = () => {
         state.bgColor = dot.getAttribute('data-color');
         document.getElementById('bgColorPicker').value = state.bgColor;
@@ -1915,7 +1926,31 @@
       };
     });
 
-    document.getElementById('bgTextureSelect').onchange = (e) => { state.texture = e.target.value; drawPaper(); };
+    // 背景纹理二级联动 (图 2)
+    const bgTextureSelect = document.getElementById('bgTextureSelect');
+    const textureSubBox = document.getElementById('textureSubBox');
+    const inputTexOpacity = document.getElementById('inputTexOpacity');
+    const texOpacityValText = document.getElementById('texOpacityValText');
+
+    bgTextureSelect.onchange = (e) => {
+      state.texture = e.target.value;
+      textureSubBox.style.display = state.texture !== 'none' ? 'flex' : 'none';
+      drawPaper();
+    };
+
+    document.querySelectorAll('.preset-dot[data-texcolor]').forEach(dot => {
+      dot.onclick = () => {
+        state.textureColor = dot.getAttribute('data-texcolor');
+        drawPaper();
+      };
+    });
+
+    inputTexOpacity.oninput = (e) => {
+      const val = parseInt(e.target.value);
+      state.textureOpacity = val / 100;
+      texOpacityValText.textContent = `${val}%`;
+      drawPaper();
+    };
 
     // 水印
     const chkWatermark = document.getElementById('chkEnableWatermark');
@@ -1927,7 +1962,7 @@
     };
     document.getElementById('txtWatermark').oninput = (e) => { state.watermarkText = e.target.value; drawPaper(); };
 
-    // 视口缩放与自适应
+    // 缩放
     document.getElementById('btnZoomIn').onclick = () => { state.zoom = Math.min(1.5, state.zoom + 0.05); drawPaper(); };
     document.getElementById('btnZoomOut').onclick = () => { state.zoom = Math.max(0.2, state.zoom - 0.05); drawPaper(); };
     document.getElementById('btnFitWindow').onclick = () => {
