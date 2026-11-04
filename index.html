@@ -195,21 +195,43 @@
       background: transparent;
     }
 
-    .color-preset-list {
+    /* 8 个色块的标准排布 */
+    .color-palette-8 {
       display: flex;
-      gap: 8px;
+      align-items: center;
+      gap: 6px;
       margin-top: 4px;
-      flex-wrap: wrap;
+      width: 100%;
     }
-    .preset-dot {
-      width: 26px;
-      height: 26px;
-      border-radius: 4px;
-      border: 1px solid rgba(0,0,0,0.15);
+    .palette-item {
+      flex: 1;
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
       cursor: pointer;
-      transition: transform 0.15s;
+      transition: transform 0.1s, border-color 0.1s;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-clip: padding-box;
     }
-    .preset-dot:hover { transform: scale(1.15); }
+    .palette-item:hover { transform: scale(1.05); }
+    .palette-item.active {
+      border: 2px solid #2563eb !important;
+      box-shadow: 0 0 0 1px #2563eb;
+    }
+    .palette-custom-input {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 60px;
+      height: 60px;
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+    }
 
     .checkbox-item {
       display: flex;
@@ -246,7 +268,6 @@
       border-radius: 4px;
     }
 
-    /* 纹理二级参数面板 */
     .texture-sub-box {
       background: #f8faf8;
       border: 1px solid #d8e2d9;
@@ -264,7 +285,7 @@
     }
     input[type="range"] {
       flex: 1;
-      accent-color: #236c42;
+      accent-color: #2563eb;
       cursor: pointer;
     }
 
@@ -599,7 +620,6 @@
           <label class="checkbox-item"><input type="checkbox" id="chkPunchSingle" /> <span data-i18n="punch_single">单环 (左上角)</span></label>
         </div>
 
-        <!-- 展开式打孔参数卡片 -->
         <div class="punch-sub-box" id="punchSubBox" style="display:none;">
           <div class="form-row">
             <span class="form-label">标记样式</span>
@@ -662,33 +682,34 @@
         </div>
       </div>
 
-      <!-- 背景设置 (含二级纹理联动控制) -->
+      <!-- 背景设置 (严格标准 8 色块排布) -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="bg_watermark">背景设置</span>
         </div>
         <div class="form-row">
           <span class="form-label" data-i18n="bg_color">背景颜色</span>
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-            <div class="color-swatch-box" style="width:36px; height:28px;">
-              <input type="color" id="bgColorPicker" value="#ffffff" />
+          <!-- 8 个色块：第1自选取色器，第2纯白，后6柔和浅色 -->
+          <div class="color-palette-8" id="bgColorPalette">
+            <div class="palette-item" id="bgCustomBox" style="background:#ffffff;" title="自选背景颜色">
+              <input type="color" class="palette-custom-input" id="bgCustomInput" value="#ffffff" />
             </div>
-            <div class="color-preset-list" style="margin-top:0;">
-              <div class="preset-dot" style="background:#fffcf0;" data-color="#fffcf0"></div>
-              <div class="preset-dot" style="background:#f4f7f9;" data-color="#f4f7f9"></div>
-              <div class="preset-dot" style="background:#eef6fc;" data-color="#eef6fc"></div>
-              <div class="preset-dot" style="background:#edf8f2;" data-color="#edf8f2"></div>
-              <div class="preset-dot" style="background:#fdf0f4;" data-color="#fdf0f4"></div>
-              <div class="preset-dot" style="background:#fcf9eb;" data-color="#fcf9eb"></div>
-            </div>
+            <div class="palette-item active" style="background:#ffffff;" data-color="#ffffff" title="纯白"></div>
+            <div class="palette-item" style="background:#fef9e7;" data-color="#fef9e7" title="米黄"></div>
+            <div class="palette-item" style="background:#f4f7f6;" data-color="#f4f7f6" title="浅灰"></div>
+            <div class="palette-item" style="background:#eef6fc;" data-color="#eef6fc" title="淡蓝"></div>
+            <div class="palette-item" style="background:#edf8f2;" data-color="#edf8f2" title="淡绿"></div>
+            <div class="palette-item" style="background:#fdf0f4;" data-color="#fdf0f4" title="浅粉"></div>
+            <div class="palette-item" style="background:#fbf8eb;" data-color="#fbf8eb" title="浅奶黄"></div>
           </div>
         </div>
-        <div class="form-row" style="margin-top:4px;">
+
+        <div class="form-row" style="margin-top:6px;">
           <span class="form-label" data-i18n="bg_texture">背景纹理</span>
           <select id="bgTextureSelect">
             <option value="none" selected>无纹理</option>
-            <option value="grid">网格纹理</option>
             <option value="dots">点状纹理</option>
+            <option value="grid">网格纹理</option>
             <option value="lines">线条纹理</option>
             <option value="cross">交叉纹理</option>
             <option value="chart">图表纹理</option>
@@ -702,26 +723,31 @@
           </select>
         </div>
 
-        <!-- 纹理二级联动选项框 (图 2) -->
+        <!-- 纹理二级联动选项框 (严格标准 8 色块排布) -->
         <div class="texture-sub-box" id="textureSubBox" style="display:none;">
           <div class="form-row">
             <span class="form-label">纹理颜色</span>
-            <div class="color-preset-list" style="margin-top:2px;">
-              <div class="preset-dot" style="background:#86efac;" data-texcolor="#86efac"></div>
-              <div class="preset-dot" style="background:#94a3b8;" data-texcolor="#94a3b8"></div>
-              <div class="preset-dot" style="background:#6ee7b7;" data-texcolor="#6ee7b7"></div>
-              <div class="preset-dot" style="background:#fca5a5;" data-texcolor="#fca5a5"></div>
-              <div class="preset-dot" style="background:#c4b5fd;" data-texcolor="#c4b5fd"></div>
-              <div class="preset-dot" style="background:#fde047;" data-texcolor="#fde047"></div>
+            <!-- 8 个色块：第1自选取色器，第2灰度，后6原图纯色色块 -->
+            <div class="color-palette-8" id="texColorPalette">
+              <div class="palette-item" id="texCustomBox" style="background:#e2e8f0;" title="自选纹理颜色">
+                <input type="color" class="palette-custom-input" id="texCustomInput" value="#94a3b8" />
+              </div>
+              <div class="palette-item active" style="background:#d1d5db;" data-texcolor="#d1d5db" title="灰度"></div>
+              <div class="palette-item" style="background:#94a3b8;" data-texcolor="#94a3b8" title="中灰"></div>
+              <div class="palette-item" style="background:#93c5fd;" data-texcolor="#93c5fd" title="浅蓝"></div>
+              <div class="palette-item" style="background:#86efac;" data-texcolor="#86efac" title="浅绿"></div>
+              <div class="palette-item" style="background:#fca5a5;" data-texcolor="#fca5a5" title="浅红"></div>
+              <div class="palette-item" style="background:#c4b5fd;" data-texcolor="#c4b5fd" title="淡紫"></div>
+              <div class="palette-item" style="background:#fde047;" data-texcolor="#fde047" title="暖黄"></div>
             </div>
           </div>
-          <div class="form-row" style="margin-top:4px;">
+          <div class="form-row" style="margin-top:6px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span class="form-label">纹理不透明度</span>
-              <span class="sub-hint" id="texOpacityValText">25%</span>
+              <span class="sub-hint" id="texOpacityValText">35%</span>
             </div>
             <div class="range-row">
-              <input type="range" id="inputTexOpacity" min="1" max="100" value="25" />
+              <input type="range" id="inputTexOpacity" min="1" max="100" value="35" />
             </div>
           </div>
         </div>
@@ -912,8 +938,8 @@
       marginLeft: 0.354,
       marginRight: 0.354,
       texture: 'none',
-      textureColor: '#86efac',
-      textureOpacity: 0.25,
+      textureColor: '#d1d5db',
+      textureOpacity: 0.35,
       enableSidebar: false,
       sidebarPos: 'left',
       sidebarWidth: 0.984,
@@ -1050,7 +1076,7 @@
         ctx.restore();
       }
 
-      // 7. 打孔定位标记 (按原图大圆斑饱满渲染)
+      // 7. 打孔定位标记 (饱满黑点)
       const hasPunch = Object.values(state.punch).some(v => v === true);
       if (hasPunch) {
         drawPunchMarkers(ctx, widthPx, heightPx);
@@ -1528,7 +1554,7 @@
       ctx.stroke();
     }
 
-    // 背景微纹理渲染（支持自定义色与透明度）
+    // 背景微纹理渲染
     function drawBackgroundTexture(ctx, w, h, texType, color, opacity) {
       ctx.save();
       ctx.globalAlpha = opacity;
@@ -1603,7 +1629,7 @@
       ctx.restore();
     }
 
-    // 打孔定位记号真实几何绘制（修复为物理尺寸饱满大圆黑点）
+    // 打孔定位记号真实几何绘制（饱满实心黑圆点）
     function drawPunchMarkers(ctx, w, h) {
       ctx.save();
       ctx.fillStyle = '#111111';
@@ -1612,12 +1638,10 @@
 
       const offsetPx = toPixels(state.punch.offsetVal);
       const style = state.punch.style;
-      // 真实物理孔洞半径（约 6mm / 0.24in 打孔器孔径）
       const punchHoleRadius = 3.0 * MM_TO_PX; 
 
       function renderMark(x, y) {
         if (style === 'dot') {
-          // 渲染饱满实心黑圆点（物理直径约 4mm）
           ctx.beginPath();
           ctx.arc(x, y, 2.2 * MM_TO_PX, 0, Math.PI * 2);
           ctx.fill();
@@ -1683,8 +1707,8 @@
     function updateToolbarInfo(w_mm, h_mm) {
       if (!w_mm) {
         const def = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-        w_mm = state.isLandscape ? def.h : def.w;
-        h_mm = state.isLandscape ? def.w : def.h;
+        w_mm = state.isLandscape ? def.h : sizeDef.w;
+        h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
       }
       const typeName = document.getElementById('paperTypeSelect').selectedOptions[0].text;
       const orientName = state.isLandscape ? '横向' : '纵向';
@@ -1828,7 +1852,6 @@
         state.bgColor = theme.bg;
         document.getElementById('lineColorPicker').value = theme.line;
         document.getElementById('lineColorText').value = theme.line;
-        document.getElementById('bgColorPicker').value = theme.bg;
         drawPaper();
       }
     };
@@ -1916,17 +1939,34 @@
     document.getElementById('sidebarBgColorPicker').oninput = (e) => { state.sidebarBgColor = e.target.value; drawPaper(); };
     document.getElementById('btnSidebarBgClear').onclick = () => { state.sidebarBgColor = null; drawPaper(); };
 
-    // 背景色与预设色块
-    document.getElementById('bgColorPicker').oninput = (e) => { state.bgColor = e.target.value; drawPaper(); };
-    document.querySelectorAll('.preset-dot[data-color]').forEach(dot => {
-      dot.onclick = () => {
-        state.bgColor = dot.getAttribute('data-color');
-        document.getElementById('bgColorPicker').value = state.bgColor;
+    // ==========================================
+    // 背景颜色 8 色块交互联动 (第1自选，第2纯白，后6柔和色)
+    // ==========================================
+    const bgCustomInput = document.getElementById('bgCustomInput');
+    const bgCustomBox = document.getElementById('bgCustomBox');
+    const bgPaletteItems = document.querySelectorAll('#bgColorPalette .palette-item');
+
+    bgCustomInput.oninput = (e) => {
+      state.bgColor = e.target.value;
+      bgCustomBox.style.background = e.target.value;
+      bgPaletteItems.forEach(el => el.classList.remove('active'));
+      bgCustomBox.classList.add('active');
+      drawPaper();
+    };
+
+    bgPaletteItems.forEach(item => {
+      if (item.id === 'bgCustomBox') return;
+      item.onclick = () => {
+        bgPaletteItems.forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        state.bgColor = item.getAttribute('data-color');
         drawPaper();
       };
     });
 
-    // 背景纹理二级联动 (图 2)
+    // ==========================================
+    // 纹理颜色 8 色块交互联动 (第1自选，第2灰度，后6原色色块)
+    // ==========================================
     const bgTextureSelect = document.getElementById('bgTextureSelect');
     const textureSubBox = document.getElementById('textureSubBox');
     const inputTexOpacity = document.getElementById('inputTexOpacity');
@@ -1938,9 +1978,24 @@
       drawPaper();
     };
 
-    document.querySelectorAll('.preset-dot[data-texcolor]').forEach(dot => {
-      dot.onclick = () => {
-        state.textureColor = dot.getAttribute('data-texcolor');
+    const texCustomInput = document.getElementById('texCustomInput');
+    const texCustomBox = document.getElementById('texCustomBox');
+    const texPaletteItems = document.querySelectorAll('#texColorPalette .palette-item');
+
+    texCustomInput.oninput = (e) => {
+      state.textureColor = e.target.value;
+      texCustomBox.style.background = e.target.value;
+      texPaletteItems.forEach(el => el.classList.remove('active'));
+      texCustomBox.classList.add('active');
+      drawPaper();
+    };
+
+    texPaletteItems.forEach(item => {
+      if (item.id === 'texCustomBox') return;
+      item.onclick = () => {
+        texPaletteItems.forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        state.textureColor = item.getAttribute('data-texcolor');
         drawPaper();
       };
     });
