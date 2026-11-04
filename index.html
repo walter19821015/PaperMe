@@ -123,7 +123,7 @@
     .form-row { display: flex; flex-direction: column; gap: 4px; }
     .form-label { font-size: 12px; color: #555555; }
 
-    select, input[type="text"], input[type="number"] {
+    select, input[type="text"], input[type="number"], input[type="file"] {
       width: 100%;
       padding: 8px 10px;
       border: 1px solid #cbd5cc;
@@ -330,9 +330,13 @@
       background: #ffffff;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
       position: relative;
+      display: inline-block;
+      margin: auto;
       transform-origin: top center;
     }
-    #renderCanvas { display: block; }
+    #renderCanvas {
+      display: block;
+    }
 
     @media print {
       body * { visibility: hidden; }
@@ -933,7 +937,7 @@
         punch_marker: 'パンチ穴ガイド',
         punch_us3: 'US 3穴バインダー (4.25")', punch_iso2: '2穴 (80mm)', punch_iso4: '4穴 (80mm)',
         punch_5hole: '5穴 (3穴・2穴互換)', punch_top2: '天綴じ2穴 (2.75")', punch_single: '単環リング',
-        sidebar_settings: 'サイドバー', enable_sidebar: 'サイドバーを有効化', position: '配置位置', pos_left: '左側', pos_right: '右侧',
+        sidebar_settings: 'サイドバー', enable_sidebar: 'サイドバーを有効化', position: '配置位置', pos_left: '左側', pos_right: '右側',
         bg_watermark: '背景設定', bg_color: '用紙カラー', bg_texture: '用紙テクスチャ', fit_window: '全体表示'
       },
       ko: {
