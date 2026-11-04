@@ -195,7 +195,6 @@
       background: transparent;
     }
 
-    /* 8 个色块的标准排布 */
     .color-palette-8 {
       display: flex;
       align-items: center;
@@ -249,7 +248,6 @@
       height: 14px;
     }
 
-    /* 二级控制卡片通用样式 */
     .sub-settings-box {
       background: #f8faf8;
       border: 1px solid #d8e2d9;
@@ -326,16 +324,19 @@
       justify-content: center;
       padding: 40px;
     }
+
+    /* 纸张容器与 Canvas 采用纯绝对尺寸由 JS 精确驱动，杜绝默认 300x150 坍塌 */
     .paper-sheet {
       background: #ffffff;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
       position: relative;
-      display: inline-block;
+      flex-shrink: 0;
       margin: auto;
-      transform-origin: top center;
     }
     #renderCanvas {
       display: block;
+      width: 100%;
+      height: 100%;
     }
 
     @media print {
@@ -675,7 +676,7 @@
         </div>
       </div>
 
-      <!-- 背景设置 (标准 8 色块 + 实心底色全铺) -->
+      <!-- 背景设置 -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="bg_watermark">背景设置</span>
@@ -715,7 +716,6 @@
           </select>
         </div>
 
-        <!-- 纹理二级联动选项框 (图 4、图 5) -->
         <div class="sub-settings-box" id="textureSubBox" style="display:none;">
           <div class="form-row">
             <span class="form-label">纹理颜色</span>
@@ -744,7 +744,7 @@
         </div>
       </div>
 
-      <!-- 水印设置 (图 3 二级参数展开) -->
+      <!-- 水印设置 -->
       <div class="form-section">
         <div class="section-title"><span>🩸</span><span>水印设置</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableWatermark" /> <span>启用水印</span></label>
@@ -790,7 +790,7 @@
         </div>
       </div>
 
-      <!-- Logo / 标识设置 (图 1、图 2 二级参数展开) -->
+      <!-- Logo / 标识设置 -->
       <div class="form-section">
         <div class="section-title"><span>🖼️</span><span>Logo / 标识</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableLogo" /> <span>启用 Logo</span></label>
@@ -827,7 +827,7 @@
         </div>
       </div>
 
-      <!-- 页面设置 (图 1 二级起始页码联动) -->
+      <!-- 页面设置 -->
       <div class="form-section">
         <div class="section-title"><span>📄</span><span>页面设置</span></div>
         <div class="form-row">
@@ -932,7 +932,7 @@
         printer_type: 'プリンターの種類', color_printer: 'カラー印刷', mono_printer: 'モノクロレーザー',
         printer_hint: 'フルカラー：テーマおよびカラーパレットが利用可能。', printer_hint_mono: 'モノクロ：黒とグレー階調のみを出力。',
         paper_type: '用紙タイプ', paper_size_title: '用紙サイズ', portrait: '縦向き', landscape: '横向き', theme_color: 'テーマ',
-        line_style: '罫線のスタイル', line_type: '線の種類', solid: '実線', dashed: '破線', dotted: '点線',
+        line_style: '罫線のスタイル', line_type: '線の種類', solid: '実線', dashed: '破線', dotted: '点线',
         line_width: '線の太さ (px)', bold_step: '太線の間隔 (Nマスごと)', margin_settings: '余白設定',
         punch_marker: 'パンチ穴ガイド',
         punch_us3: 'US 3穴バインダー (4.25")', punch_iso2: '2穴 (80mm)', punch_iso4: '4穴 (80mm)',
@@ -984,7 +984,6 @@
       creative: { line: '#d90429', bg: '#fffafa' }
     };
 
-    // 状态对象：默认缩放 39%
     const state = {
       lang: 'zh',
       isMono: false,
@@ -1067,13 +1066,16 @@
       const widthPx = Math.round(rawW_mm * MM_TO_PX);
       const heightPx = Math.round(rawH_mm * MM_TO_PX);
 
+      // 设置真实内部高清分辨率
       canvas.width = widthPx;
       canvas.height = heightPx;
 
-      paperSheet.style.width = (widthPx * state.zoom) + 'px';
-      paperSheet.style.height = (heightPx * state.zoom) + 'px';
-      canvas.style.width = (widthPx * state.zoom) + 'px';
-      canvas.style.height = (heightPx * state.zoom) + 'px';
+      // 设置显示缩放尺寸 (严格按 zoom 比例计算)
+      const displayW = Math.round(widthPx * state.zoom);
+      const displayH = Math.round(heightPx * state.zoom);
+
+      paperSheet.style.width = displayW + 'px';
+      paperSheet.style.height = displayH + 'px';
 
       // 1. 底色
       ctx.fillStyle = state.bgColor;
@@ -1656,7 +1658,6 @@
       ctx.stroke();
     }
 
-    // 背景微纹理渲染（含实心底色整面变色）
     function drawBackgroundTexture(ctx, w, h, texType, color, opacity) {
       ctx.save();
       ctx.globalAlpha = opacity;
@@ -1664,7 +1665,6 @@
       ctx.fillStyle = color;
       ctx.lineWidth = 1;
 
-      // 实心底色：全屏平铺色块
       if (texType === 'solid') {
         ctx.fillRect(0, 0, w, h);
       } else if (texType === 'v_lines') {
@@ -1734,7 +1734,6 @@
       ctx.restore();
     }
 
-    // 打孔定位记号真实几何绘制（饱满实心黑圆点）
     function drawPunchMarkers(ctx, w, h) {
       ctx.save();
       ctx.fillStyle = '#111111';
@@ -1812,8 +1811,8 @@
     function updateToolbarInfo(w_mm, h_mm) {
       if (!w_mm) {
         const def = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-        w_mm = state.isLandscape ? def.h : sizeDef.w;
-        h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
+        w_mm = state.isLandscape ? def.h : def.w;
+        h_mm = state.isLandscape ? def.w : def.h;
       }
       const typeName = document.getElementById('paperTypeSelect').selectedOptions[0].text;
       const orientName = state.isLandscape ? '横向' : '纵向';
@@ -1867,7 +1866,6 @@
     // 交互事件
     document.getElementById('langSelect').onchange = (e) => setLanguage(e.target.value);
 
-    // 打印机模式
     const btnColor = document.getElementById('btnPrinterColor');
     const btnMono = document.getElementById('btnPrinterMono');
     btnColor.onclick = () => {
@@ -1879,7 +1877,6 @@
       state.isMono = true; setLanguage(state.lang); drawPaper();
     };
 
-    // 纸张类型
     document.getElementById('paperTypeSelect').onchange = (e) => {
       state.paperType = e.target.value;
       const labelSpacing = document.getElementById('labelSpacing');
@@ -1894,7 +1891,6 @@
 
     document.getElementById('paperStandardSelect').onchange = (e) => { state.standardSize = e.target.value; drawPaper(); };
 
-    // 单位切换
     const btnUnitMm = document.getElementById('btnUnitMm');
     const btnUnitIn = document.getElementById('btnUnitIn');
 
@@ -1939,13 +1935,11 @@
       updateUnitDisplay();
     };
 
-    // 纸张方向
     const btnV = document.getElementById('btnOrientV');
     const btnH = document.getElementById('btnOrientH');
     btnV.onclick = () => { btnV.classList.add('active'); btnH.classList.remove('active'); state.isLandscape = false; drawPaper(); };
     btnH.onclick = () => { btnH.classList.add('active'); btnV.classList.remove('active'); state.isLandscape = true; drawPaper(); };
 
-    // 主题色彩联动
     document.getElementById('themeSelect').onchange = (e) => {
       const theme = THEME_PRESETS[e.target.value];
       if (theme) {
@@ -1999,7 +1993,6 @@
       drawPaper();
     };
 
-    // 打孔定位逻辑
     const punchCheckboxes = {
       us3: document.getElementById('chkPunchUS3'),
       iso2: document.getElementById('chkPunchISO2'),
@@ -2030,7 +2023,6 @@
       drawPaper();
     };
 
-    // 侧边栏
     const chkSidebar = document.getElementById('chkEnableSidebar');
     const sidebarBox = document.getElementById('sidebarOptionsBox');
     chkSidebar.onchange = (e) => {
@@ -2118,7 +2110,7 @@
       drawPaper();
     };
 
-    // 水印二级展开交互 (图 3)
+    // 水印
     const chkWatermark = document.getElementById('chkEnableWatermark');
     const watermarkBox = document.getElementById('watermarkBox');
     chkWatermark.onchange = (e) => {
@@ -2153,7 +2145,7 @@
       drawPaper();
     };
 
-    // Logo 二级展开交互 (图 1、图 2)
+    // Logo
     const chkLogo = document.getElementById('chkEnableLogo');
     const logoBox = document.getElementById('logoBox');
     chkLogo.onchange = (e) => {
@@ -2184,7 +2176,7 @@
       drawPaper();
     };
 
-    // 页面设置二级起始页码联动 (图 1)
+    // 页面设置
     const chkPageNum = document.getElementById('chkShowPageNum');
     const startPageBox = document.getElementById('startPageBox');
     chkPageNum.onchange = (e) => {
@@ -2216,9 +2208,12 @@
       drawPaper();
     };
 
-    window.addEventListener('DOMContentLoaded', () => {
+    // 确保外层 flex 容器计算完成后再执行首次渲染
+    window.addEventListener('load', () => {
       setLanguage('zh');
-      drawPaper();
+      requestAnimationFrame(() => {
+        drawPaper();
+      });
     });
   </script>
 </body>
