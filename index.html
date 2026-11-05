@@ -77,7 +77,6 @@
       direction: ltr !important;
     }
 
-    /* 图 1：5 个按钮一行排列 */
     .export-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -328,20 +327,19 @@
       padding: 40px;
     }
 
+    /* 纸张容器：彻底杜绝 300x150 坍塌，由 JS 计算绝对尺寸 */
     .paper-sheet {
       background: #ffffff;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
       position: relative;
       flex-shrink: 0;
       margin: auto;
+      display: block;
     }
     #renderCanvas {
       display: block;
-      width: 100%;
-      height: 100%;
     }
 
-    /* 图 2：修复打印排版问题，避免跨页与缩放失真 */
     @media print {
       @page {
         size: auto;
@@ -405,7 +403,6 @@
 
   <main>
     <aside class="sidebar" id="mainSidebar">
-      <!-- 图 1：5 个按钮一行排开 -->
       <div class="export-grid">
         <button class="btn-export btn-pdf" id="btnExportPDF">
           <span>📄</span><span data-i18n="export_pdf">导出 PDF</span>
@@ -424,7 +421,6 @@
         </button>
       </div>
 
-      <!-- 打印机类型 -->
       <div class="form-section">
         <div class="section-title">
           <span>🖨️</span><span data-i18n="printer_type">打印机类型</span>
@@ -436,7 +432,6 @@
         <div class="sub-hint" id="printerHint" data-i18n="printer_hint">全彩：可以使用主题和取色器。</div>
       </div>
 
-      <!-- 纸张类型 -->
       <div class="form-section">
         <div class="section-title">
           <span>📋</span><span data-i18n="paper_type">纸张类型</span>
@@ -490,45 +485,9 @@
             <option value="knitting_grid">编织图格纸</option>
             <option value="rect_hui_gong">长方回宫格</option>
           </optgroup>
-          <optgroup label="—— 新增纸张 ——">
-            <option value="vintage_notes">复古笔记纸</option>
-            <option value="doodle_paper">儿童涂鸦纸</option>
-            <option value="minimal_journal">简约手账纸</option>
-            <option value="student_notes">学生笔记纸</option>
-            <option value="meeting_notes">会议笔记纸</option>
-            <option value="project_planner">项目规划纸</option>
-            <option value="task_planner">任务计划表</option>
-            <option value="chore_list">周清单 / 家务表</option>
-            <option value="weekly_plan">周计划表</option>
-            <option value="daily_plan">日计划表</option>
-            <option value="weekly_meal">一周食谱计划</option>
-            <option value="polar">极坐标纸</option>
-            <option value="number_line">数轴练习纸</option>
-            <option value="semi_log">半对数坐标纸</option>
-            <option value="log_log">双对数坐标纸</option>
-            <option value="hundred_board">十格 / 百数表</option>
-            <option value="habit_tracker">月度习惯追踪</option>
-            <option value="workout_log">训练日志</option>
-            <option value="monthly_calendar">月历</option>
-            <option value="clock_practice">空白钟面练习纸</option>
-            <option value="recipe_card">空白菜谱卡</option>
-            <option value="fraction_wall">分数条 / 分数墙</option>
-            <option value="sewing">缝纫裁剪格纸</option>
-            <option value="swot">SWOT 分析表</option>
-            <option value="medication_tracker">用药追踪表</option>
-            <option value="target_thermometer">目标温度计</option>
-            <option value="family_budget">家庭预算表</option>
-            <option value="sketch_paper">草图纸</option>
-            <option value="creative_log">创意记录纸</option>
-            <option value="brand_custom">品牌定制纸</option>
-            <option value="error_notebook">错题整理本</option>
-            <option value="chinese_prep">语文预习卡</option>
-            <option value="vocab_practice">汉英互译单词练习纸</option>
-          </optgroup>
         </select>
       </div>
 
-      <!-- 纸张尺寸 -->
       <div class="form-section">
         <div class="section-title">
           <span>📐</span><span data-i18n="paper_size_title">纸张尺寸</span>
@@ -557,7 +516,6 @@
         </select>
       </div>
 
-      <!-- 主题配色 -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="theme_color">主题</span>
@@ -569,18 +527,9 @@
           <option value="vintage_brown">复古棕</option>
           <option value="soft">柔和色</option>
           <option value="classic">经典风</option>
-          <option disabled>---- 新增主题 ----</option>
-          <option value="minimal">极简风</option>
-          <option value="marine">海洋风</option>
-          <option value="forest">森林风</option>
-          <option value="sunset">日落风</option>
-          <option value="tech">科技风</option>
-          <option value="elegant">优雅风</option>
-          <option value="creative">创意风</option>
         </select>
       </div>
 
-      <!-- 线条样式 -->
       <div class="form-section">
         <div class="section-title">
           <span>✏️</span><span data-i18n="line_style">线条样式</span>
@@ -613,15 +562,111 @@
         <div class="form-row" style="margin-top:4px;" id="rowGridSpacing">
           <span class="form-label" id="labelSpacing">格距 (mm)</span>
           <input type="number" id="inputGridSpacing" value="15" step="0.5" min="1" max="100" />
+          <span class="sub-hint" id="hintSpacingDesc"></span>
         </div>
 
-        <!-- 图 3：基础纸张选项（右上角日期行） -->
+        <!-- 专属控制卡片：吉他/尤克里里/小节数 -->
+        <div class="sub-settings-box" id="boxMusicMeasures" style="display:none;">
+          <span class="form-label" style="font-weight:600;">每行小节数</span>
+          <select id="selectMeasures">
+            <option value="0">无小节</option>
+            <option value="1">1 小节</option>
+            <option value="2" selected>2 小节</option>
+            <option value="3">3 小节</option>
+            <option value="4">4 小节</option>
+          </select>
+          <span class="sub-hint" id="hintMeasuresDesc"></span>
+        </div>
+
+        <!-- 专属控制卡片：六边形朝向 -->
+        <div class="sub-settings-box" id="boxHexOptions" style="display:none;">
+          <span class="form-label" style="font-weight:600;">六边形朝向</span>
+          <select id="selectHexOrient">
+            <option value="pointy" selected>尖顶朝上 ( ▲ )</option>
+            <option value="flat">平顶朝上 ( ⬢ )</option>
+          </select>
+          <span class="sub-hint">默认尖顶朝上，适合地图与游戏格纸；需要平顶样式时可切换。</span>
+        </div>
+
+        <!-- 专属控制卡片：书法纸布局 -->
+        <div class="sub-settings-box" id="boxCalligraphyLayout" style="display:none;">
+          <span class="form-label" style="font-weight:600;">线条 / 网格布局</span>
+          <select id="selectCalligraphyFit">
+            <option value="fill" selected>铺满边距（内容区内贴边）</option>
+            <option value="center">居中均摊（四周留白均等）</option>
+          </select>
+          <span class="sub-hint">线条和网格在边距围成的区域内铺满，首尾贴边，左右/上下不会一边多一边少。</span>
+        </div>
+
+        <!-- 专属控制卡片：斜线引导设置 -->
+        <div class="sub-settings-box" id="boxSlantGuideOptions" style="display:none;">
+          <span class="form-label" style="font-weight:600;">斜线引导设置</span>
+          <div class="range-row">
+            <span class="form-label" style="width:130px;">倾斜角度 (相对水平)</span>
+            <input type="range" id="inputSlantAngle" min="40" max="75" value="55" />
+            <span class="sub-hint" id="valSlantAngle">55°</span>
+          </div>
+          <span class="sub-hint">默认 55°，适合现代书法 / Copperplate。打印后垫在练习纸下；增大更竖、减小更平。</span>
+        </div>
+
+        <!-- 专属控制卡片：斜线格纸设置 (kosa) -->
+        <div class="sub-settings-box" id="boxKosaOptions" style="display:none;">
+          <span class="form-label" style="font-weight:600;">斜线格纸设置</span>
+          <div class="form-row">
+            <span class="form-label">横线样式</span>
+            <select id="selectKosaStyle">
+              <option value="group" selected>分组书写带</option>
+              <option value="regular">常规连续横线</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <span class="form-label">每组横线数</span>
+            <input type="number" id="inputKosaLines" value="3" min="2" max="6" />
+          </div>
+          <div class="form-row">
+            <span class="form-label">组间距 (mm)</span>
+            <input type="number" id="inputKosaGroupGap" value="7.5" step="0.5" />
+          </div>
+          <label class="checkbox-item"><input type="checkbox" id="chkKosaRedLine" checked /> <span>显示左侧红边线</span></label>
+        </div>
+
+        <!-- 专属控制卡片：透视网格 -->
+        <div class="sub-settings-box" id="boxPerspectiveOptions" style="display:none;">
+          <span class="form-label" style="font-weight:600;">透视网格 (草图)</span>
+          <div class="form-row">
+            <span class="form-label">网格类型</span>
+            <select id="selectPerspType">
+              <option value="1">一点透视</option>
+              <option value="2" selected>二点透视（转角）</option>
+              <option value="3">三点透视</option>
+            </select>
+          </div>
+          <div class="range-row">
+            <span class="form-label" style="width:110px;">视平线高度 (%)</span>
+            <input type="range" id="inputPerspHorizon" min="20" max="80" value="50" />
+          </div>
+          <label class="checkbox-item"><input type="checkbox" id="chkPerspLine" checked /> <span>绘制视平线</span></label>
+        </div>
+
+        <!-- 基础纸张选项（右上角日期行） -->
         <div class="sub-settings-box" id="boxBaseOptions" style="display:none;">
           <span class="form-label" style="font-weight:600;">基础纸张选项</span>
           <label class="checkbox-item"><input type="checkbox" id="chkShowDateLine" /> <span>右上角日期行</span></label>
         </div>
 
-        <!-- 图 7、8、9：五线谱选项 -->
+        <!-- 作业纸通用页眉 -->
+        <div class="sub-settings-box" id="boxSchoolHeaderOptions" style="display:none;">
+          <label class="checkbox-item"><input type="checkbox" id="chkSchoolHeader" checked /> <span id="labelSchoolHeader">显示页眉（班级、姓名、学号、日期）</span></label>
+          <label class="checkbox-item" id="chkEnglishFrameLabel" style="display:none;"><input type="checkbox" id="chkEnglishFrame" checked /> <span>淡蓝书写框</span></label>
+        </div>
+
+        <!-- 原稿用纸标题栏 -->
+        <div class="sub-settings-box" id="boxGenkoOptions" style="display:none;">
+          <label class="checkbox-item"><input type="checkbox" id="chkGenkoHeader" checked /> <span>显示顶部日期与标题栏</span></label>
+          <span class="sub-hint">左侧是「月」「日」和写星期用的括号，右侧有方括号区写课题或姓名。</span>
+        </div>
+
+        <!-- 五线谱独立选项 -->
         <div class="sub-settings-box" id="boxMusicOptions" style="display:none;">
           <span class="form-label" style="font-weight:600;">五线谱选项</span>
           <div class="form-row">
@@ -631,22 +676,18 @@
               <option value="treble" selected>高音谱号（常用，小提琴等）</option>
               <option value="bass">低音谱号</option>
             </select>
-            <span class="sub-hint">需要「拿来就能写」时打开；空白练习可保持不要谱号。</span>
           </div>
           <div class="form-row">
             <span class="form-label">一页放几组五线谱</span>
             <input type="number" id="inputStaveCount" value="10" min="4" max="25" />
-            <span class="sub-hint">组数越多越密；放不下时会自动少放几组。</span>
           </div>
           <div class="form-row">
-            <span class="form-label">组与组之间的间距 (毫米) (mm)</span>
+            <span class="form-label">组与组之间的间距 (mm)</span>
             <input type="number" id="inputStaveGap" value="8" min="2" max="30" />
-            <span class="sub-hint">这是最小间距；多出来的空白会均匀分到各组之间。</span>
           </div>
         </div>
       </div>
 
-      <!-- 边距设置 -->
       <div class="form-section">
         <div class="section-title">
           <span>🔲</span><span data-i18n="margin_settings">边距设置</span>
@@ -660,7 +701,6 @@
         </div>
       </div>
 
-      <!-- 打孔定位标记 -->
       <div class="form-section">
         <div class="section-title">
           <span>🔘</span><span data-i18n="punch_marker">打孔定位标记</span>
@@ -694,7 +734,6 @@
         </div>
       </div>
 
-      <!-- 侧边栏设置 -->
       <div class="form-section">
         <div class="section-title">
           <span>📑</span><span data-i18n="sidebar_settings">侧边栏</span>
@@ -737,7 +776,6 @@
         </div>
       </div>
 
-      <!-- 背景设置 -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="bg_watermark">背景设置</span>
@@ -773,7 +811,6 @@
             <option value="dense_dots">密点</option>
             <option value="checkerboard">棋盘格</option>
             <option value="solid">实心底色</option>
-            <option value="custom_img">自定义图像</option>
           </select>
         </div>
 
@@ -805,7 +842,6 @@
         </div>
       </div>
 
-      <!-- 水印设置 -->
       <div class="form-section">
         <div class="section-title"><span>🩸</span><span>水印设置</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableWatermark" /> <span>启用水印</span></label>
@@ -851,7 +887,6 @@
         </div>
       </div>
 
-      <!-- Logo / 标识设置 -->
       <div class="form-section">
         <div class="section-title"><span>🖼️</span><span>Logo / 标识</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableLogo" /> <span>启用 Logo</span></label>
@@ -869,12 +904,10 @@
               <option value="tl">左上</option>
               <option value="center">居中</option>
             </select>
-            <span class="sub-hint">在预览区拖动可移动位置</span>
           </div>
           <div class="form-row">
             <span class="form-label">大小 (mm)</span>
             <input type="number" id="inputLogoSize" value="20" min="5" max="150" />
-            <span class="sub-hint">mm</span>
           </div>
           <div class="form-row">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -888,7 +921,6 @@
         </div>
       </div>
 
-      <!-- 页面设置 -->
       <div class="form-section">
         <div class="section-title"><span>📄</span><span>页面设置</span></div>
         <div class="form-row">
@@ -903,14 +935,9 @@
           </div>
           <label class="checkbox-item"><input type="checkbox" id="chkDuplex" /> <span>双面打印 (正面 + 背面)</span></label>
         </div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <button class="btn-tool" style="flex:1; padding:8px;" id="btnExportSettings">📥 导出设置</button>
-          <button class="btn-tool" style="flex:1; padding:8px;" id="btnImportSettings">📤 导入设置</button>
-        </div>
       </div>
     </aside>
 
-    <!-- 右侧画板预览区 -->
     <section class="preview-viewport">
       <div class="viewport-toolbar">
         <div class="toolbar-left">
@@ -948,71 +975,6 @@
         punch_5hole: '5 孔 (左侧, 兼容 3 孔和 2 孔)', punch_top2: '顶部 2 孔 (顶部夹子文件夹, 孔距 2.75 英寸)', punch_single: '单环 (左上角)',
         sidebar_settings: '侧边栏', enable_sidebar: '启用侧边栏', position: '位置', pos_left: '左侧', pos_right: '右侧',
         bg_watermark: '背景设置', bg_color: '背景颜色', bg_texture: '背景纹理', fit_window: '适应视口'
-      },
-      en: {
-        brand: 'Paper Design & Print Generator', export_pdf: 'Export PDF', export_svg: 'Export SVG', export_png: 'Export PNG', print_now: 'Print',
-        printer_type: 'Printer Type', color_printer: 'Color Printer', mono_printer: 'Mono Laser Printer',
-        printer_hint: 'Color: Themes and color pickers available.', printer_hint_mono: 'Mono: Black & white output only.',
-        paper_type: 'Paper Type', paper_size_title: 'Paper Size', portrait: 'Portrait', landscape: 'Landscape', theme_color: 'Theme',
-        line_style: 'Line Styles', line_type: 'Line Type', solid: 'Solid', dashed: 'Dashed', dotted: 'Dotted',
-        line_width: 'Line Width (px)', margin_settings: 'Margins',
-        punch_marker: 'Hole Punch Marks',
-        punch_us3: 'US 3-Hole Binder (Left, 4.25")', punch_iso2: '2-Hole (Left, 80mm)', punch_iso4: '4-Hole (Left, 80mm)',
-        punch_5hole: '5-Hole (Left, 3 & 2 Compatible)', punch_top2: 'Top 2-Hole (2.75")', punch_single: 'Single Ring (Top-Left)',
-        sidebar_settings: 'Sidebar', enable_sidebar: 'Enable Sidebar', position: 'Position', pos_left: 'Left', pos_right: 'Right',
-        bg_watermark: 'Background', bg_color: 'Background Color', bg_texture: 'Texture', fit_window: 'Fit Window'
-      },
-      es: {
-        brand: 'Generador de Papel e Impresión', export_pdf: 'Exportar PDF', export_svg: 'Exportar SVG', export_png: 'Exportar PNG', print_now: 'Imprimir',
-        printer_type: 'Tipo de Impresora', color_printer: 'Impresora Color', mono_printer: 'Láser Monocromo',
-        printer_hint: 'Color: Usa temas y selector de color libremente.', printer_hint_mono: 'Monocromo: Salida en negro/escala de grises.',
-        paper_type: 'Tipo de Papel', paper_size_title: 'Tamaño de Papel', portrait: 'Vertical', landscape: 'Horizontal', theme_color: 'Tema',
-        line_style: 'Estilo de Línea', line_type: 'Tipo', solid: 'Continua', dashed: 'Discontinua', dotted: 'Punteada',
-        line_width: 'Grosor (px)', margin_settings: 'Márgenes',
-        punch_marker: 'Marcas de Perforación',
-        punch_us3: '3 Taladros EE.UU. (4.25")', punch_iso2: '2 Taladros ISO (80 mm)', punch_iso4: '4 Taladros ISO (80 mm)',
-        punch_5hole: '5 Taladros (Compatible 3 y 2)', punch_top2: 'Superior 2 Taladros (2.75")', punch_single: 'Anilla única',
-        sidebar_settings: 'Barra Lateral', enable_sidebar: 'Activar lateral', position: 'Posición', pos_left: 'Izquierda', pos_right: 'Derecha',
-        bg_watermark: 'Fondo', bg_color: 'Color de Fondo', bg_texture: 'Textura', fit_window: 'Ajustar a ventana'
-      },
-      ar: {
-        brand: 'مولد تصميم الورق والطباعة', export_pdf: 'تصدير PDF', export_svg: 'تصدير SVG', export_png: 'تصدير PNG', print_now: 'طباعة فورية',
-        printer_type: 'نوع الطابعة', color_printer: 'طابعة ملونة', mono_printer: 'ليزر أبيض وأسود',
-        printer_hint: 'ألوان كاملة: منتقي الألوان والسمات مفعل.', printer_hint_mono: 'أبيض وأسود: إخراج أحادي اللون.',
-        paper_type: 'نوع الورق', paper_size_title: 'حجم الورق', portrait: 'عمودي', landscape: 'أفقي', theme_color: 'السمة',
-        line_style: 'نمط الخطوط', line_type: 'النوع', solid: 'متصل', dashed: 'متقطع', dotted: 'منقط',
-        line_width: 'سماكة الخط (px)', margin_settings: 'الهوامش',
-        punch_marker: 'علامات التثقيب',
-        punch_us3: '3 ثقوب أمريكية (4.25 بوصة)', punch_iso2: 'ثقبان (80 ملم)', punch_iso4: '4 ثقوب (80 ملم)',
-        punch_5hole: '5 ثقوب (متوافق مع 3 و 2)', punch_top2: 'ثقبان علويان (2.75 بوصة)', punch_single: 'حلقة فردية',
-        sidebar_settings: 'الشريط الجانبي', enable_sidebar: 'تفعيل الشريط الجانبي', position: 'الموضع', pos_left: 'يسار', pos_right: 'يمين',
-        bg_watermark: 'الخلفية', bg_color: 'لون الخلفية', bg_texture: 'الملمس', fit_window: 'ملاءمة النافذة'
-      },
-      ja: {
-        brand: '用紙デザイン＆印刷ジェネレーター', export_pdf: 'PDF 出力', export_svg: 'SVG 出力', export_png: 'PNG 出力', print_now: '即時印刷',
-        printer_type: 'プリンターの種類', color_printer: 'カラー印刷', mono_printer: 'モノクロレーザー',
-        printer_hint: 'フルカラー：テーマおよびカラーパレットが利用可能。', printer_hint_mono: 'モノクロ：黒とグレー階調のみを出力。',
-        paper_type: '用紙タイプ', paper_size_title: '用紙サイズ', portrait: '縦向き', landscape: '横向き', theme_color: 'テーマ',
-        line_style: '罫線のスタイル', line_type: '線の種類', solid: '実線', dashed: '破線', dotted: '点線',
-        line_width: '線の太さ (px)', margin_settings: '余白設定',
-        punch_marker: 'パンチ穴ガイド',
-        punch_us3: 'US 3穴バインダー (4.25")', punch_iso2: '2穴 (80mm)', punch_iso4: '4穴 (80mm)',
-        punch_5hole: '5穴 (3穴・2穴互換)', punch_top2: '天綴じ2穴 (2.75")', punch_single: '単環リング',
-        sidebar_settings: 'サイドバー', enable_sidebar: 'サイドバーを有効化', position: '配置位置', pos_left: '左側', pos_right: '右側',
-        bg_watermark: '背景設定', bg_color: '用紙カラー', bg_texture: '用紙テクスチャ', fit_window: '全体表示'
-      },
-      ko: {
-        brand: '종이 디자인 및 인쇄 생성기', export_pdf: 'PDF 내보내기', export_svg: 'SVG 내보내기', export_png: 'PNG 내보내기', print_now: '즉시 인쇄',
-        printer_type: '프린터 유형', color_printer: '컬러 프린터', mono_printer: '흑백 레이저',
-        printer_hint: '컬러: 테마 및 색상 추출기를 자유롭게 사용 가능.', printer_hint_mono: '흑백: 흑백 및 그레이스케일로 강제 출력.',
-        paper_type: '용지 서식', paper_size_title: '용지 규격', portrait: '세로', landscape: '가로', theme_color: '테마',
-        line_style: '선 스타일', line_type: '선 형태', solid: '실선', dashed: '파선', dotted: '점선',
-        line_width: '선 굵기 (px)', margin_settings: '여백 설정',
-        punch_marker: '타공 위치 마크',
-        punch_us3: '미국식 3공 바인더 (4.25")', punch_iso2: '2공 (80mm)', punch_iso4: '4공 (80mm)',
-        punch_5hole: '5공 (3공 및 2공 호환)', punch_top2: '상단 2공 (2.75")', punch_single: '단일 링',
-        sidebar_settings: '사이드바', enable_sidebar: '사이드바 사용', position: '위치', pos_left: '왼쪽', pos_right: '오른쪽',
-        bg_watermark: '배경 설정', bg_color: '용지 색상', bg_texture: '용지 질감', fit_window: '화면 맞춤'
       }
     };
 
@@ -1035,20 +997,13 @@
       dark: { line: '#1f2421', bg: '#f5f5f5' },
       vintage_brown: { line: '#5c3a21', bg: '#fcf8ee' },
       soft: { line: '#8a7d74', bg: '#fbfaf8' },
-      classic: { line: '#2c4a6f', bg: '#ffffff' },
-      minimal: { line: '#111111', bg: '#ffffff' },
-      marine: { line: '#0f6479', bg: '#f2f8fa' },
-      forest: { line: '#205c3b', bg: '#f4f8f4' },
-      sunset: { line: '#a34828', bg: '#fdf7f4' },
-      tech: { line: '#1d3557', bg: '#f8fafc' },
-      elegant: { line: '#6a4c93', bg: '#fbf8fd' },
-      creative: { line: '#d90429', bg: '#fffafa' }
+      classic: { line: '#2c4a6f', bg: '#ffffff' }
     };
 
     const state = {
       lang: 'zh',
       isMono: false,
-      paperType: 'mi_zi_ge',
+      paperType: 'mi_zi_ge', // 默认米字格
       standardSize: 'A4',
       isLandscape: false,
       unit: 'mm',
@@ -1064,7 +1019,21 @@
       texture: 'none',
       textureColor: '#d1d5db',
       textureOpacity: 0.35,
+      hexOrient: 'pointy',
+      measures: 2,
+      calligraphyFit: 'fill',
+      slantAngle: 55,
+      kosaStyle: 'group',
+      kosaLines: 3,
+      kosaGroupGap: 7.5,
+      kosaRedLine: true,
+      perspType: '2',
+      perspHorizon: 50,
+      perspLine: true,
       showDateLine: false,
+      schoolHeader: true,
+      englishFrame: true,
+      genkoHeader: true,
       music: {
         clef: 'treble',
         staveCount: 10,
@@ -1102,7 +1071,7 @@
         style: 'dot',
         offsetMm: 12
       },
-      zoom: 0.39 // 默认缩放 39%
+      zoom: 0.39 // 严格默认 39%
     };
 
     const canvas = document.getElementById('renderCanvas');
@@ -1125,39 +1094,44 @@
       updateToolbarInfo();
     }
 
+    // 核心绘制主逻辑
     function drawPaper() {
       const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-      const rawW_mm = state.isLandscape ? sizeDef.h : sizeDef.w;
-      const rawH_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
+      const rawW_mm = state.isLandscape ? Math.max(sizeDef.w, sizeDef.h) : Math.min(sizeDef.w, sizeDef.h);
+      const rawH_mm = state.isLandscape ? Math.min(sizeDef.w, sizeDef.h) : Math.max(sizeDef.w, sizeDef.h);
 
       const widthPx = Math.round(rawW_mm * MM_TO_PX);
       const heightPx = Math.round(rawH_mm * MM_TO_PX);
 
+      // 1. 设置 Canvas 真实 300 DPI 矢量分辨率
       canvas.width = widthPx;
       canvas.height = heightPx;
 
+      // 2. 严格按 39% 给 CSS 赋值显式尺寸，杜绝任何外部压缩
       const displayW = Math.round(widthPx * state.zoom);
       const displayH = Math.round(heightPx * state.zoom);
 
       paperSheet.style.width = displayW + 'px';
       paperSheet.style.height = displayH + 'px';
+      canvas.style.width = displayW + 'px';
+      canvas.style.height = displayH + 'px';
 
-      // 1. 底色
+      // 3. 底色
       ctx.fillStyle = state.bgColor;
       ctx.fillRect(0, 0, widthPx, heightPx);
 
-      // 2. 纹理层渲染 (实心底色全铺)
+      // 4. 纹理层渲染 (实心底色全铺)
       if (state.texture !== 'none') {
         drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
       }
 
-      // 3. 边距与绝对对称居中
+      // 5. 边距与绝对对称居中
       const topPx = state.marginTopMm * MM_TO_PX;
       const bottomPx = heightPx - (state.marginBottomMm * MM_TO_PX);
       let leftPx = state.marginLeftMm * MM_TO_PX;
       let rightPx = widthPx - (state.marginRightMm * MM_TO_PX);
 
-      // 4. 侧边栏
+      // 6. 侧边栏
       if (state.enableSidebar) {
         const sideW_Px = state.sidebarWidthMm * MM_TO_PX;
         ctx.save();
@@ -1187,7 +1161,7 @@
         ctx.restore();
       }
 
-      // 5. 核心线条与居中平摊
+      // 7. 核心线条与居中平摊
       const baseLineColor = state.isMono ? '#444444' : state.lineColor;
       const boldLineColor = state.isMono ? '#111111' : state.lineColor;
       const stepPx = state.gridSpacingMm * MM_TO_PX;
@@ -1202,14 +1176,13 @@
       renderPaperTemplateCentered(ctx, state.paperType, leftPx, topPx, rightPx, bottomPx, stepPx, baseLineColor, boldLineColor);
       ctx.restore();
 
-      // 图 3：右上角日期行绘制
-      if (state.showDateLine && (state.paperType === 'lined' || state.paperType === 'grid' || state.paperType === 'dot')) {
+      // 右上角日期行
+      if (state.showDateLine && ['lined', 'grid', 'dot'].includes(state.paperType)) {
         ctx.save();
         ctx.strokeStyle = baseLineColor;
         ctx.fillStyle = baseLineColor;
         ctx.lineWidth = state.lineWidth * 1.5;
-        const dateW = 60 * MM_TO_PX;
-        const dateY = topPx - 4 * MM_TO_PX;
+        const dateY = topPx - 5 * MM_TO_PX;
         if (dateY > 10) {
           ctx.font = `${Math.round(11 * (RENDER_DPI / 72))}px sans-serif`;
           ctx.textAlign = 'right';
@@ -1218,7 +1191,7 @@
         ctx.restore();
       }
 
-      // 6. 水印
+      // 8. 水印
       if (state.enableWatermark && state.watermarkText.trim()) {
         ctx.save();
         ctx.globalAlpha = state.watermarkOpacity;
@@ -1233,7 +1206,7 @@
         ctx.restore();
       }
 
-      // 7. Logo 渲染
+      // 9. Logo 渲染
       if (state.enableLogo && state.logoImg) {
         ctx.save();
         ctx.globalAlpha = state.logoOpacity;
@@ -1251,7 +1224,7 @@
         ctx.restore();
       }
 
-      // 8. 页码渲染
+      // 10. 页码
       if (state.showPageNum) {
         ctx.save();
         ctx.fillStyle = '#666666';
@@ -1261,7 +1234,7 @@
         ctx.restore();
       }
 
-      // 9. 打孔定位标记
+      // 11. 打孔标记
       const hasPunch = Object.values(state.punch).some(v => v === true);
       if (hasPunch) {
         drawPunchMarkers(ctx, widthPx, heightPx);
@@ -1272,91 +1245,386 @@
 
     // 左右留白绝对均摊对称渲染引擎
     function renderPaperTemplateCentered(ctx, type, left, top, right, bottom, step, baseColor, boldColor) {
-      // 图 6：空白纸纯白，直接返回不画任何内部线条
-      if (type === 'blank') {
-        return;
-      }
+      if (type === 'blank') return;
 
       const availW = right - left;
       const availH = bottom - top;
       if (availW <= 10 || availH <= 10 || step <= 1) return;
 
-      // 图 5：粉色毫米方格纸独立高精度绘制
-      if (type === 'pink_grid') {
-        const mmStep = Math.max(1, state.gridSpacingMm) * MM_TO_PX;
-        const pinkLight = '#fbcfe8';
-        const pinkMajor = '#f43f5e';
-        const cols = Math.floor(availW / mmStep);
-        const rows = Math.floor(availH / mmStep);
-        const offsetX = (availW - cols * mmStep) / 2;
-        const offsetY = (availH - rows * mmStep) / 2;
-        const startX = left + offsetX;
-        const startY = top + offsetY;
+      // 1. 吉他六线谱 (带和弦框)
+      if (type === 'guitar_tab') {
+        const totalHeight = step;
+        const chordH = totalHeight * 0.42;
+        const tabH = totalHeight * 0.45;
+        const groupGap = totalHeight * 0.4;
+        let curY = top;
 
-        for (let i = 0; i <= cols; i++) {
-          const x = startX + i * mmStep;
-          const isMajor = (i % 5 === 0);
-          ctx.strokeStyle = isMajor ? pinkMajor : pinkLight;
-          ctx.lineWidth = isMajor ? 1.4 : 0.6;
-          ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, startY + rows * mmStep); ctx.stroke();
-        }
-        for (let j = 0; j <= rows; j++) {
-          const y = startY + j * mmStep;
-          const isMajor = (j % 5 === 0);
-          ctx.strokeStyle = isMajor ? pinkMajor : pinkLight;
-          ctx.lineWidth = isMajor ? 1.4 : 0.6;
-          ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(startX + cols * mmStep, y); ctx.stroke();
+        while (curY + totalHeight <= bottom) {
+          // 4 个和弦框 (6纵 3横)
+          const chordW = 28 * MM_TO_PX;
+          const chordBoxH = chordH * 0.85;
+          const chordGap = (availW - 4 * chordW) / 3;
+          for (let k = 0; k < 4; k++) {
+            const cx = left + k * (chordW + chordGap);
+            drawChordBox(ctx, cx, curY, chordW, chordBoxH, 6, 3, baseColor);
+          }
+
+          // 六线谱
+          const tabTop = curY + chordH;
+          const subH = tabH / 5;
+          ctx.strokeStyle = baseColor;
+          ctx.lineWidth = state.lineWidth * 1.2;
+          for (let i = 0; i < 6; i++) {
+            const y = tabTop + i * subH;
+            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+          }
+          ctx.strokeRect(left, tabTop, availW, tabH);
+          curY += totalHeight + groupGap;
         }
         return;
       }
 
-      // 图 7、8、9：乐谱纸按原版规范绘制（含谱号选择与组间距分配）
-      if (type === 'music_stave') {
-        const staveCount = state.music.staveCount;
-        const lineGapPx = state.music.lineGapMm * MM_TO_PX;
-        const staveHeightPx = lineGapPx * 4;
-        const minGapPx = state.music.staveGapMm * MM_TO_PX;
-        
-        let actualGapPx = minGapPx;
-        if (staveCount > 1) {
-          const remainingSpace = availH - (staveCount * staveHeightPx);
-          actualGapPx = Math.max(minGapPx, remainingSpace / (staveCount - 1));
+      // 2. 贝斯四线谱 (带弦名 G D A E)
+      if (type === 'bass_tab') {
+        const subH = step;
+        const blockH = subH * 3;
+        const groupGap = subH * 3.5;
+        let curY = top;
+        const bassNotes = ['G', 'D', 'A', 'E'];
+
+        while (curY + blockH <= bottom) {
+          ctx.save();
+          ctx.font = `bold ${Math.round(subH * 0.7)}px sans-serif`;
+          ctx.fillStyle = baseColor;
+          for (let i = 0; i < 4; i++) {
+            const y = curY + i * subH;
+            ctx.fillText(bassNotes[i], left, y + subH * 0.25);
+            ctx.beginPath(); ctx.moveTo(left + 22, y); ctx.lineTo(right, y); ctx.stroke();
+          }
+          ctx.restore();
+          curY += blockH + groupGap;
         }
+        return;
+      }
+
+      // 3. 五线谱 + TAB (尤克里里)
+      if (type === 'ukulele_tab') {
+        const sysHeight = step;
+        const staveH = sysHeight * 0.35;
+        const tabH = sysHeight * 0.28;
+        const middleGap = sysHeight * 0.18;
+        const groupGap = sysHeight * 0.35;
+        let curY = top;
+
+        while (curY + sysHeight <= bottom) {
+          // 五线谱
+          const s5 = staveH / 4;
+          for (let i = 0; i < 5; i++) {
+            const y = curY + i * s5;
+            ctx.beginPath(); ctx.moveTo(left + 24, y); ctx.lineTo(right, y); ctx.stroke();
+          }
+          ctx.font = `${Math.round(s5 * 4)}px serif`;
+          ctx.fillStyle = baseColor;
+          ctx.fillText('𝄞', left + 26, curY + staveH);
+
+          // TAB 四线
+          const tabTop = curY + staveH + middleGap;
+          const s4 = tabH / 3;
+          for (let i = 0; i < 4; i++) {
+            const y = tabTop + i * s4;
+            ctx.beginPath(); ctx.moveTo(left + 24, y); ctx.lineTo(right, y); ctx.stroke();
+          }
+          // TAB 标注与弦名 A E C G
+          ctx.save();
+          ctx.font = `bold ${Math.round(s4 * 0.8)}px sans-serif`;
+          const uNotes = ['A', 'E', 'C', 'G'];
+          for (let i = 0; i < 4; i++) {
+            ctx.fillText(uNotes[i], left + 10, tabTop + i * s4 + s4 * 0.25);
+          }
+          ctx.restore();
+
+          // 小节线
+          if (state.measures > 0) {
+            const mWidth = (availW - 24) / state.measures;
+            for (let m = 0; m <= state.measures; m++) {
+              const mx = left + 24 + m * mWidth;
+              ctx.beginPath(); ctx.moveTo(mx, curY); ctx.lineTo(mx, curY + staveH); ctx.stroke();
+              ctx.beginPath(); ctx.moveTo(mx, tabTop); ctx.lineTo(mx, tabTop + tabH); ctx.stroke();
+            }
+          }
+          curY += sysHeight + groupGap;
+        }
+        return;
+      }
+
+      // 4. 带和弦图的高音五线谱 (吉他)
+      if (type === 'guitar_chord') {
+        const sysHeight = step;
+        const staveH = sysHeight * 0.35;
+        const chordH = sysHeight * 0.42;
+        const groupGap = sysHeight * 0.35;
+        let curY = top;
+
+        while (curY + sysHeight <= bottom) {
+          // 五线谱
+          const s5 = staveH / 4;
+          for (let i = 0; i < 5; i++) {
+            const y = curY + i * s5;
+            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+          }
+          ctx.font = `${Math.round(s5 * 4)}px serif`;
+          ctx.fillStyle = baseColor;
+          ctx.fillText('𝄞', left + 6, curY + staveH);
+
+          // 小节线
+          const mCount = Math.max(1, state.measures);
+          const mW = availW / mCount;
+          for (let m = 0; m <= mCount; m++) {
+            const mx = left + m * mW;
+            ctx.beginPath(); ctx.moveTo(mx, curY); ctx.lineTo(mx, curY + staveH); ctx.stroke();
+          }
+
+          // 和弦行 (6纵 4横)
+          const chordTop = curY + staveH + 12;
+          const totalChords = mCount * 4;
+          const cBoxW = (availW - (totalChords - 1) * 6) / totalChords;
+          for (let c = 0; c < totalChords; c++) {
+            const cx = left + c * (cBoxW + 6);
+            drawChordBox(ctx, cx, chordTop, cBoxW, chordH * 0.8, 6, 4, baseColor);
+          }
+
+          curY += sysHeight + groupGap;
+        }
+        return;
+      }
+
+      // 5. 书法纸 (铺满边距/全斜对角线+十字虚线)
+      if (type === 'calligraphy_base') {
+        const cellSize = step;
+        const cols = (state.calligraphyFit === 'fill') ? Math.round(availW / cellSize) : Math.floor(availW / cellSize);
+        const rows = (state.calligraphyFit === 'fill') ? Math.round(availH / cellSize) : Math.floor(availH / cellSize);
+        const actualW = availW / cols;
+        const actualH = availH / rows;
+
+        for (let c = 0; c < cols; c++) {
+          for (let r = 0; r < rows; r++) {
+            const x = left + c * actualW;
+            const y = top + r * actualH;
+            ctx.setLineDash([]);
+            ctx.strokeStyle = boldColor;
+            ctx.lineWidth = state.lineWidth * 2.0;
+            ctx.strokeRect(x, y, actualW, actualH);
+
+            // 十字与对角米字虚线
+            ctx.setLineDash([6, 6]);
+            ctx.strokeStyle = baseColor;
+            ctx.lineWidth = state.lineWidth * 0.9;
+            ctx.beginPath();
+            ctx.moveTo(x + actualW / 2, y); ctx.lineTo(x + actualW / 2, y + actualH);
+            ctx.moveTo(x, y + actualH / 2); ctx.lineTo(x + actualW, y + actualH / 2);
+            ctx.moveTo(x, y); ctx.lineTo(x + actualW, y + actualH);
+            ctx.moveTo(x + actualW, y); ctx.lineTo(x, y + actualH);
+            ctx.stroke();
+          }
+        }
+        return;
+      }
+
+      // 6. 现代书法斜线引导纸 (55°)
+      if (type === 'slant_guide_55') {
+        const rad = (state.slantAngle * Math.PI) / 180;
+        const tanA = Math.tan(rad);
+        const dx = availH / tanA;
+
+        ctx.setLineDash([]);
+        ctx.strokeStyle = baseColor;
+        ctx.lineWidth = state.lineWidth * 1.2;
+
+        for (let x = left - dx; x <= right + dx; x += step) {
+          ctx.beginPath();
+          ctx.moveTo(x, bottom);
+          ctx.lineTo(x + dx, top);
+          ctx.stroke();
+        }
+        return;
+      }
+
+      // 7. 斜线格纸 (коса лінійка)
+      if (type === 'slant_grid_koca') {
+        let curY = top;
+        const groupH = step * state.kosaLines;
+        const groupGap = state.kosaGroupGap * MM_TO_PX;
+
+        // 左侧红边线
+        if (state.kosaRedLine) {
+          ctx.save();
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 1.6;
+          const redX = left + 20 * MM_TO_PX;
+          ctx.beginPath(); ctx.moveTo(redX, top); ctx.lineTo(redX, bottom); ctx.stroke();
+          ctx.restore();
+        }
+
+        ctx.strokeStyle = baseColor;
+        ctx.lineWidth = state.lineWidth * 1.1;
+
+        while (curY + groupH <= bottom) {
+          for (let l = 0; l <= state.kosaLines; l++) {
+            const y = curY + l * step;
+            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+          }
+          curY += groupH + groupGap;
+        }
+
+        // 65° 斜线交织
+        const rad = (65 * Math.PI) / 180;
+        const dx = availH / Math.tan(rad);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 0.8;
+        for (let x = left - dx; x <= right + dx; x += step * 1.2) {
+          ctx.beginPath(); ctx.moveTo(x, bottom); ctx.lineTo(x + dx, top); ctx.stroke();
+        }
+        return;
+      }
+
+      // 8. 康奈尔笔记
+      if (type === 'cornell') {
+        const cueW = availW * 0.28;
+        const sumH = availH * 0.2;
+        const mainB = bottom - sumH;
+
+        ctx.setLineDash([]);
+        ctx.lineWidth = state.lineWidth * 2.4;
+        ctx.strokeStyle = boldColor;
+        ctx.beginPath(); ctx.moveTo(left + cueW, top); ctx.lineTo(left + cueW, mainB); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(left, mainB); ctx.lineTo(right, mainB); ctx.stroke();
+
+        ctx.lineWidth = state.lineWidth * 1.1;
+        ctx.strokeStyle = baseColor;
+        for (let y = top + step; y < mainB - 4; y += step) {
+          ctx.beginPath(); ctx.moveTo(left + cueW, y); ctx.lineTo(right, y); ctx.stroke();
+        }
+        return;
+      }
+
+      // 9. 等距网格
+      if (type === 'iso_grid') {
+        const h = (step * Math.sqrt(3)) / 2;
+        ctx.lineWidth = state.lineWidth * 1.0;
+        ctx.strokeStyle = baseColor;
+        for (let y = top; y <= bottom; y += h) {
+          ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+        }
+        for (let x = left - availH; x <= right + availH; x += step) {
+          ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x + availH / Math.sqrt(3), bottom); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x - availH / Math.sqrt(3), bottom); ctx.stroke();
+        }
+        return;
+      }
+
+      // 10. 透视网格纸 (二点透视等)
+      if (type === 'perspective_grid') {
+        const hy = top + availH * (state.perspHorizon / 100);
+        ctx.strokeStyle = baseColor;
+        ctx.lineWidth = state.lineWidth * 1.0;
+
+        if (state.perspLine) {
+          ctx.save();
+          ctx.lineWidth = 1.8;
+          ctx.beginPath(); ctx.moveTo(left, hy); ctx.lineTo(right, hy); ctx.stroke();
+          ctx.restore();
+        }
+
+        const vp1 = { x: left - 20, y: hy };
+        const vp2 = { x: right + 20, y: hy };
+        const rayDensity = Math.max(12, Math.round(step * 2.5));
+
+        for (let y = top; y <= bottom; y += rayDensity) {
+          ctx.beginPath(); ctx.moveTo(vp1.x, vp1.y); ctx.lineTo(right, y); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(vp2.x, vp2.y); ctx.lineTo(left, y); ctx.stroke();
+        }
+        return;
+      }
+
+      // 11. 六边形网格 (尖顶 ▲ / 平顶 ⬢)
+      if (type === 'hex_grid') {
+        const r = step * 0.65;
+        const isPointy = state.hexOrient === 'pointy';
+        const dx = isPointy ? (Math.sqrt(3) * r) : (1.5 * r);
+        const dy = isPointy ? (1.5 * r) : (Math.sqrt(3) * r);
 
         ctx.setLineDash([]);
         ctx.lineWidth = state.lineWidth * 1.4;
         ctx.strokeStyle = baseColor;
-        ctx.fillStyle = baseColor;
 
-        let curY = top;
-        for (let s = 0; s < staveCount; s++) {
-          if (curY + staveHeightPx > bottom + 2) break;
-
-          // 绘制 5 根水平谱线
-          for (let l = 0; l < 5; l++) {
-            const y = curY + l * lineGapPx;
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+        let rowIdx = 0;
+        for (let y = top + r; y <= bottom; y += dy) {
+          const xOffset = isPointy ? ((rowIdx % 2) * (dx / 2)) : 0;
+          let colIdx = 0;
+          for (let x = left + r + xOffset; x <= right; x += dx) {
+            const yOffset = (!isPointy) ? ((colIdx % 2) * (dy / 2)) : 0;
+            drawSingleHex(ctx, x, y + yOffset, r, isPointy);
+            colIdx++;
           }
-
-          // 绘制两端封口竖线
-          ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(left, curY + staveHeightPx); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(right, curY); ctx.lineTo(right, curY + staveHeightPx); ctx.stroke();
-
-          // 绘制谱号
-          if (state.music.clef === 'treble') {
-            ctx.font = `${Math.round(lineGapPx * 4.2)}px serif`;
-            ctx.fillText('𝄞', left + 8, curY + staveHeightPx - lineGapPx * 0.8);
-          } else if (state.music.clef === 'bass') {
-            ctx.font = `${Math.round(lineGapPx * 3.4)}px serif`;
-            ctx.fillText('𝄢', left + 8, curY + staveHeightPx - lineGapPx * 1.1);
-          }
-
-          curY += staveHeightPx + actualGapPx;
+          rowIdx++;
         }
         return;
       }
 
-      // 其他常规网格与练字纸对称均摊计算
+      // 12. 法式田字格 (Seyes)
+      if (type === 'french_grid') {
+        const majorStep = Math.max(6, state.gridSpacingMm) * MM_TO_PX;
+        const subStep = majorStep / 4;
+        const cols = Math.floor(availW / majorStep);
+        const rows = Math.floor(availH / majorStep);
+        const startX = left + (availW - cols * majorStep) / 2;
+        const startY = top + (availH - rows * majorStep) / 2;
+
+        for (let r = 0; r <= rows; r++) {
+          const y = startY + r * majorStep;
+          ctx.setLineDash([]);
+          ctx.strokeStyle = boldColor;
+          ctx.lineWidth = state.lineWidth * 1.8;
+          ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(startX + cols * majorStep, y); ctx.stroke();
+
+          if (r < rows) {
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = state.lineWidth * 0.8;
+            for (let s = 1; s <= 3; s++) {
+              const sy = y + s * subStep;
+              ctx.beginPath(); ctx.moveTo(startX, sy); ctx.lineTo(startX + cols * majorStep, sy); ctx.stroke();
+            }
+          }
+        }
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = state.lineWidth * 0.8;
+        for (let c = 0; c <= cols; c++) {
+          const x = startX + c * majorStep;
+          ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, startY + rows * majorStep); ctx.stroke();
+        }
+        return;
+      }
+
+      // 13. 分镜纸 (左右双画框)
+      if (type === 'storyboard') {
+        const gap = state.gridSpacingMm * MM_TO_PX;
+        const boxW = (availW - gap) / 2;
+        const boxH = boxW * (9 / 16);
+        let curY = top;
+
+        ctx.setLineDash([]);
+        ctx.lineWidth = state.lineWidth * 1.5;
+        ctx.strokeStyle = baseColor;
+
+        while (curY + boxH <= bottom) {
+          ctx.strokeRect(left, curY, boxW, boxH);
+          ctx.strokeRect(left + boxW + gap, curY, boxW, boxH);
+          curY += boxH + gap;
+        }
+        return;
+      }
+
+      // 默认核心：米字格 / 田字格等经典格式
       const cols = Math.floor(availW / step);
       const rows = Math.floor(availH / step);
       const offsetX = (availW - cols * step) / 2;
@@ -1368,57 +1636,6 @@
       const cBottom = cTop + rows * step;
 
       switch (type) {
-        case 'grid':
-        case 'sewing':
-        case 'knitting_grid': {
-          for (let x = cLeft; x <= cRight + 0.5; x += step) {
-            ctx.beginPath(); ctx.moveTo(x, cTop); ctx.lineTo(x, cBottom); ctx.stroke();
-          }
-          for (let y = cTop; y <= cBottom + 0.5; y += step) {
-            ctx.beginPath(); ctx.moveTo(cLeft, y); ctx.lineTo(cRight, y); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'lined':
-        case 'vintage_notes':
-        case 'student_notes':
-        case 'meeting_notes':
-        case 'doodle_paper':
-        case 'general_practice': {
-          for (let y = cTop; y <= cBottom + 0.5; y += step) {
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'vertical_lined': {
-          for (let x = cLeft; x <= cRight + 0.5; x += step) {
-            ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
-          }
-          break;
-        }
-
-        case 'dot': {
-          ctx.fillStyle = baseColor;
-          const r = state.lineWidth * 1.8;
-          for (let x = cLeft; x <= cRight + 0.5; x += step) {
-            for (let y = cTop; y <= cBottom + 0.5; y += step) {
-              ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-            }
-          }
-          break;
-        }
-
-        case 'split_notes': {
-          const half = (left + right) / 2;
-          ctx.beginPath(); ctx.moveTo(half, top); ctx.lineTo(half, bottom); ctx.stroke();
-          for (let y = cTop; y <= cBottom + 0.5; y += step) {
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          break;
-        }
-
         case 'mi_zi_ge':
         case 'tian_zi_ge':
         case 'hui_gong_ge':
@@ -1449,54 +1666,55 @@
                 ctx.moveTo(x + cellSize, y); ctx.lineTo(x, y + cellSize);
                 ctx.stroke();
               }
-              if (type === 'hui_gong_ge' || type === 'rect_hui_gong') {
-                const inner = cellSize * 0.5;
-                const offset = (cellSize - inner) / 2;
-                ctx.strokeRect(x + offset, y + offset, inner, inner);
-              }
-              if (type === 'jiu_gong_ge') {
-                const third = cellSize / 3;
-                ctx.beginPath();
-                ctx.moveTo(x + third, y); ctx.lineTo(x + third, y + cellSize);
-                ctx.moveTo(x + third * 2, y); ctx.lineTo(x + third * 2, y + cellSize);
-                ctx.moveTo(x, y + third); ctx.lineTo(x + cellSize, y + third);
-                ctx.moveTo(x, y + third * 2); ctx.lineTo(x + cellSize, y + third * 2);
-                ctx.stroke();
-              }
             }
-          }
-          break;
-        }
-
-        case 'guitar_tab':
-        case 'bass_tab':
-        case 'ukulele_tab':
-        case 'guitar_chord': {
-          const linesCount = (type === 'bass_tab' || type === 'ukulele_tab') ? 4 : (type === 'guitar_tab' ? 6 : 5);
-          const staveGap = step * 0.25;
-          const groupGap = step * 1.8;
-          let curY = top;
-          while (curY + staveGap * (linesCount - 1) <= bottom) {
-            ctx.setLineDash([]);
-            ctx.lineWidth = state.lineWidth * 1.4;
-            for (let i = 0; i < linesCount; i++) {
-              const y = curY + i * staveGap;
-              ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-            }
-            curY += staveGap * (linesCount - 1) + groupGap;
           }
           break;
         }
 
         default: {
-          for (let y = cTop; y <= cBottom; y += step) {
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+          for (let x = cLeft; x <= cRight + 0.5; x += step) {
+            ctx.beginPath(); ctx.moveTo(x, cTop); ctx.lineTo(x, cBottom); ctx.stroke();
+          }
+          for (let y = cTop; y <= cBottom + 0.5; y += step) {
+            ctx.beginPath(); ctx.moveTo(cLeft, y); ctx.lineTo(cRight, y); ctx.stroke();
           }
           break;
         }
       }
     }
 
+    // 辅助：绘制吉他/尤克里里和弦网格框
+    function drawChordBox(ctx, x, y, w, h, cols, frets, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.0;
+      ctx.strokeRect(x, y, w, h);
+      const colW = w / (cols - 1);
+      for (let i = 1; i < cols - 1; i++) {
+        ctx.beginPath(); ctx.moveTo(x + i * colW, y); ctx.lineTo(x + i * colW, y + h); ctx.stroke();
+      }
+      const fretH = h / frets;
+      for (let j = 1; j < frets; j++) {
+        ctx.beginPath(); ctx.moveTo(x, y + j * fretH); ctx.lineTo(x + w, y + j * fretH); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // 辅助：绘制单颗六边形
+    function drawSingleHex(ctx, cx, cy, r, isPointy) {
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i * 60 + (isPointy ? 30 : 0)) * Math.PI / 180;
+        const x = cx + r * Math.cos(a);
+        const y = cy + r * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    // 背景微纹理
     function drawBackgroundTexture(ctx, w, h, texType, color, opacity) {
       ctx.save();
       ctx.globalAlpha = opacity;
@@ -1507,72 +1725,18 @@
       if (texType === 'solid') {
         ctx.fillRect(0, 0, w, h);
       } else if (texType === 'v_lines') {
-        const gap = 16;
-        for (let x = 0; x < w; x += gap) {
+        for (let x = 0; x < w; x += 16) {
           ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
         }
       } else if (texType === 'lines') {
-        const gap = 16;
-        for (let y = 0; y < h; y += gap) {
-          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-        }
-      } else if (texType === 'slash') {
-        const gap = 24;
-        for (let x = -h; x < w; x += gap) {
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + h, h); ctx.stroke();
-        }
-      } else if (texType === 'backslash') {
-        const gap = 24;
-        for (let x = 0; x < w + h; x += gap) {
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x - h, h); ctx.stroke();
-        }
-      } else if (texType === 'dots' || texType === 'dense_dots') {
-        const gap = texType === 'dense_dots' ? 14 : 30;
-        for (let x = 10; x < w; x += gap) {
-          for (let y = 10; y < h; y += gap) {
-            ctx.fillRect(x, y, 2.5, 2.5);
-          }
-        }
-      } else if (texType === 'grid') {
-        const gap = 20;
-        for (let x = 0; x < w; x += gap) {
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-        }
-        for (let y = 0; y < h; y += gap) {
-          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-        }
-      } else if (texType === 'cross') {
-        const gap = 26;
-        for (let x = 0; x < w; x += gap) {
-          for (let y = 0; y < h; y += gap) {
-            ctx.beginPath();
-            ctx.moveTo(x - 3, y); ctx.lineTo(x + 3, y);
-            ctx.moveTo(x, y - 3); ctx.lineTo(x, y + 3);
-            ctx.stroke();
-          }
-        }
-      } else if (texType === 'checkerboard') {
-        const gap = 32;
-        let toggle = false;
-        for (let x = 0; x < w; x += gap) {
-          toggle = !toggle;
-          for (let y = 0; y < h; y += gap) {
-            if (toggle) ctx.fillRect(x, y, gap, gap);
-            toggle = !toggle;
-          }
-        }
-      } else if (texType === 'chart') {
-        const gap = 28;
-        for (let x = 0; x < w; x += gap) {
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-        }
-        for (let y = 0; y < h; y += gap * 2) {
+        for (let y = 0; y < h; y += 16) {
           ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
         }
       }
       ctx.restore();
     }
 
+    // 打孔记号
     function drawPunchMarkers(ctx, w, h) {
       ctx.save();
       ctx.fillStyle = '#111111';
@@ -1580,31 +1744,13 @@
       ctx.lineWidth = 2.5;
 
       const offsetPx = state.punch.offsetMm * MM_TO_PX;
-      const style = state.punch.style;
-      const punchHoleRadius = 3.0 * MM_TO_PX;
+      const centerY = h / 2;
 
       function renderMark(x, y) {
-        if (style === 'dot') {
-          ctx.beginPath();
-          ctx.arc(x, y, 2.2 * MM_TO_PX, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (style === 'circle') {
-          ctx.beginPath();
-          ctx.arc(x, y, punchHoleRadius, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.arc(x, y, 2.0, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (style === 'cross') {
-          const crossLen = 4.5 * MM_TO_PX;
-          ctx.beginPath();
-          ctx.moveTo(x - crossLen, y); ctx.lineTo(x + crossLen, y);
-          ctx.moveTo(x, y - crossLen); ctx.lineTo(x, y + crossLen);
-          ctx.stroke();
-        }
+        ctx.beginPath();
+        ctx.arc(x, y, 2.2 * MM_TO_PX, 0, Math.PI * 2);
+        ctx.fill();
       }
-
-      const centerY = h / 2;
 
       if (state.punch.us3) {
         const gap = 4.25 * 25.4 * MM_TO_PX;
@@ -1613,45 +1759,21 @@
         renderMark(offsetPx, centerY + gap);
       }
       if (state.punch.iso2) {
-        const gap = (80 / 2) * MM_TO_PX;
+        const gap = 40 * MM_TO_PX;
         renderMark(offsetPx, centerY - gap);
         renderMark(offsetPx, centerY + gap);
-      }
-      if (state.punch.iso4) {
-        const half = 40 * MM_TO_PX;
-        const outer = 120 * MM_TO_PX;
-        renderMark(offsetPx, centerY - half);
-        renderMark(offsetPx, centerY + half);
-        renderMark(offsetPx, centerY - outer);
-        renderMark(offsetPx, centerY + outer);
-      }
-      if (state.punch.punch5) {
-        const gapUS = 4.25 * 25.4 * MM_TO_PX;
-        const gapISO = (80 / 2) * MM_TO_PX;
-        renderMark(offsetPx, centerY);
-        renderMark(offsetPx, centerY - gapUS);
-        renderMark(offsetPx, centerY + gapUS);
-        renderMark(offsetPx, centerY - gapISO);
-        renderMark(offsetPx, centerY + gapISO);
-      }
-      if (state.punch.top2) {
-        const gap = (2.75 * 25.4 / 2) * MM_TO_PX;
-        const centerX = w / 2;
-        renderMark(centerX - gap, offsetPx);
-        renderMark(centerX + gap, offsetPx);
       }
       if (state.punch.single) {
         renderMark(offsetPx, offsetPx);
       }
-
       ctx.restore();
     }
 
     function updateToolbarInfo(w_mm, h_mm) {
       if (!w_mm) {
         const def = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-        w_mm = state.isLandscape ? def.h : sizeDef.w;
-        h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
+        w_mm = state.isLandscape ? Math.max(def.w, def.h) : Math.min(def.w, def.h);
+        h_mm = state.isLandscape ? Math.min(def.w, def.h) : Math.max(def.w, def.h);
       }
       const typeName = document.getElementById('paperTypeSelect').selectedOptions[0].text;
       const orientName = state.isLandscape ? '横向' : '纵向';
@@ -1664,8 +1786,8 @@
     document.getElementById('btnExportPDF').onclick = function() {
       const { jsPDF } = window.jspdf;
       const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-      const w_mm = state.isLandscape ? sizeDef.h : sizeDef.w;
-      const h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
+      const w_mm = state.isLandscape ? Math.max(sizeDef.w, sizeDef.h) : Math.min(sizeDef.w, sizeDef.h);
+      const h_mm = state.isLandscape ? Math.min(sizeDef.w, sizeDef.h) : Math.max(sizeDef.w, sizeDef.h);
 
       const pdf = new jsPDF({
         orientation: state.isLandscape ? 'landscape' : 'portrait',
@@ -1687,8 +1809,8 @@
 
     document.getElementById('btnExportSVG').onclick = function() {
       const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-      const w_mm = state.isLandscape ? sizeDef.h : sizeDef.w;
-      const h_mm = state.isLandscape ? sizeDef.w : sizeDef.h;
+      const w_mm = state.isLandscape ? Math.max(sizeDef.w, sizeDef.h) : Math.min(sizeDef.w, sizeDef.h);
+      const h_mm = state.isLandscape ? Math.min(sizeDef.w, sizeDef.h) : Math.max(sizeDef.w, sizeDef.h);
       const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${w_mm}mm" height="${h_mm}mm" viewBox="0 0 ${canvas.width} ${canvas.height}">
   <image href="${canvas.toDataURL('image/png')}" width="${canvas.width}" height="${canvas.height}"/>
@@ -1700,7 +1822,6 @@
       link.click();
     };
 
-    // 导出 DOCX (包装当前高清画布图为 Word 规范文档)
     document.getElementById('btnExportDOCX').onclick = function() {
       const imgData = canvas.toDataURL('image/png');
       const htmlContent = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Paper Export</title></head><body style="margin:0;padding:0;text-align:center;"><img src="${imgData}" style="width:100%;max-width:210mm;height:auto;" /></body></html>`;
@@ -1713,122 +1834,111 @@
 
     document.getElementById('btnPrint').onclick = function() { window.print(); };
 
-    // 交互事件
-    document.getElementById('langSelect').onchange = (e) => setLanguage(e.target.value);
-
-    const btnColor = document.getElementById('btnPrinterColor');
-    const btnMono = document.getElementById('btnPrinterMono');
-    btnColor.onclick = () => {
-      btnColor.classList.add('active'); btnMono.classList.remove('active');
-      state.isMono = false; setLanguage(state.lang); drawPaper();
-    };
-    btnMono.onclick = () => {
-      btnMono.classList.add('active'); btnColor.classList.remove('active');
-      state.isMono = true; setLanguage(state.lang); drawPaper();
-    };
-
-    // 纸张类型切换联动
+    // 交互监听
     const paperTypeSelect = document.getElementById('paperTypeSelect');
-    const boxBaseOptions = document.getElementById('boxBaseOptions');
-    const boxMusicOptions = document.getElementById('boxMusicOptions');
     const labelSpacing = document.getElementById('labelSpacing');
     const rowGridSpacing = document.getElementById('rowGridSpacing');
+    const hintSpacingDesc = document.getElementById('hintSpacingDesc');
 
     paperTypeSelect.onchange = (e) => {
       state.paperType = e.target.value;
       const unitStr = state.unit === 'in' ? 'in' : 'mm';
 
-      // 显隐右上角日期行选项
-      const isBaseLined = ['lined', 'grid', 'dot'].includes(state.paperType);
-      boxBaseOptions.style.display = isBaseLined ? 'flex' : 'none';
+      // 隐藏全部专属卡片
+      document.getElementById('boxHexOptions').style.display = 'none';
+      document.getElementById('boxMusicMeasures').style.display = 'none';
+      document.getElementById('boxCalligraphyLayout').style.display = 'none';
+      document.getElementById('boxSlantGuideOptions').style.display = 'none';
+      document.getElementById('boxKosaOptions').style.display = 'none';
+      document.getElementById('boxPerspectiveOptions').style.display = 'none';
+      document.getElementById('boxBaseOptions').style.display = 'none';
+      document.getElementById('boxMusicOptions').style.display = 'none';
 
-      // 显隐五线谱独立配置
-      const isMusic = state.paperType === 'music_stave';
-      boxMusicOptions.style.display = isMusic ? 'flex' : 'none';
+      rowGridSpacing.style.display = (state.paperType === 'blank') ? 'none' : 'flex';
 
-      if (state.paperType === 'blank') {
-        rowGridSpacing.style.display = 'none';
-      } else {
-        rowGridSpacing.style.display = 'flex';
-      }
-
-      if (state.paperType.includes('mi_zi') || state.paperType.includes('tian_zi')) {
+      // 根据纸型动态展开卡片与文案
+      if (state.paperType === 'guitar_tab') {
+        labelSpacing.textContent = `六线谱高度 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 常用: 22-28mm，包含和弦格和六线谱';
+      } else if (state.paperType === 'bass_tab') {
+        labelSpacing.textContent = `弦线间距 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 常用 3.5-5mm';
+      } else if (state.paperType === 'ukulele_tab') {
+        labelSpacing.textContent = `每行系统高度 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 建议 5 组: 约 48-52mm，A4 不拥挤、写谱方便';
+        document.getElementById('boxMusicMeasures').style.display = 'flex';
+        document.getElementById('hintMeasuresDesc').textContent = '自动小节线将按此数量均分每行；选「无小节」则不画小节线';
+      } else if (state.paperType === 'guitar_chord') {
+        labelSpacing.textContent = `每组系统高度 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 A4 默认约 48mm 可排 5 组；调大则组数减少、组间距变大';
+        document.getElementById('boxMusicMeasures').style.display = 'flex';
+        document.getElementById('hintMeasuresDesc').textContent = '无小节线时仍显示 4 个和弦框；1-3 小节会等分整行宽度，每小节 4 个 6×4 框';
+      } else if (state.paperType === 'calligraphy_base') {
         labelSpacing.textContent = `格子大小 (${unitStr})`;
-      } else if (state.paperType === 'pink_grid') {
-        labelSpacing.textContent = `小格边长 (${unitStr})`;
-      } else if (state.paperType === 'music_stave') {
-        labelSpacing.textContent = `五线之间的间距 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 常用: 20-30mm，初学者可用较大格子';
+        document.getElementById('boxCalligraphyLayout').style.display = 'flex';
+      } else if (state.paperType === 'slant_guide_55') {
+        labelSpacing.textContent = `斜线间距 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 Copperplate 常用 6-8mm；越小越密';
+        document.getElementById('boxSlantGuideOptions').style.display = 'flex';
+      } else if (state.paperType === 'slant_grid_koca') {
+        labelSpacing.textContent = `格高 / 行距 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 东欧斜线本常用 4-6mm';
+        document.getElementById('boxKosaOptions').style.display = 'flex';
+      } else if (state.paperType === 'cornell') {
+        labelSpacing.textContent = `行间距 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 常用：7-9mm，便于笔记整理';
+      } else if (state.paperType === 'iso_grid') {
+        labelSpacing.textContent = `网格间距 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 常用：4-6mm，适合技术绘图';
+      } else if (state.paperType === 'perspective_grid') {
+        labelSpacing.textContent = `网格密度 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 约 4-8mm：适合起稿；数值越大线越疏。';
+        document.getElementById('boxPerspectiveOptions').style.display = 'flex';
+      } else if (state.paperType === 'hex_grid') {
+        labelSpacing.textContent = `六边形大小 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 常用: 5-7mm，适合游戏地图';
+        document.getElementById('boxHexOptions').style.display = 'flex';
+      } else if (state.paperType === 'french_grid') {
+        labelSpacing.textContent = `格子大小 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 标准: 8mm，法式书写规范';
+      } else if (state.paperType === 'storyboard') {
+        labelSpacing.textContent = `格子间距 (${unitStr})`;
+        hintSpacingDesc.textContent = '💡 常用: 8-12mm，适合故事板绘制';
+      } else if (['lined', 'grid', 'dot'].includes(state.paperType)) {
+        labelSpacing.textContent = `格距 (${unitStr})`;
+        hintSpacingDesc.textContent = '';
+        document.getElementById('boxBaseOptions').style.display = 'flex';
       } else {
         labelSpacing.textContent = `格距 (${unitStr})`;
+        hintSpacingDesc.textContent = '';
       }
+
       drawPaper();
     };
 
-    document.getElementById('chkShowDateLine').onchange = (e) => {
-      state.showDateLine = e.target.checked;
+    document.getElementById('selectHexOrient').onchange = (e) => { state.hexOrient = e.target.value; drawPaper(); };
+    document.getElementById('selectMeasures').onchange = (e) => { state.measures = parseInt(e.target.value); drawPaper(); };
+    document.getElementById('selectCalligraphyFit').onchange = (e) => { state.calligraphyFit = e.target.value; drawPaper(); };
+    document.getElementById('inputSlantAngle').oninput = (e) => {
+      state.slantAngle = parseInt(e.target.value);
+      document.getElementById('valSlantAngle').textContent = `${e.target.value}°`;
       drawPaper();
     };
+    document.getElementById('chkKosaRedLine').onchange = (e) => { state.kosaRedLine = e.target.checked; drawPaper(); };
+    document.getElementById('chkPerspLine').onchange = (e) => { state.perspLine = e.target.checked; drawPaper(); };
+    document.getElementById('chkShowDateLine').onchange = (e) => { state.showDateLine = e.target.checked; drawPaper(); };
 
-    document.getElementById('selectClef').onchange = (e) => {
-      state.music.clef = e.target.value;
-      drawPaper();
-    };
-    document.getElementById('inputStaveCount').oninput = (e) => {
-      state.music.staveCount = parseInt(e.target.value) || 10;
-      drawPaper();
-    };
-    document.getElementById('inputStaveGap').oninput = (e) => {
-      state.music.staveGapMm = parseFloat(e.target.value) || 8;
-      drawPaper();
-    };
-
-    document.getElementById('paperStandardSelect').onchange = (e) => { state.standardSize = e.target.value; drawPaper(); };
-
+    // 单位与方向
     const btnUnitMm = document.getElementById('btnUnitMm');
     const btnUnitIn = document.getElementById('btnUnitIn');
-
-    function updateUnitDisplay() {
-      const isMm = state.unit === 'mm';
-      const factor = isMm ? 1 : (1 / 25.4);
-      const unitStr = isMm ? 'mm' : 'in';
-
-      document.getElementById('inputGridSpacing').value = (state.gridSpacingMm * factor).toFixed(isMm ? 1 : 3);
-      document.getElementById('marginTop').value = (state.marginTopMm * factor).toFixed(isMm ? 1 : 3);
-      document.getElementById('marginBottom').value = (state.marginBottomMm * factor).toFixed(isMm ? 1 : 3);
-      document.getElementById('marginLeft').value = (state.marginLeftMm * factor).toFixed(isMm ? 1 : 3);
-      document.getElementById('marginRight').value = (state.marginRightMm * factor).toFixed(isMm ? 1 : 3);
-      document.getElementById('sidebarWidth').value = (state.sidebarWidthMm * factor).toFixed(isMm ? 1 : 3);
-      document.getElementById('inputPunchOffset').value = (state.punch.offsetMm * factor).toFixed(isMm ? 1 : 3);
-
-      document.getElementById('labelMarginHint').textContent = `边距 (${unitStr})`;
-      document.getElementById('labelSidebarWidth').textContent = `宽度 (${unitStr})`;
-      document.getElementById('labelPunchOffset').textContent = state.punch.single
-        ? `角孔中心距顶边和左边 (${unitStr})`
-        : `孔中心距纸边 (${unitStr})`;
-      document.getElementById('punchWarnText').textContent = `⚠️ 标记可能与线条重叠，建议左/上边距至少 ${isMm ? '18 mm' : '0.709 in'}。`;
-
-      if (state.paperType.includes('mi_zi') || state.paperType.includes('tian_zi')) {
-        labelSpacing.textContent = `格子大小 (${unitStr})`;
-      } else if (state.paperType === 'pink_grid') {
-        labelSpacing.textContent = `小格边长 (${unitStr})`;
-      } else if (state.paperType === 'music_stave') {
-        labelSpacing.textContent = `五线之间的间距 (${unitStr})`;
-      } else {
-        labelSpacing.textContent = `格距 (${unitStr})`;
-      }
-    }
-
     btnUnitMm.onclick = () => {
-      btnUnitMm.classList.add('active');
-      btnUnitIn.classList.remove('active');
-      state.unit = 'mm';
-      updateUnitDisplay();
+      btnUnitMm.classList.add('active'); btnUnitIn.classList.remove('active');
+      state.unit = 'mm'; drawPaper();
     };
     btnUnitIn.onclick = () => {
-      btnUnitIn.classList.add('active');
-      btnUnitMm.classList.remove('active');
-      state.unit = 'in';
-      updateUnitDisplay();
+      btnUnitIn.classList.add('active'); btnUnitMm.classList.remove('active');
+      state.unit = 'in'; drawPaper();
     };
 
     const btnV = document.getElementById('btnOrientV');
@@ -1836,119 +1946,23 @@
     btnV.onclick = () => { btnV.classList.add('active'); btnH.classList.remove('active'); state.isLandscape = false; drawPaper(); };
     btnH.onclick = () => { btnH.classList.add('active'); btnV.classList.remove('active'); state.isLandscape = true; drawPaper(); };
 
-    document.getElementById('themeSelect').onchange = (e) => {
-      const theme = THEME_PRESETS[e.target.value];
-      if (theme) {
-        state.lineColor = theme.line;
-        state.bgColor = theme.bg;
-        document.getElementById('lineColorPicker').value = theme.line;
-        document.getElementById('lineColorText').value = theme.line;
-        drawPaper();
-      }
-    };
-
-    const lineColorPicker = document.getElementById('lineColorPicker');
-    const lineColorText = document.getElementById('lineColorText');
-    lineColorPicker.oninput = (e) => { state.lineColor = e.target.value; lineColorText.value = e.target.value; drawPaper(); };
-    lineColorText.onchange = (e) => { state.lineColor = e.target.value; lineColorPicker.value = e.target.value; drawPaper(); };
-    document.getElementById('btnResetColor').onclick = () => {
-      state.lineColor = '#8b5a2b';
-      lineColorPicker.value = '#8b5a2b';
-      lineColorText.value = '#8b5a2b';
+    document.getElementById('paperStandardSelect').onchange = (e) => { state.standardSize = e.target.value; drawPaper(); };
+    document.getElementById('lineColorPicker').oninput = (e) => {
+      state.lineColor = e.target.value;
+      document.getElementById('lineColorText').value = e.target.value;
       drawPaper();
     };
-
-    document.getElementById('lineDashSelect').onchange = (e) => { state.lineDash = e.target.value; drawPaper(); };
     document.getElementById('inputLineWidth').oninput = (e) => { state.lineWidth = parseFloat(e.target.value) || 0.6; drawPaper(); };
-
     document.getElementById('inputGridSpacing').oninput = (e) => {
       const val = parseFloat(e.target.value) || 15;
       state.gridSpacingMm = state.unit === 'in' ? val * 25.4 : val;
-      if (state.paperType === 'music_stave') {
-        state.music.lineGapMm = state.gridSpacingMm;
-      }
       drawPaper();
     };
 
-    document.getElementById('marginTop').oninput = (e) => {
-      const val = parseFloat(e.target.value) || 0;
-      state.marginTopMm = state.unit === 'in' ? val * 25.4 : val;
-      drawPaper();
-    };
-    document.getElementById('marginBottom').oninput = (e) => {
-      const val = parseFloat(e.target.value) || 0;
-      state.marginBottomMm = state.unit === 'in' ? val * 25.4 : val;
-      drawPaper();
-    };
-    document.getElementById('marginLeft').oninput = (e) => {
-      const val = parseFloat(e.target.value) || 0;
-      state.marginLeftMm = state.unit === 'in' ? val * 25.4 : val;
-      drawPaper();
-    };
-    document.getElementById('marginRight').oninput = (e) => {
-      const val = parseFloat(e.target.value) || 0;
-      state.marginRightMm = state.unit === 'in' ? val * 25.4 : val;
-      drawPaper();
-    };
-
-    const punchCheckboxes = {
-      us3: document.getElementById('chkPunchUS3'),
-      iso2: document.getElementById('chkPunchISO2'),
-      iso4: document.getElementById('chkPunchISO4'),
-      punch5: document.getElementById('chkPunch5Hole'),
-      top2: document.getElementById('chkPunchTop2'),
-      single: document.getElementById('chkPunchSingle')
-    };
-    const punchSubBox = document.getElementById('punchSubBox');
-
-    Object.keys(punchCheckboxes).forEach(k => {
-      punchCheckboxes[k].onchange = (e) => {
-        state.punch[k] = e.target.checked;
-        const anyChecked = Object.values(state.punch).some(v => v === true);
-        punchSubBox.style.display = anyChecked ? 'flex' : 'none';
-        updateUnitDisplay();
-        drawPaper();
-      };
-    });
-
-    document.getElementById('punchStyleSelect').onchange = (e) => {
-      state.punch.style = e.target.value;
-      drawPaper();
-    };
-    document.getElementById('inputPunchOffset').oninput = (e) => {
-      const val = parseFloat(e.target.value) || 12;
-      state.punch.offsetMm = state.unit === 'in' ? val * 25.4 : val;
-      drawPaper();
-    };
-
-    const chkSidebar = document.getElementById('chkEnableSidebar');
-    const sidebarBox = document.getElementById('sidebarOptionsBox');
-    chkSidebar.onchange = (e) => {
-      state.enableSidebar = e.target.checked;
-      sidebarBox.style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('sidebarPosSelect').onchange = (e) => { state.sidebarPos = e.target.value; drawPaper(); };
-    document.getElementById('sidebarWidth').oninput = (e) => {
-      const val = parseFloat(e.target.value) || 25;
-      state.sidebarWidthMm = state.unit === 'in' ? val * 25.4 : val;
-      drawPaper();
-    };
-
-    const sidebarColorPicker = document.getElementById('sidebarColorPicker');
-    const sidebarColorText = document.getElementById('sidebarColorText');
-    sidebarColorPicker.oninput = (e) => { state.sidebarColor = e.target.value; sidebarColorText.value = e.target.value; drawPaper(); };
-    sidebarColorText.onchange = (e) => { state.sidebarColor = e.target.value; sidebarColorPicker.value = e.target.value; drawPaper(); };
-
-    document.getElementById('sidebarDashSelect').onchange = (e) => { state.sidebarDash = e.target.value; drawPaper(); };
-    document.getElementById('sidebarBgColorPicker').oninput = (e) => { state.sidebarBgColor = e.target.value; drawPaper(); };
-    document.getElementById('btnSidebarBgClear').onclick = () => { state.sidebarBgColor = null; drawPaper(); };
-
-    // 背景颜色 8 色块交互联动
+    // 背景色 8 块
     const bgCustomInput = document.getElementById('bgCustomInput');
     const bgCustomBox = document.getElementById('bgCustomBox');
     const bgPaletteItems = document.querySelectorAll('#bgColorPalette .palette-item');
-
     bgCustomInput.oninput = (e) => {
       state.bgColor = e.target.value;
       bgCustomBox.style.background = e.target.value;
@@ -1956,7 +1970,6 @@
       bgCustomBox.classList.add('active');
       drawPaper();
     };
-
     bgPaletteItems.forEach(item => {
       if (item.id === 'bgCustomBox') return;
       item.onclick = () => {
@@ -1967,130 +1980,15 @@
       };
     });
 
-    // 纹理颜色 8 色块交互联动
-    const bgTextureSelect = document.getElementById('bgTextureSelect');
-    const textureSubBox = document.getElementById('textureSubBox');
-    const inputTexOpacity = document.getElementById('inputTexOpacity');
-    const texOpacityValText = document.getElementById('texOpacityValText');
-
-    bgTextureSelect.onchange = (e) => {
+    document.getElementById('bgTextureSelect').onchange = (e) => {
       state.texture = e.target.value;
-      textureSubBox.style.display = state.texture !== 'none' ? 'flex' : 'none';
+      document.getElementById('textureSubBox').style.display = state.texture !== 'none' ? 'flex' : 'none';
       drawPaper();
     };
-
-    const texCustomInput = document.getElementById('texCustomInput');
-    const texCustomBox = document.getElementById('texCustomBox');
-    const texPaletteItems = document.querySelectorAll('#texColorPalette .palette-item');
-
-    texCustomInput.oninput = (e) => {
-      state.textureColor = e.target.value;
-      texCustomBox.style.background = e.target.value;
-      texPaletteItems.forEach(el => el.classList.remove('active'));
-      texCustomBox.classList.add('active');
+    document.getElementById('inputTexOpacity').oninput = (e) => {
+      state.textureOpacity = parseInt(e.target.value) / 100;
+      document.getElementById('texOpacityValText').textContent = `${e.target.value}%`;
       drawPaper();
-    };
-
-    texPaletteItems.forEach(item => {
-      if (item.id === 'texCustomBox') return;
-      item.onclick = () => {
-        texPaletteItems.forEach(el => el.classList.remove('active'));
-        item.classList.add('active');
-        state.textureColor = item.getAttribute('data-texcolor');
-        drawPaper();
-      };
-    });
-
-    inputTexOpacity.oninput = (e) => {
-      const val = parseInt(e.target.value);
-      state.textureOpacity = val / 100;
-      texOpacityValText.textContent = `${val}%`;
-      drawPaper();
-    };
-
-    // 水印
-    const chkWatermark = document.getElementById('chkEnableWatermark');
-    const watermarkBox = document.getElementById('watermarkBox');
-    chkWatermark.onchange = (e) => {
-      state.enableWatermark = e.target.checked;
-      watermarkBox.style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('txtWatermark').oninput = (e) => { state.watermarkText = e.target.value; drawPaper(); };
-    document.getElementById('inputWmOpacity').oninput = (e) => {
-      state.watermarkOpacity = parseInt(e.target.value) / 100;
-      document.getElementById('wmOpacityText').textContent = `${e.target.value}%`;
-      drawPaper();
-    };
-    document.getElementById('inputWmAngle').oninput = (e) => {
-      state.watermarkAngle = parseInt(e.target.value);
-      document.getElementById('wmAngleText').textContent = `${e.target.value}°`;
-      drawPaper();
-    };
-    document.getElementById('inputWmFontSize').oninput = (e) => {
-      state.watermarkFontSize = parseInt(e.target.value);
-      document.getElementById('wmFontSizeText').textContent = `${e.target.value}px`;
-      drawPaper();
-    };
-    document.getElementById('wmColorPicker').oninput = (e) => {
-      state.watermarkColor = e.target.value;
-      document.getElementById('wmColorText').value = e.target.value;
-      drawPaper();
-    };
-    document.getElementById('wmColorText').onchange = (e) => {
-      state.watermarkColor = e.target.value;
-      document.getElementById('wmColorPicker').value = e.target.value;
-      drawPaper();
-    };
-
-    // Logo
-    const chkLogo = document.getElementById('chkEnableLogo');
-    const logoBox = document.getElementById('logoBox');
-    chkLogo.onchange = (e) => {
-      state.enableLogo = e.target.checked;
-      logoBox.style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('inputLogoFile').onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const img = new Image();
-          img.onload = () => { state.logoImg = img; drawPaper(); };
-          img.src = evt.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    document.getElementById('selectLogoPos').onchange = (e) => { state.logoPos = e.target.value; drawPaper(); };
-    document.getElementById('inputLogoSize').oninput = (e) => {
-      state.logoSizeMm = parseFloat(e.target.value) || 20;
-      drawPaper();
-    };
-    document.getElementById('inputLogoOpacity').oninput = (e) => {
-      state.logoOpacity = parseInt(e.target.value) / 100;
-      document.getElementById('logoOpacityText').textContent = `${e.target.value}%`;
-      drawPaper();
-    };
-
-    // 页面设置
-    const chkPageNum = document.getElementById('chkShowPageNum');
-    const startPageBox = document.getElementById('startPageBox');
-    chkPageNum.onchange = (e) => {
-      state.showPageNum = e.target.checked;
-      startPageBox.style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('inputStartPage').oninput = (e) => {
-      state.startPage = parseInt(e.target.value) || 1;
-      drawPaper();
-    };
-    document.getElementById('chkDuplex').onchange = (e) => {
-      state.duplex = e.target.checked;
-    };
-    document.getElementById('pageCountInput').oninput = (e) => {
-      state.pageCount = parseInt(e.target.value) || 1;
     };
 
     // 缩放
@@ -2100,13 +1998,13 @@
       const container = document.getElementById('scrollContainer');
       const availW = container.clientWidth - 80;
       const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-      const rawW_mm = state.isLandscape ? sizeDef.h : sizeDef.w;
+      const rawW_mm = state.isLandscape ? Math.max(sizeDef.w, sizeDef.h) : Math.min(sizeDef.w, sizeDef.h);
       const targetPx = rawW_mm * MM_TO_PX;
       state.zoom = Math.min(1.0, Math.max(0.25, availW / targetPx));
       drawPaper();
     };
 
-    // 确保外层加载完毕后渲染
+    // 页面加载完成后立即执行首次绘制，保证默认米字格稳定呈现
     window.addEventListener('load', () => {
       setLanguage('zh');
       requestAnimationFrame(() => {
