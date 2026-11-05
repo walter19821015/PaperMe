@@ -370,6 +370,7 @@
       padding: 40px;
     }
 
+    /* 纸张容器：彻底消除 300x150 坍塌 */
     .paper-sheet {
       background: #ffffff;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
@@ -1088,112 +1089,6 @@
   </main>
 
   <script>
-    /* 多语言字典配置（彻底补齐，防止未定义阻断） */
-    const I18N_DICT = {
-      zh: {
-        brand: '纸张设计与打印生成器',
-        export_pdf: '导出 PDF',
-        export_svg: '导出 SVG',
-        export_png: '导出 PNG',
-        print_now: '直接打印',
-        printer_type: '打印机类型',
-        color_printer: '彩色打印机',
-        mono_printer: '黑白激光打印机',
-        printer_hint: '全彩：可以使用主题和取色器。',
-        printer_hint_mono: '黑白：自动强制纯黑/纯灰线条输出。',
-        paper_type: '纸张类型',
-        paper_size_title: '纸张尺寸',
-        portrait: '纵向',
-        landscape: '横向',
-        theme_color: '主题',
-        line_style: '线条样式',
-        line_type: '线条类型',
-        solid: '实线',
-        dashed: '虚线',
-        dotted: '点线',
-        line_width: '线条粗细 (px)',
-        margin_settings: '边距设置',
-        punch_marker: '打孔定位标记',
-        punch_us3: '美式 3 孔活页夹 (左侧, 孔距 4.25 英寸)',
-        punch_iso2: '2 孔 (左侧, 孔距 80 毫米)',
-        punch_iso4: '4 孔 (左侧, 孔距 80 毫米)',
-        punch_5hole: '5 孔 (左侧, 兼容 3 孔和 2 孔)',
-        punch_top2: '顶部 2 孔 (顶部夹子文件夹, 孔距 2.75 英寸)',
-        punch_single: '单环 (左上角)',
-        sidebar_settings: '侧边栏',
-        enable_sidebar: '启用侧边栏',
-        position: '位置',
-        pos_left: '左侧',
-        pos_right: '右侧',
-        bg_watermark: '背景设置',
-        bg_color: '背景颜色',
-        bg_texture: '背景纹理',
-        fit_window: '适应视口'
-      },
-      en: {
-        brand: 'Paper Design & Print Generator',
-        export_pdf: 'Export PDF',
-        export_svg: 'Export SVG',
-        export_png: 'Export PNG',
-        print_now: 'Print',
-        printer_type: 'Printer Type',
-        color_printer: 'Color Printer',
-        mono_printer: 'Mono Laser Printer',
-        printer_hint: 'Color: Themes and color pickers available.',
-        printer_hint_mono: 'Mono: Black & white output only.',
-        paper_type: 'Paper Type',
-        paper_size_title: 'Paper Size',
-        portrait: 'Portrait',
-        landscape: 'Landscape',
-        theme_color: 'Theme',
-        line_style: 'Line Styles',
-        line_type: 'Line Type',
-        solid: 'Solid',
-        dashed: 'Dashed',
-        dotted: 'Dotted',
-        line_width: 'Line Width (px)',
-        margin_settings: 'Margins',
-        punch_marker: 'Hole Punch Marks',
-        punch_us3: 'US 3-Hole Binder (Left, 4.25")',
-        punch_iso2: '2-Hole (Left, 80mm)',
-        punch_iso4: '4-Hole (Left, 80mm)',
-        punch_5hole: '5-Hole (Left, 3 & 2 Compatible)',
-        punch_top2: 'Top 2-Hole (2.75")',
-        punch_single: 'Single Ring (Top-Left)',
-        sidebar_settings: 'Sidebar',
-        enable_sidebar: 'Enable Sidebar',
-        position: 'Position',
-        pos_left: 'Left',
-        pos_right: 'Right',
-        bg_watermark: 'Background',
-        bg_color: 'Background Color',
-        bg_texture: 'Texture',
-        fit_window: 'Fit Window'
-      }
-    };
-
-    const PAPER_SIZES_MM = {
-      'A4': { w: 210, h: 297 },
-      'A5': { w: 148, h: 210 },
-      'A3': { w: 297, h: 420 },
-      'B4': { w: 250, h: 353 },
-      'B5': { w: 176, h: 250 },
-      'Letter': { w: 215.9, h: 279.4 },
-      'Legal': { w: 215.9, h: 355.6 },
-      'Tabloid': { w: 279.4, h: 431.8 },
-      'Executive': { w: 184.15, h: 266.7 },
-      'Custom': { w: 210, h: 297 }
-    };
-
-    const THEME_PRESETS = {
-      vintage: { line: '#8b5a2b', bg: '#ffffff' },
-      default: { line: '#4a5b5c', bg: '#ffffff' },
-      dark: { line: '#1f2421', bg: '#f5f5f5' },
-      vintage_brown: { line: '#5c3a21', bg: '#fcf8ee' },
-      soft: { line: '#8a7d74', bg: '#fbfaf8' },
-      classic: { line: '#2c4a6f', bg: '#ffffff' }
-    };
-
     const state = {
       lang: 'zh',
       isMono: false,
@@ -1292,168 +1187,160 @@
 
     function setLanguage(langKey) {
       state.lang = langKey;
-      const dict = (typeof I18N_DICT !== 'undefined' && I18N_DICT[langKey]) ? I18N_DICT[langKey] : ((typeof I18N_DICT !== 'undefined' && I18N_DICT.zh) ? I18N_DICT.zh : {});
-      const brandEl = document.getElementById('uiBrandTitle');
-      if (brandEl && dict.brand) brandEl.textContent = dict.brand;
+      const dict = I18N_DICT[langKey] || I18N_DICT.zh;
+      document.getElementById('uiBrandTitle').textContent = dict.brand;
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const k = el.getAttribute('data-i18n');
-        if (dict && dict[k]) el.textContent = dict[k];
+        if (dict[k]) el.textContent = dict[k];
       });
-      const hintEl = document.getElementById('printerHint');
-      if (hintEl && dict.printer_hint) {
-        hintEl.textContent = state.isMono ? dict.printer_hint_mono : dict.printer_hint;
-      }
+      document.getElementById('printerHint').textContent = state.isMono ? dict.printer_hint_mono : dict.printer_hint;
       updateToolbarInfo();
     }
 
     function drawPaper() {
-      try {
-        const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
-        const rawW_mm = state.isLandscape ? Math.max(sizeDef.w, sizeDef.h) : Math.min(sizeDef.w, sizeDef.h);
-        const rawH_mm = state.isLandscape ? Math.min(sizeDef.w, sizeDef.h) : Math.max(sizeDef.w, sizeDef.h);
+      const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
+      const rawW_mm = state.isLandscape ? Math.max(sizeDef.w, sizeDef.h) : Math.min(sizeDef.w, sizeDef.h);
+      const rawH_mm = state.isLandscape ? Math.min(sizeDef.w, sizeDef.h) : Math.max(sizeDef.w, sizeDef.h);
 
-        const widthPx = Math.round(rawW_mm * MM_TO_PX);
-        const heightPx = Math.round(rawH_mm * MM_TO_PX);
+      const widthPx = Math.round(rawW_mm * MM_TO_PX);
+      const heightPx = Math.round(rawH_mm * MM_TO_PX);
 
-        canvas.width = widthPx;
-        canvas.height = heightPx;
+      canvas.width = widthPx;
+      canvas.height = heightPx;
 
-        const displayW = Math.round(widthPx * state.zoom);
-        const displayH = Math.round(heightPx * state.zoom);
+      const displayW = Math.round(widthPx * state.zoom);
+      const displayH = Math.round(heightPx * state.zoom);
 
-        paperSheet.style.width = displayW + 'px';
-        paperSheet.style.height = displayH + 'px';
-        canvas.style.width = displayW + 'px';
-        canvas.style.height = displayH + 'px';
+      paperSheet.style.width = displayW + 'px';
+      paperSheet.style.height = displayH + 'px';
+      canvas.style.width = displayW + 'px';
+      canvas.style.height = displayH + 'px';
 
-        // 1. 底色
-        ctx.fillStyle = state.bgColor;
-        ctx.fillRect(0, 0, widthPx, heightPx);
+      // 1. 底色
+      ctx.fillStyle = state.bgColor;
+      ctx.fillRect(0, 0, widthPx, heightPx);
 
-        // 2. 纹理层渲染 (实心底色全铺)
-        if (state.texture !== 'none') {
-          drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
-        }
+      // 2. 纹理层渲染 (实心底色全铺)
+      if (state.texture !== 'none') {
+        drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
+      }
 
-        // 3. 边距与绝对对称居中
-        const topPx = state.marginTopMm * MM_TO_PX;
-        const bottomPx = heightPx - (state.marginBottomMm * MM_TO_PX);
-        let leftPx = state.marginLeftMm * MM_TO_PX;
-        let rightPx = widthPx - (state.marginRightMm * MM_TO_PX);
+      // 3. 边距与绝对对称居中
+      const topPx = state.marginTopMm * MM_TO_PX;
+      const bottomPx = heightPx - (state.marginBottomMm * MM_TO_PX);
+      let leftPx = state.marginLeftMm * MM_TO_PX;
+      let rightPx = widthPx - (state.marginRightMm * MM_TO_PX);
 
-        // 4. 侧边栏
-        if (state.enableSidebar) {
-          const sideW_Px = state.sidebarWidthMm * MM_TO_PX;
-          ctx.save();
-          ctx.strokeStyle = state.isMono ? '#333333' : state.sidebarColor;
-          ctx.lineWidth = Math.max(1.8, state.lineWidth * 2.5);
-          if (state.sidebarDash === 'dashed') ctx.setLineDash([12, 8]);
-          else if (state.sidebarDash === 'dotted') ctx.setLineDash([3, 6]);
-          else ctx.setLineDash([]);
-
-          if (state.sidebarPos === 'left') {
-            if (state.sidebarBgColor) {
-              ctx.fillStyle = state.sidebarBgColor;
-              ctx.fillRect(leftPx, topPx, sideW_Px, bottomPx - topPx);
-            }
-            const splitX = leftPx + sideW_Px;
-            ctx.beginPath(); ctx.moveTo(splitX, topPx); ctx.lineTo(splitX, bottomPx); ctx.stroke();
-            leftPx = splitX;
-          } else {
-            if (state.sidebarBgColor) {
-              ctx.fillStyle = state.sidebarBgColor;
-              ctx.fillRect(rightPx - sideW_Px, topPx, sideW_Px, bottomPx - topPx);
-            }
-            const splitX = rightPx - sideW_Px;
-            ctx.beginPath(); ctx.moveTo(splitX, topPx); ctx.lineTo(splitX, bottomPx); ctx.stroke();
-            rightPx = splitX;
-          }
-          ctx.restore();
-        }
-
-        // 5. 核心线条与居中平摊
-        const baseLineColor = state.isMono ? '#444444' : state.lineColor;
-        const boldLineColor = state.isMono ? '#111111' : state.lineColor;
-        const stepPx = state.gridSpacingMm * MM_TO_PX;
-
+      // 4. 侧边栏
+      if (state.enableSidebar) {
+        const sideW_Px = state.sidebarWidthMm * MM_TO_PX;
         ctx.save();
-        ctx.strokeStyle = baseLineColor;
-        ctx.lineWidth = state.lineWidth * 1.5;
-        if (state.lineDash === 'dashed') ctx.setLineDash([12, 8]);
-        else if (state.lineDash === 'dotted') ctx.setLineDash([3, 6]);
+        ctx.strokeStyle = state.isMono ? '#333333' : state.sidebarColor;
+        ctx.lineWidth = Math.max(1.8, state.lineWidth * 2.5);
+        if (state.sidebarDash === 'dashed') ctx.setLineDash([12, 8]);
+        else if (state.sidebarDash === 'dotted') ctx.setLineDash([3, 6]);
         else ctx.setLineDash([]);
 
-        renderPaperTemplateCentered(ctx, state.paperType, leftPx, topPx, rightPx, bottomPx, stepPx, baseLineColor, boldLineColor);
-        ctx.restore();
-
-        // 右上角日期行
-        if (state.showDateLine && ['lined', 'grid', 'dot'].includes(state.paperType)) {
-          ctx.save();
-          ctx.strokeStyle = baseLineColor;
-          ctx.fillStyle = baseLineColor;
-          ctx.lineWidth = state.lineWidth * 1.5;
-          const dateY = topPx - 5 * MM_TO_PX;
-          if (dateY > 10) {
-            ctx.font = `${Math.round(11 * (RENDER_DPI / 72))}px sans-serif`;
-            ctx.textAlign = 'right';
-            ctx.fillText('Date: ___________', rightPx, dateY);
+        if (state.sidebarPos === 'left') {
+          if (state.sidebarBgColor) {
+            ctx.fillStyle = state.sidebarBgColor;
+            ctx.fillRect(leftPx, topPx, sideW_Px, bottomPx - topPx);
           }
-          ctx.restore();
+          const splitX = leftPx + sideW_Px;
+          ctx.beginPath(); ctx.moveTo(splitX, topPx); ctx.lineTo(splitX, bottomPx); ctx.stroke();
+          leftPx = splitX;
+        } else {
+          if (state.sidebarBgColor) {
+            ctx.fillStyle = state.sidebarBgColor;
+            ctx.fillRect(rightPx - sideW_Px, topPx, sideW_Px, bottomPx - topPx);
+          }
+          const splitX = rightPx - sideW_Px;
+          ctx.beginPath(); ctx.moveTo(splitX, topPx); ctx.lineTo(splitX, bottomPx); ctx.stroke();
+          rightPx = splitX;
         }
-
-        // 6. 水印
-        if (state.enableWatermark && state.watermarkText.trim()) {
-          ctx.save();
-          ctx.globalAlpha = state.watermarkOpacity;
-          ctx.fillStyle = state.watermarkColor;
-          const fontPx = Math.round(state.watermarkFontSize * (RENDER_DPI / 72));
-          ctx.font = `bold ${fontPx}px -apple-system, sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.translate(widthPx / 2, heightPx / 2);
-          ctx.rotate((state.watermarkAngle * Math.PI) / 180);
-          ctx.fillText(state.watermarkText, 0, 0);
-          ctx.restore();
-        }
-
-        // 7. Logo 渲染
-        if (state.enableLogo && state.logoImg) {
-          ctx.save();
-          ctx.globalAlpha = state.logoOpacity;
-          const logoSizePx = state.logoSizeMm * MM_TO_PX;
-          const padPx = 15 * MM_TO_PX;
-          let lx = widthPx - logoSizePx - padPx;
-          let ly = heightPx - logoSizePx - padPx;
-
-          if (state.logoPos === 'tl') { lx = padPx; ly = padPx; }
-          else if (state.logoPos === 'tr') { lx = widthPx - logoSizePx - padPx; ly = padPx; }
-          else if (state.logoPos === 'bl') { lx = padPx; ly = heightPx - logoSizePx - padPx; }
-          else if (state.logoPos === 'center') { lx = (widthPx - logoSizePx) / 2; ly = (heightPx - logoSizePx) / 2; }
-
-          ctx.drawImage(state.logoImg, lx, ly, logoSizePx, logoSizePx);
-          ctx.restore();
-        }
-
-        // 8. 页码
-        if (state.showPageNum) {
-          ctx.save();
-          ctx.fillStyle = '#666666';
-          ctx.font = `${Math.round(12 * (RENDER_DPI / 72))}px sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.fillText(`- ${state.startPage} -`, widthPx / 2, heightPx - 10 * MM_TO_PX);
-          ctx.restore();
-        }
-
-        // 9. 打孔标记
-        const hasPunch = Object.values(state.punch).some(v => v === true);
-        if (hasPunch) {
-          drawPunchMarkers(ctx, widthPx, heightPx);
-        }
-
-        updateToolbarInfo(rawW_mm, rawH_mm);
-      } catch (err) {
-        console.error('drawPaper failed safely:', err);
+        ctx.restore();
       }
+
+      // 5. 核心线条与居中平摊
+      const baseLineColor = state.isMono ? '#444444' : state.lineColor;
+      const boldLineColor = state.isMono ? '#111111' : state.lineColor;
+      const stepPx = state.gridSpacingMm * MM_TO_PX;
+
+      ctx.save();
+      ctx.strokeStyle = baseLineColor;
+      ctx.lineWidth = state.lineWidth * 1.5;
+      if (state.lineDash === 'dashed') ctx.setLineDash([12, 8]);
+      else if (state.lineDash === 'dotted') ctx.setLineDash([3, 6]);
+      else ctx.setLineDash([]);
+
+      renderPaperTemplateCentered(ctx, state.paperType, leftPx, topPx, rightPx, bottomPx, stepPx, baseLineColor, boldLineColor);
+      ctx.restore();
+
+      // 右上角日期行
+      if (state.showDateLine && ['lined', 'grid', 'dot'].includes(state.paperType)) {
+        ctx.save();
+        ctx.strokeStyle = baseLineColor;
+        ctx.fillStyle = baseLineColor;
+        ctx.lineWidth = state.lineWidth * 1.5;
+        const dateY = topPx - 5 * MM_TO_PX;
+        if (dateY > 10) {
+          ctx.font = `${Math.round(11 * (RENDER_DPI / 72))}px sans-serif`;
+          ctx.textAlign = 'right';
+          ctx.fillText('Date: ___________', rightPx, dateY);
+        }
+        ctx.restore();
+      }
+
+      // 6. 水印
+      if (state.enableWatermark && state.watermarkText.trim()) {
+        ctx.save();
+        ctx.globalAlpha = state.watermarkOpacity;
+        ctx.fillStyle = state.watermarkColor;
+        const fontPx = Math.round(state.watermarkFontSize * (RENDER_DPI / 72));
+        ctx.font = `bold ${fontPx}px -apple-system, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.translate(widthPx / 2, heightPx / 2);
+        ctx.rotate((state.watermarkAngle * Math.PI) / 180);
+        ctx.fillText(state.watermarkText, 0, 0);
+        ctx.restore();
+      }
+
+      // 7. Logo 渲染
+      if (state.enableLogo && state.logoImg) {
+        ctx.save();
+        ctx.globalAlpha = state.logoOpacity;
+        const logoSizePx = state.logoSizeMm * MM_TO_PX;
+        const padPx = 15 * MM_TO_PX;
+        let lx = widthPx - logoSizePx - padPx;
+        let ly = heightPx - logoSizePx - padPx;
+
+        if (state.logoPos === 'tl') { lx = padPx; ly = padPx; }
+        else if (state.logoPos === 'tr') { lx = widthPx - logoSizePx - padPx; ly = padPx; }
+        else if (state.logoPos === 'bl') { lx = padPx; ly = heightPx - logoSizePx - padPx; }
+        else if (state.logoPos === 'center') { lx = (widthPx - logoSizePx) / 2; ly = (heightPx - logoSizePx) / 2; }
+
+        ctx.drawImage(state.logoImg, lx, ly, logoSizePx, logoSizePx);
+        ctx.restore();
+      }
+
+      // 8. 页码
+      if (state.showPageNum) {
+        ctx.save();
+        ctx.fillStyle = '#666666';
+        ctx.font = `${Math.round(12 * (RENDER_DPI / 72))}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`- ${state.startPage} -`, widthPx / 2, heightPx - 10 * MM_TO_PX);
+        ctx.restore();
+      }
+
+      // 9. 打孔标记
+      const hasPunch = Object.values(state.punch).some(v => v === true);
+      if (hasPunch) {
+        drawPunchMarkers(ctx, widthPx, heightPx);
+      }
+
+      updateToolbarInfo(rawW_mm, rawH_mm);
     }
 
     // 左右留白绝对均摊对称渲染引擎
@@ -2519,15 +2406,11 @@
         w_mm = state.isLandscape ? Math.max(def.w, def.h) : Math.min(def.w, def.h);
         h_mm = state.isLandscape ? Math.min(def.w, def.h) : Math.max(def.w, def.h);
       }
-      const selectEl = document.getElementById('paperTypeSelect');
-      const typeName = (selectEl && selectEl.selectedOptions[0]) ? selectEl.selectedOptions[0].text : '纸张';
+      const typeName = document.getElementById('paperTypeSelect').selectedOptions[0].text;
       const orientName = state.isLandscape ? '横向' : '纵向';
-      const badgeInfo = document.getElementById('badgePaperInfo');
-      if (badgeInfo) badgeInfo.textContent = `${typeName} · ${state.standardSize} ${orientName}`;
-      const badgeDim = document.getElementById('badgePaperDimension');
-      if (badgeDim) badgeDim.textContent = `${Math.round(w_mm)} × ${Math.round(h_mm)} mm`;
-      const zoomText = document.getElementById('zoomPercentText');
-      if (zoomText) zoomText.textContent = Math.round(state.zoom * 100) + '%';
+      document.getElementById('badgePaperInfo').textContent = `${typeName} · ${state.standardSize} ${orientName}`;
+      document.getElementById('badgePaperDimension').textContent = `${Math.round(w_mm)} × ${Math.round(h_mm)} mm`;
+      document.getElementById('zoomPercentText').textContent = Math.round(state.zoom * 100) + '%';
     }
 
     // 导出处理
@@ -2591,6 +2474,7 @@
     const hintSpacingAlert = document.getElementById('hintSpacingAlert');
     const badgeRecommend = document.getElementById('badgeRecommend');
 
+    // 纸张切换时完整调度各卡片
     paperTypeSelect.onchange = (e) => {
       state.paperType = e.target.value;
       const unitStr = state.unit === 'in' ? 'in' : 'mm';
@@ -2616,6 +2500,7 @@
       const schoolBox = document.getElementById('boxSchoolHeaderOptions');
       schoolBox.className = 'sub-settings-box';
 
+      // 根据具体纸张类型适配文案和专属卡片
       if (state.paperType === 'guitar_tab') {
         labelSpacing.textContent = `六线谱高度 (${unitStr})`;
         hintSpacingDesc.textContent = '吉他六线谱组的总高度';
