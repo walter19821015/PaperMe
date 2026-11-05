@@ -77,7 +77,6 @@
       direction: ltr !important;
     }
 
-    /* 一行 5 个操作按钮 */
     .export-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -123,7 +122,7 @@
       align-items: center;
       gap: 6px;
     }
-    .form-row { display: flex; flex-direction: column; gap: 4px; position: relative; }
+    .form-row { display: flex; flex-direction: column; gap: 4px; }
     .form-label { font-size: 12px; color: #555555; }
 
     select, input[type="text"], input[type="number"], input[type="file"] {
@@ -198,7 +197,6 @@
       background: transparent;
     }
 
-    /* 8 个色块排布 */
     .color-palette-8 {
       display: flex;
       align-items: center;
@@ -252,7 +250,6 @@
       height: 14px;
     }
 
-    /* 二级控制卡片 */
     .sub-settings-box {
       background: #f8faf8;
       border: 1px solid #d8e2d9;
@@ -263,54 +260,14 @@
       flex-direction: column;
       gap: 8px;
     }
-    .sub-box-yellow {
-      background: #fffbeb !important;
-      border-color: #fef08a !important;
-    }
-    .sub-box-pink {
-      background: #fff1f2 !important;
-      border-color: #fecdd3 !important;
-    }
-    .sub-box-cyan {
-      background: #ecfeff !important;
-      border-color: #a5f3fc !important;
-    }
-    .sub-box-blue {
-      background: #eff6ff !important;
-      border-color: #bfdbfe !important;
-    }
-    .sub-box-gray {
-      background: #f8fafc !important;
-      border-color: #e2e8f0 !important;
-    }
-
-    .recommend-badge {
-      position: absolute;
-      right: 8px;
-      top: 26px;
-      background: #dcfce7;
-      color: #15803d;
+    .warn-hint-text {
       font-size: 11px;
-      padding: 2px 6px;
+      color: #b45309;
+      line-height: 1.4;
+      background: #fef3c7;
+      padding: 4px 8px;
       border-radius: 4px;
-      font-weight: 500;
-      pointer-events: none;
     }
-    .hint-alert-warn {
-      color: #dc2626;
-      font-size: 11px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .hint-alert-ok {
-      color: #16a34a;
-      font-size: 11px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
     .range-row {
       display: flex;
       align-items: center;
@@ -370,7 +327,7 @@
       padding: 40px;
     }
 
-    /* 纸张容器：彻底消除 300x150 坍塌 */
+    /* 纸张容器：彻底杜绝 300x150 坍塌，由 JS 计算绝对尺寸 */
     .paper-sheet {
       background: #ffffff;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
@@ -446,7 +403,6 @@
 
   <main>
     <aside class="sidebar" id="mainSidebar">
-      <!-- 5 导出功能按钮 -->
       <div class="export-grid">
         <button class="btn-export btn-pdf" id="btnExportPDF">
           <span>📄</span><span data-i18n="export_pdf">导出 PDF</span>
@@ -465,7 +421,6 @@
         </button>
       </div>
 
-      <!-- 打印机类型 -->
       <div class="form-section">
         <div class="section-title">
           <span>🖨️</span><span data-i18n="printer_type">打印机类型</span>
@@ -477,7 +432,6 @@
         <div class="sub-hint" id="printerHint" data-i18n="printer_hint">全彩：可以使用主题和取色器。</div>
       </div>
 
-      <!-- 纸张类型选择 -->
       <div class="form-section">
         <div class="section-title">
           <span>📋</span><span data-i18n="paper_type">纸张类型</span>
@@ -534,7 +488,6 @@
         </select>
       </div>
 
-      <!-- 纸张尺寸 -->
       <div class="form-section">
         <div class="section-title">
           <span>📐</span><span data-i18n="paper_size_title">纸张尺寸</span>
@@ -563,7 +516,6 @@
         </select>
       </div>
 
-      <!-- 主题配色 -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="theme_color">主题</span>
@@ -578,7 +530,6 @@
         </select>
       </div>
 
-      <!-- 线条样式与专属控制项 -->
       <div class="form-section">
         <div class="section-title">
           <span>✏️</span><span data-i18n="line_style">线条样式</span>
@@ -608,17 +559,13 @@
           </div>
         </div>
 
-        <!-- 动态主输入项（带推荐标、说明、校验） -->
-        <div class="form-row" style="margin-top:6px;" id="rowGridSpacing">
+        <div class="form-row" style="margin-top:4px;" id="rowGridSpacing">
           <span class="form-label" id="labelSpacing">格距 (mm)</span>
-          <span class="recommend-badge" id="badgeRecommend">推荐</span>
-          <input type="number" id="inputGridSpacing" value="15" step="0.5" />
+          <input type="number" id="inputGridSpacing" value="15" step="0.5" min="1" max="100" />
           <span class="sub-hint" id="hintSpacingDesc"></span>
-          <span class="sub-hint" id="hintSpacingTip" style="font-weight:500;"></span>
-          <div id="hintSpacingAlert"></div>
         </div>
 
-        <!-- 专属卡片：五线谱小节数 (尤克里里/吉他和弦) -->
+        <!-- 专属控制卡片：吉他/尤克里里/小节数 -->
         <div class="sub-settings-box" id="boxMusicMeasures" style="display:none;">
           <span class="form-label" style="font-weight:600;">每行小节数</span>
           <select id="selectMeasures">
@@ -631,7 +578,17 @@
           <span class="sub-hint" id="hintMeasuresDesc"></span>
         </div>
 
-        <!-- 专属卡片：书法纸线条/网格布局 -->
+        <!-- 专属控制卡片：六边形朝向 -->
+        <div class="sub-settings-box" id="boxHexOptions" style="display:none;">
+          <span class="form-label" style="font-weight:600;">六边形朝向</span>
+          <select id="selectHexOrient">
+            <option value="pointy" selected>尖顶朝上 ( ▲ )</option>
+            <option value="flat">平顶朝上 ( ⬢ )</option>
+          </select>
+          <span class="sub-hint">默认尖顶朝上，适合地图与游戏格纸；需要平顶样式时可切换。</span>
+        </div>
+
+        <!-- 专属控制卡片：书法纸布局 -->
         <div class="sub-settings-box" id="boxCalligraphyLayout" style="display:none;">
           <span class="form-label" style="font-weight:600;">线条 / 网格布局</span>
           <select id="selectCalligraphyFit">
@@ -641,7 +598,7 @@
           <span class="sub-hint">线条和网格在边距围成的区域内铺满，首尾贴边，左右/上下不会一边多一边少。</span>
         </div>
 
-        <!-- 专属卡片：现代书法斜线引导纸 (55°) -->
+        <!-- 专属控制卡片：斜线引导设置 -->
         <div class="sub-settings-box" id="boxSlantGuideOptions" style="display:none;">
           <span class="form-label" style="font-weight:600;">斜线引导设置</span>
           <div class="range-row">
@@ -652,7 +609,7 @@
           <span class="sub-hint">默认 55°，适合现代书法 / Copperplate。打印后垫在练习纸下；增大更竖、减小更平。</span>
         </div>
 
-        <!-- 专属卡片：斜线格纸设置 (kosa) -->
+        <!-- 专属控制卡片：斜线格纸设置 (kosa) -->
         <div class="sub-settings-box" id="boxKosaOptions" style="display:none;">
           <span class="form-label" style="font-weight:600;">斜线格纸设置</span>
           <div class="form-row">
@@ -661,7 +618,6 @@
               <option value="group" selected>分组书写带</option>
               <option value="regular">常规连续横线</option>
             </select>
-            <span class="sub-hint">分组：每组几条横线，组与组之间留白更大——经典 kosa liniika。</span>
           </div>
           <div class="form-row">
             <span class="form-label">每组横线数</span>
@@ -671,29 +627,10 @@
             <span class="form-label">组间距 (mm)</span>
             <input type="number" id="inputKosaGroupGap" value="7.5" step="0.5" />
           </div>
-          <div class="form-row">
-            <span class="form-label">斜线角度（相对水平）</span>
-            <div class="range-row">
-              <input type="range" id="inputKosaAngle" min="50" max="75" value="65" />
-              <span class="sub-hint" id="valKosaAngle">65°</span>
-            </div>
-          </div>
-          <div class="form-row">
-            <span class="form-label">斜线间距 (mm)</span>
-            <input type="number" id="inputKosaSlantGap" value="5" step="0.5" />
-          </div>
-          <div class="form-row">
-            <span class="form-label">斜线线宽 (px)</span>
-            <input type="number" id="inputKosaSlantWidth" value="0.35" step="0.05" />
-          </div>
           <label class="checkbox-item"><input type="checkbox" id="chkKosaRedLine" checked /> <span>显示左侧红边线</span></label>
-          <div class="form-row" id="rowKosaRedMargin">
-            <span class="form-label">红边线距左槽 (mm)</span>
-            <input type="number" id="inputKosaRedMargin" value="20" step="1" />
-          </div>
         </div>
 
-        <!-- 专属卡片：透视网格 (草图) -->
+        <!-- 专属控制卡片：透视网格 -->
         <div class="sub-settings-box" id="boxPerspectiveOptions" style="display:none;">
           <span class="form-label" style="font-weight:600;">透视网格 (草图)</span>
           <div class="form-row">
@@ -708,68 +645,7 @@
             <span class="form-label" style="width:110px;">视平线高度 (%)</span>
             <input type="range" id="inputPerspHorizon" min="20" max="80" value="50" />
           </div>
-          <div class="range-row">
-            <span class="form-label" style="width:110px;">灭点张开程度 (%)</span>
-            <input type="range" id="inputPerspSpread" min="20" max="100" value="60" />
-          </div>
           <label class="checkbox-item"><input type="checkbox" id="chkPerspLine" checked /> <span>绘制视平线</span></label>
-          <span class="sub-hint">用滑块调整视平线与灭点位置，以匹配你的构图；线条疏密由上方的「网格密度」控制。</span>
-        </div>
-
-        <!-- 专属卡片：六边形朝向 -->
-        <div class="sub-settings-box" id="boxHexOptions" style="display:none;">
-          <span class="form-label" style="font-weight:600;">六边形朝向</span>
-          <select id="selectHexOrient">
-            <option value="pointy" selected>尖顶朝上 ( ▲ )</option>
-            <option value="flat">平顶朝上 ( ⬢ )</option>
-          </select>
-          <span class="sub-hint">默认尖顶朝上，适合地图与游戏格纸；需要平顶样式时可切换。</span>
-        </div>
-
-        <!-- 专属卡片：美式幼儿书写纸页面版式 -->
-        <div class="sub-settings-box sub-box-blue" id="boxUSKinderOptions" style="display:none;">
-          <span class="form-label" style="font-weight:600;">页面版式</span>
-          <label class="checkbox-item"><input type="radio" name="usKinderLayout" value="full" checked /> <span>整页书写线</span></label>
-          <label class="checkbox-item"><input type="radio" name="usKinderLayout" value="split" /> <span>上半画画、下半书写</span></label>
-          <span class="sub-hint">选「上半画画」时，页面上半留白，只在下半画书写线。</span>
-        </div>
-
-        <!-- 专属卡片：德标三年级练字格 Lineatur 3 选项 -->
-        <div class="sub-settings-box sub-box-blue" id="boxLineatur3Options" style="display:none;">
-          <span class="form-label" style="font-weight:600;">Lineatur 3 选项</span>
-          <label class="checkbox-item"><input type="checkbox" id="chkL3Header" checked /> <span>显示页眉（姓名 / 日期 / 页码）</span></label>
-          <label class="checkbox-item"><input type="checkbox" id="chkL3LineNum" checked /> <span>显示左侧奇数行号</span></label>
-          <label class="checkbox-item"><input type="checkbox" id="chkL3PunchMark" checked /> <span>显示左侧打孔示意</span></label>
-          <label class="checkbox-item"><input type="checkbox" id="chkL3Footer" checked /> <span>显示页脚标注</span></label>
-        </div>
-
-        <!-- 专属卡片：盲文练习纸选项 -->
-        <div class="sub-settings-box sub-box-blue" id="boxBrailleOptions" style="display:none;">
-          <div class="form-row">
-            <span class="form-label">每页行数</span>
-            <select id="selectBrailleRows">
-              <option value="5">5 行</option>
-              <option value="6" selected>6 行</option>
-              <option value="7">7 行</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <span class="form-label">每行格数</span>
-            <select id="selectBrailleCols">
-              <option value="14">14 格</option>
-              <option value="16" selected>16 格</option>
-              <option value="18">18 格</option>
-            </select>
-          </div>
-          <label class="checkbox-item"><input type="checkbox" id="chkBrailleBox" checked /> <span>显示外框</span></label>
-          <label class="checkbox-item"><input type="checkbox" id="chkBrailleSepLine" checked /> <span>显示行底分隔线</span></label>
-          <span class="sub-hint">每格为标准 2×3 空心点阵；默认横版 A4 (297×210 mm)。</span>
-        </div>
-
-        <!-- 专属卡片：日式原稿纸顶部标题栏 -->
-        <div class="sub-settings-box sub-box-gray" id="boxGenkoOptions" style="display:none;">
-          <label class="checkbox-item"><input type="checkbox" id="chkGenkoHeader" checked /> <span>显示顶部日期与标题栏</span></label>
-          <span class="sub-hint">左侧是「月」「日」和写星期用的括号，右侧有方括号区写课题或姓名。关掉后整块方格更高，适合只要格子不要顶栏。</span>
         </div>
 
         <!-- 基础纸张选项（右上角日期行） -->
@@ -778,12 +654,16 @@
           <label class="checkbox-item"><input type="checkbox" id="chkShowDateLine" /> <span>右上角日期行</span></label>
         </div>
 
-        <!-- 作业纸/练习纸通用专属页眉控制卡片（带自适应色彩） -->
+        <!-- 作业纸通用页眉 -->
         <div class="sub-settings-box" id="boxSchoolHeaderOptions" style="display:none;">
           <label class="checkbox-item"><input type="checkbox" id="chkSchoolHeader" checked /> <span id="labelSchoolHeader">显示页眉（班级、姓名、学号、日期）</span></label>
-          <span class="sub-hint" id="descSchoolHeader">勾选后会在纸张顶部显示班级、姓名、学号、日期等信息</span>
           <label class="checkbox-item" id="chkEnglishFrameLabel" style="display:none;"><input type="checkbox" id="chkEnglishFrame" checked /> <span>淡蓝书写框</span></label>
-          <span class="sub-hint" id="descEnglishFrame" style="display:none;">在写字区域加一圈淡淡的蓝框，更像平时用的练习本，一眼也能看清从哪里开始写。</span>
+        </div>
+
+        <!-- 原稿用纸标题栏 -->
+        <div class="sub-settings-box" id="boxGenkoOptions" style="display:none;">
+          <label class="checkbox-item"><input type="checkbox" id="chkGenkoHeader" checked /> <span>显示顶部日期与标题栏</span></label>
+          <span class="sub-hint">左侧是「月」「日」和写星期用的括号，右侧有方括号区写课题或姓名。</span>
         </div>
 
         <!-- 五线谱独立选项 -->
@@ -808,7 +688,6 @@
         </div>
       </div>
 
-      <!-- 边距设置 -->
       <div class="form-section">
         <div class="section-title">
           <span>🔲</span><span data-i18n="margin_settings">边距设置</span>
@@ -822,7 +701,6 @@
         </div>
       </div>
 
-      <!-- 打孔定位标记 -->
       <div class="form-section">
         <div class="section-title">
           <span>🔘</span><span data-i18n="punch_marker">打孔定位标记</span>
@@ -856,7 +734,6 @@
         </div>
       </div>
 
-      <!-- 侧边栏设置 -->
       <div class="form-section">
         <div class="section-title">
           <span>📑</span><span data-i18n="sidebar_settings">侧边栏</span>
@@ -899,7 +776,6 @@
         </div>
       </div>
 
-      <!-- 背景设置 -->
       <div class="form-section">
         <div class="section-title">
           <span>🎨</span><span data-i18n="bg_watermark">背景设置</span>
@@ -966,7 +842,6 @@
         </div>
       </div>
 
-      <!-- 水印设置 -->
       <div class="form-section">
         <div class="section-title"><span>🩸</span><span>水印设置</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableWatermark" /> <span>启用水印</span></label>
@@ -1012,7 +887,6 @@
         </div>
       </div>
 
-      <!-- Logo / 标识设置 -->
       <div class="form-section">
         <div class="section-title"><span>🖼️</span><span>Logo / 标识</span></div>
         <label class="checkbox-item"><input type="checkbox" id="chkEnableLogo" /> <span>启用 Logo</span></label>
@@ -1047,7 +921,6 @@
         </div>
       </div>
 
-      <!-- 页面设置 -->
       <div class="form-section">
         <div class="section-title"><span>📄</span><span>页面设置</span></div>
         <div class="form-row">
@@ -1089,10 +962,48 @@
   </main>
 
   <script>
+    const I18N_DICT = {
+      zh: {
+        brand: '纸张设计与打印生成器', export_pdf: '导出 PDF', export_svg: '导出 SVG', export_png: '导出 PNG', print_now: '直接打印',
+        printer_type: '打印机类型', color_printer: '彩色打印机', mono_printer: '黑白激光打印机',
+        printer_hint: '全彩：可以使用主题和取色器。', printer_hint_mono: '黑白：自动强制纯黑/纯灰线条输出。',
+        paper_type: '纸张类型', paper_size_title: '纸张尺寸', portrait: '纵向', landscape: '横向', theme_color: '主题',
+        line_style: '线条样式', line_type: '线条类型', solid: '实线', dashed: '虚线', dotted: '点线',
+        line_width: '线条粗细 (px)', margin_settings: '边距设置',
+        punch_marker: '打孔定位标记',
+        punch_us3: '美式 3 孔活页夹 (左侧, 孔距 4.25 英寸)', punch_iso2: '2 孔 (左侧, 孔距 80 毫米)', punch_iso4: '4 孔 (左侧, 孔距 80 毫米)',
+        punch_5hole: '5 孔 (左侧, 兼容 3 孔和 2 孔)', punch_top2: '顶部 2 孔 (顶部夹子文件夹, 孔距 2.75 英寸)', punch_single: '单环 (左上角)',
+        sidebar_settings: '侧边栏', enable_sidebar: '启用侧边栏', position: '位置', pos_left: '左侧', pos_right: '右侧',
+        bg_watermark: '背景设置', bg_color: '背景颜色', bg_texture: '背景纹理', fit_window: '适应视口'
+      }
+    };
+
+    const PAPER_SIZES_MM = {
+      'A4': { w: 210, h: 297 },
+      'A5': { w: 148, h: 210 },
+      'A3': { w: 297, h: 420 },
+      'B4': { w: 250, h: 353 },
+      'B5': { w: 176, h: 250 },
+      'Letter': { w: 215.9, h: 279.4 },
+      'Legal': { w: 215.9, h: 355.6 },
+      'Tabloid': { w: 279.4, h: 431.8 },
+      'Executive': { w: 184.15, h: 266.7 },
+      'Custom': { w: 210, h: 297 }
+    };
+
+    const THEME_PRESETS = {
+      vintage: { line: '#8b5a2b', bg: '#ffffff' },
+      default: { line: '#4a5b5c', bg: '#ffffff' },
+      dark: { line: '#1f2421', bg: '#f5f5f5' },
+      vintage_brown: { line: '#5c3a21', bg: '#fcf8ee' },
+      soft: { line: '#8a7d74', bg: '#fbfaf8' },
+      classic: { line: '#2c4a6f', bg: '#ffffff' }
+    };
+
     const state = {
       lang: 'zh',
       isMono: false,
-      paperType: 'mi_zi_ge',
+      paperType: 'mi_zi_ge', // 默认米字格
       standardSize: 'A4',
       isLandscape: false,
       unit: 'mm',
@@ -1115,24 +1026,10 @@
       kosaStyle: 'group',
       kosaLines: 3,
       kosaGroupGap: 7.5,
-      kosaAngle: 65,
-      kosaSlantGap: 5,
-      kosaSlantWidth: 0.35,
       kosaRedLine: true,
-      kosaRedMarginMm: 20,
       perspType: '2',
       perspHorizon: 50,
-      perspSpread: 60,
       perspLine: true,
-      usKinderLayout: 'full',
-      l3Header: true,
-      l3LineNum: true,
-      l3PunchMark: true,
-      l3Footer: true,
-      brailleRows: 6,
-      brailleCols: 16,
-      brailleBox: true,
-      brailleSepLine: true,
       showDateLine: false,
       schoolHeader: true,
       englishFrame: true,
@@ -1174,7 +1071,7 @@
         style: 'dot',
         offsetMm: 12
       },
-      zoom: 0.39
+      zoom: 0.39 // 严格默认 39%
     };
 
     const canvas = document.getElementById('renderCanvas');
@@ -1197,6 +1094,7 @@
       updateToolbarInfo();
     }
 
+    // 核心绘制主逻辑
     function drawPaper() {
       const sizeDef = PAPER_SIZES_MM[state.standardSize] || PAPER_SIZES_MM['A4'];
       const rawW_mm = state.isLandscape ? Math.max(sizeDef.w, sizeDef.h) : Math.min(sizeDef.w, sizeDef.h);
@@ -1205,9 +1103,11 @@
       const widthPx = Math.round(rawW_mm * MM_TO_PX);
       const heightPx = Math.round(rawH_mm * MM_TO_PX);
 
+      // 1. 设置 Canvas 真实 300 DPI 矢量分辨率
       canvas.width = widthPx;
       canvas.height = heightPx;
 
+      // 2. 严格按 39% 给 CSS 赋值显式尺寸，杜绝任何外部压缩
       const displayW = Math.round(widthPx * state.zoom);
       const displayH = Math.round(heightPx * state.zoom);
 
@@ -1216,22 +1116,22 @@
       canvas.style.width = displayW + 'px';
       canvas.style.height = displayH + 'px';
 
-      // 1. 底色
+      // 3. 底色
       ctx.fillStyle = state.bgColor;
       ctx.fillRect(0, 0, widthPx, heightPx);
 
-      // 2. 纹理层渲染 (实心底色全铺)
+      // 4. 纹理层渲染 (实心底色全铺)
       if (state.texture !== 'none') {
         drawBackgroundTexture(ctx, widthPx, heightPx, state.texture, state.textureColor, state.textureOpacity);
       }
 
-      // 3. 边距与绝对对称居中
+      // 5. 边距与绝对对称居中
       const topPx = state.marginTopMm * MM_TO_PX;
       const bottomPx = heightPx - (state.marginBottomMm * MM_TO_PX);
       let leftPx = state.marginLeftMm * MM_TO_PX;
       let rightPx = widthPx - (state.marginRightMm * MM_TO_PX);
 
-      // 4. 侧边栏
+      // 6. 侧边栏
       if (state.enableSidebar) {
         const sideW_Px = state.sidebarWidthMm * MM_TO_PX;
         ctx.save();
@@ -1261,7 +1161,7 @@
         ctx.restore();
       }
 
-      // 5. 核心线条与居中平摊
+      // 7. 核心线条与居中平摊
       const baseLineColor = state.isMono ? '#444444' : state.lineColor;
       const boldLineColor = state.isMono ? '#111111' : state.lineColor;
       const stepPx = state.gridSpacingMm * MM_TO_PX;
@@ -1291,7 +1191,7 @@
         ctx.restore();
       }
 
-      // 6. 水印
+      // 8. 水印
       if (state.enableWatermark && state.watermarkText.trim()) {
         ctx.save();
         ctx.globalAlpha = state.watermarkOpacity;
@@ -1306,7 +1206,7 @@
         ctx.restore();
       }
 
-      // 7. Logo 渲染
+      // 9. Logo 渲染
       if (state.enableLogo && state.logoImg) {
         ctx.save();
         ctx.globalAlpha = state.logoOpacity;
@@ -1324,7 +1224,7 @@
         ctx.restore();
       }
 
-      // 8. 页码
+      // 10. 页码
       if (state.showPageNum) {
         ctx.save();
         ctx.fillStyle = '#666666';
@@ -1334,7 +1234,7 @@
         ctx.restore();
       }
 
-      // 9. 打孔标记
+      // 11. 打孔标记
       const hasPunch = Object.values(state.punch).some(v => v === true);
       if (hasPunch) {
         drawPunchMarkers(ctx, widthPx, heightPx);
@@ -1360,6 +1260,7 @@
         let curY = top;
 
         while (curY + totalHeight <= bottom) {
+          // 4 个和弦框 (6纵 3横)
           const chordW = 28 * MM_TO_PX;
           const chordBoxH = chordH * 0.85;
           const chordGap = (availW - 4 * chordW) / 3;
@@ -1368,6 +1269,7 @@
             drawChordBox(ctx, cx, curY, chordW, chordBoxH, 6, 3, baseColor);
           }
 
+          // 六线谱
           const tabTop = curY + chordH;
           const subH = tabH / 5;
           ctx.strokeStyle = baseColor;
@@ -1415,6 +1317,7 @@
         let curY = top;
 
         while (curY + sysHeight <= bottom) {
+          // 五线谱
           const s5 = staveH / 4;
           for (let i = 0; i < 5; i++) {
             const y = curY + i * s5;
@@ -1424,13 +1327,14 @@
           ctx.fillStyle = baseColor;
           ctx.fillText('𝄞', left + 26, curY + staveH);
 
+          // TAB 四线
           const tabTop = curY + staveH + middleGap;
           const s4 = tabH / 3;
           for (let i = 0; i < 4; i++) {
             const y = tabTop + i * s4;
             ctx.beginPath(); ctx.moveTo(left + 24, y); ctx.lineTo(right, y); ctx.stroke();
           }
-
+          // TAB 标注与弦名 A E C G
           ctx.save();
           ctx.font = `bold ${Math.round(s4 * 0.8)}px sans-serif`;
           const uNotes = ['A', 'E', 'C', 'G'];
@@ -1439,6 +1343,7 @@
           }
           ctx.restore();
 
+          // 小节线
           if (state.measures > 0) {
             const mWidth = (availW - 24) / state.measures;
             for (let m = 0; m <= state.measures; m++) {
@@ -1461,6 +1366,7 @@
         let curY = top;
 
         while (curY + sysHeight <= bottom) {
+          // 五线谱
           const s5 = staveH / 4;
           for (let i = 0; i < 5; i++) {
             const y = curY + i * s5;
@@ -1470,6 +1376,7 @@
           ctx.fillStyle = baseColor;
           ctx.fillText('𝄞', left + 6, curY + staveH);
 
+          // 小节线
           const mCount = Math.max(1, state.measures);
           const mW = availW / mCount;
           for (let m = 0; m <= mCount; m++) {
@@ -1477,6 +1384,7 @@
             ctx.beginPath(); ctx.moveTo(mx, curY); ctx.lineTo(mx, curY + staveH); ctx.stroke();
           }
 
+          // 和弦行 (6纵 4横)
           const chordTop = curY + staveH + 12;
           const totalChords = mCount * 4;
           const cBoxW = (availW - (totalChords - 1) * 6) / totalChords;
@@ -1490,7 +1398,7 @@
         return;
       }
 
-      // 5. 书法纸 (铺满边距/内嵌全斜对角线+十字虚线)
+      // 5. 书法纸 (铺满边距/全斜对角线+十字虚线)
       if (type === 'calligraphy_base') {
         const cellSize = step;
         const cols = (state.calligraphyFit === 'fill') ? Math.round(availW / cellSize) : Math.floor(availW / cellSize);
@@ -1507,6 +1415,7 @@
             ctx.lineWidth = state.lineWidth * 2.0;
             ctx.strokeRect(x, y, actualW, actualH);
 
+            // 十字与对角米字虚线
             ctx.setLineDash([6, 6]);
             ctx.strokeStyle = baseColor;
             ctx.lineWidth = state.lineWidth * 0.9;
@@ -1546,11 +1455,12 @@
         const groupH = step * state.kosaLines;
         const groupGap = state.kosaGroupGap * MM_TO_PX;
 
+        // 左侧红边线
         if (state.kosaRedLine) {
           ctx.save();
           ctx.strokeStyle = '#ef4444';
           ctx.lineWidth = 1.6;
-          const redX = left + state.kosaRedMarginMm * MM_TO_PX;
+          const redX = left + 20 * MM_TO_PX;
           ctx.beginPath(); ctx.moveTo(redX, top); ctx.lineTo(redX, bottom); ctx.stroke();
           ctx.restore();
         }
@@ -1566,12 +1476,12 @@
           curY += groupH + groupGap;
         }
 
-        const rad = (state.kosaAngle * Math.PI) / 180;
+        // 65° 斜线交织
+        const rad = (65 * Math.PI) / 180;
         const dx = availH / Math.tan(rad);
         ctx.strokeStyle = '#cbd5e1';
-        ctx.lineWidth = state.kosaSlantWidth;
-        const sGap = state.kosaSlantGap * MM_TO_PX;
-        for (let x = left - dx; x <= right + dx; x += sGap) {
+        ctx.lineWidth = 0.8;
+        for (let x = left - dx; x <= right + dx; x += step * 1.2) {
           ctx.beginPath(); ctx.moveTo(x, bottom); ctx.lineTo(x + dx, top); ctx.stroke();
         }
         return;
@@ -1625,9 +1535,8 @@
           ctx.restore();
         }
 
-        const spreadPx = availW * (state.perspSpread / 100);
-        const vp1 = { x: left - spreadPx * 0.3, y: hy };
-        const vp2 = { x: right + spreadPx * 0.3, y: hy };
+        const vp1 = { x: left - 20, y: hy };
+        const vp2 = { x: right + 20, y: hy };
         const rayDensity = Math.max(12, Math.round(step * 2.5));
 
         for (let y = top; y <= bottom; y += rayDensity) {
@@ -1715,516 +1624,7 @@
         return;
       }
 
-      // 14. 汉语拼音作业纸
-      if (type === 'pinyin_homework') {
-        let curY = top;
-        if (state.schoolHeader) {
-          drawHeaderDualLine(ctx, left, curY, right, baseColor);
-          curY += 16 * MM_TO_PX;
-        }
-        const rowH = step;
-        const subH = rowH / 3;
-        const lineGap = rowH * 0.55;
-
-        while (curY + rowH <= bottom) {
-          for (let l = 0; l <= 3; l++) {
-            const y = curY + l * subH;
-            ctx.setLineDash((l === 1 || l === 2) ? [8, 6] : []);
-            ctx.strokeStyle = (l === 1 || l === 2) ? '#94a3b8' : baseColor;
-            ctx.lineWidth = (l === 0 || l === 3) ? 1.4 : 0.9;
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          const cellW = rowH * 1.4;
-          ctx.setLineDash([]);
-          ctx.strokeStyle = '#cbd5e1';
-          ctx.lineWidth = 0.7;
-          for (let x = left; x <= right; x += cellW) {
-            ctx.beginPath(); ctx.moveTo(x, curY); ctx.lineTo(x, curY + rowH); ctx.stroke();
-          }
-          curY += rowH + lineGap;
-        }
-        return;
-      }
-
-      // 15. 拼音田字格
-      if (type === 'pinyin_tian') {
-        let curY = top;
-        const tianSize = step;
-        const pinyinH = tianSize * 0.45;
-        const subH = pinyinH / 3;
-        const groupGap = tianSize * 0.35;
-        const cols = Math.floor(availW / tianSize);
-        const startX = left + (availW - cols * tianSize) / 2;
-
-        while (curY + pinyinH + tianSize <= bottom) {
-          for (let l = 0; l <= 3; l++) {
-            const py = curY + l * subH;
-            ctx.setLineDash((l === 1 || l === 2) ? [6, 6] : []);
-            ctx.strokeStyle = (l === 1 || l === 2) ? '#94a3b8' : baseColor;
-            ctx.lineWidth = 0.9;
-            ctx.beginPath(); ctx.moveTo(startX, py); ctx.lineTo(startX + cols * tianSize, py); ctx.stroke();
-          }
-          ctx.setLineDash([4, 6]);
-          for (let c = 0; c <= cols; c++) {
-            const px = startX + c * tianSize;
-            ctx.beginPath(); ctx.moveTo(px, curY); ctx.lineTo(px, curY + pinyinH); ctx.stroke();
-          }
-
-          const gridTop = curY + pinyinH;
-          for (let c = 0; c < cols; c++) {
-            const gx = startX + c * tianSize;
-            ctx.setLineDash([]);
-            ctx.lineWidth = 1.4;
-            ctx.strokeStyle = boldColor;
-            ctx.strokeRect(gx, gridTop, tianSize, tianSize);
-
-            ctx.setLineDash([6, 6]);
-            ctx.lineWidth = 0.8;
-            ctx.strokeStyle = baseColor;
-            ctx.beginPath();
-            ctx.moveTo(gx + tianSize / 2, gridTop); ctx.lineTo(gx + tianSize / 2, gridTop + tianSize);
-            ctx.moveTo(gx, gridTop + tianSize / 2); ctx.lineTo(gx + tianSize, gridTop + tianSize / 2);
-            ctx.stroke();
-          }
-
-          curY += pinyinH + tianSize + groupGap;
-        }
-        return;
-      }
-
-      // 16. 作文纸
-      if (type === 'composition') {
-        let curY = top;
-        if (state.schoolHeader) {
-          drawHeaderDualLine(ctx, left, curY, right, baseColor);
-          curY += 16 * MM_TO_PX;
-        }
-        const cellH = step;
-        const cellW = cellH;
-        const lineGap = cellH * 0.45;
-        const cols = Math.floor(availW / cellW);
-        const startX = left + (availW - cols * cellW) / 2;
-
-        ctx.setLineDash([]);
-        ctx.lineWidth = 1.0;
-        ctx.strokeStyle = baseColor;
-
-        while (curY + cellH <= bottom) {
-          for (let c = 0; c < cols; c++) {
-            ctx.strokeRect(startX + c * cellW, curY, cellW, cellH);
-          }
-          curY += cellH + lineGap;
-        }
-        return;
-      }
-
-      // 17. 原稿用纸 (日式稿纸)
-      if (type === 'genko_yoshi') {
-        let curY = top;
-        if (state.genkoHeader) {
-          ctx.save();
-          ctx.fillStyle = boldColor;
-          ctx.font = `${Math.round(12 * (RENDER_DPI / 72))}px serif`;
-          ctx.fillText('月      日      (      )', left + 20, curY + 12 * MM_TO_PX);
-          const rightBracketW = 120 * MM_TO_PX;
-          ctx.fillText('[', right - rightBracketW, curY + 12 * MM_TO_PX);
-          ctx.fillText(']', right - 10, curY + 12 * MM_TO_PX);
-          ctx.strokeStyle = baseColor;
-          ctx.beginPath(); ctx.moveTo(right - rightBracketW + 15, curY + 13 * MM_TO_PX); ctx.lineTo(right - 15, curY + 13 * MM_TO_PX); ctx.stroke();
-          ctx.restore();
-          curY += 18 * MM_TO_PX;
-        }
-        const cell = step;
-        const cols = Math.floor(availW / cell);
-        const rows = Math.floor((bottom - curY) / cell);
-        const startX = left + (availW - cols * cell) / 2;
-        const startY = curY;
-
-        for (let c = 0; c < cols; c++) {
-          for (let r = 0; r < rows; r++) {
-            const x = startX + c * cell;
-            const y = startY + r * cell;
-            ctx.setLineDash([]);
-            ctx.lineWidth = 1.1;
-            ctx.strokeStyle = baseColor;
-            ctx.strokeRect(x, y, cell, cell);
-
-            ctx.setLineDash([4, 6]);
-            ctx.lineWidth = 0.6;
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.beginPath();
-            ctx.moveTo(x + cell / 2, y); ctx.lineTo(x + cell / 2, y + cell);
-            ctx.moveTo(x, y + cell / 2); ctx.lineTo(x + cell, y + cell / 2);
-            ctx.stroke();
-          }
-        }
-        return;
-      }
-
-      // 18. 算术纸
-      if (type === 'arithmetic') {
-        let curY = top;
-        if (state.schoolHeader) {
-          drawHeaderDualLine(ctx, left, curY, right, baseColor);
-          curY += 18 * MM_TO_PX;
-        }
-        const cell = step;
-        const cols = Math.floor(availW / cell);
-        const rows = Math.floor((bottom - curY) / cell);
-        const startX = left + (availW - cols * cell) / 2;
-        const startY = curY;
-
-        ctx.setLineDash([]);
-        ctx.lineWidth = 0.9;
-        ctx.strokeStyle = baseColor;
-        for (let c = 0; c <= cols; c++) {
-          const x = startX + c * cell;
-          ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, startY + rows * cell); ctx.stroke();
-        }
-        for (let r = 0; r <= rows; r++) {
-          const y = startY + r * cell;
-          ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(startX + cols * cell, y); ctx.stroke();
-        }
-        return;
-      }
-
-      // 19. 英语作业纸
-      if (type === 'english_homework') {
-        let curY = top;
-        if (state.schoolHeader) {
-          drawHeaderQuadLine(ctx, left, curY, right, baseColor);
-          curY += 16 * MM_TO_PX;
-        }
-        const subGap = step;
-        const rowH = subGap * 3;
-        const lineGap = rowH * 0.85;
-
-        while (curY + rowH <= bottom) {
-          for (let l = 0; l <= 3; l++) {
-            const y = curY + l * subGap;
-            ctx.setLineDash((l === 1 || l === 2) ? [6, 6] : []);
-            ctx.strokeStyle = (l === 1 || l === 2) ? '#94a3b8' : baseColor;
-            ctx.lineWidth = (l === 2) ? 1.4 : 1.0;
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          curY += rowH + lineGap;
-        }
-        return;
-      }
-
-      // 20. 英文书法练习纸
-      if (type === 'english_calligraphy') {
-        let curY = top;
-        if (state.schoolHeader) {
-          drawHeaderQuadLine(ctx, left, curY, right, baseColor);
-          curY += 16 * MM_TO_PX;
-        }
-        const subGap = step;
-        const blockH = subGap * 3;
-        const blockGap = blockH * 0.7;
-
-        if (state.englishFrame) {
-          ctx.save();
-          ctx.strokeStyle = '#93c5fd';
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(left - 8, curY - 6, availW + 16, (bottom - curY + 12));
-          ctx.restore();
-        }
-
-        while (curY + blockH <= bottom) {
-          ctx.setLineDash([6, 6]);
-          ctx.strokeStyle = '#94a3b8';
-          ctx.lineWidth = 0.8;
-          ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(right, curY); ctx.stroke();
-
-          ctx.setLineDash([]);
-          ctx.strokeStyle = baseColor;
-          ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.moveTo(left, curY + subGap); ctx.lineTo(right, curY + subGap); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(left, curY + subGap * 2); ctx.lineTo(right, curY + subGap * 2); ctx.stroke();
-
-          ctx.setLineDash([6, 6]);
-          ctx.strokeStyle = '#94a3b8';
-          ctx.lineWidth = 0.8;
-          ctx.beginPath(); ctx.moveTo(left, curY + blockH); ctx.lineTo(right, curY + blockH); ctx.stroke();
-
-          curY += blockH + blockGap;
-        }
-        return;
-      }
-
-      // 21. 美式幼儿书写纸
-      if (type === 'us_kindergarten') {
-        const rowH = step;
-        const subH = rowH / 2;
-        const groupGap = rowH * 0.8;
-        let curY = (state.usKinderLayout === 'split') ? (top + availH * 0.45) : top;
-
-        if (state.usKinderLayout === 'split') {
-          ctx.save();
-          ctx.strokeStyle = '#94a3b8';
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(left, top, availW, availH * 0.4);
-          ctx.restore();
-        }
-
-        while (curY + rowH <= bottom) {
-          ctx.setLineDash([]);
-          ctx.strokeStyle = '#2563eb';
-          ctx.lineWidth = 1.4;
-          ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(right, curY); ctx.stroke();
-
-          ctx.setLineDash([8, 6]);
-          ctx.strokeStyle = '#3b82f6';
-          ctx.lineWidth = 1.0;
-          ctx.beginPath(); ctx.moveTo(left, curY + subH); ctx.lineTo(right, curY + subH); ctx.stroke();
-
-          ctx.setLineDash([]);
-          ctx.strokeStyle = '#dc2626';
-          ctx.lineWidth = 1.4;
-          ctx.beginPath(); ctx.moveTo(left, curY + rowH); ctx.lineTo(right, curY + rowH); ctx.stroke();
-
-          curY += rowH + groupGap;
-        }
-        return;
-      }
-
-      // 22. 德式三线练习纸 (带边框 / 无边框)
-      if (type === 'german_lineatur1' || type === 'german_lineatur_border') {
-        const subH = step;
-        const blockH = subH * 2;
-        const groupGap = subH * 1.5;
-        let curY = top;
-
-        while (curY + blockH <= bottom) {
-          ctx.setLineDash([]);
-          ctx.lineWidth = state.lineWidth * 1.2;
-          ctx.strokeStyle = baseColor;
-          for (let i = 0; i <= 2; i++) {
-            const y = curY + i * subH;
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-          if (type === 'german_lineatur_border') {
-            ctx.strokeRect(left, curY, availW, blockH);
-          }
-          curY += blockH + groupGap;
-        }
-        return;
-      }
-
-      // 23. 德标三年级练字格 (Lineatur 3)
-      if (type === 'german_lineatur3') {
-        let curY = top;
-        if (state.l3Header) {
-          ctx.save();
-          ctx.strokeStyle = baseColor;
-          ctx.lineWidth = 1.0;
-          ctx.fillStyle = boldColor;
-          ctx.font = `${Math.round(11 * (RENDER_DPI / 72))}px sans-serif`;
-          ctx.fillText('姓名', left + 8, curY + 10 * MM_TO_PX);
-          ctx.strokeRect(left + 38 * MM_TO_PX, curY + 2 * MM_TO_PX, 100 * MM_TO_PX, 10 * MM_TO_PX);
-          ctx.fillText('日期', left + 146 * MM_TO_PX, curY + 10 * MM_TO_PX);
-          ctx.strokeRect(left + 176 * MM_TO_PX, curY + 2 * MM_TO_PX, 32 * MM_TO_PX, 10 * MM_TO_PX);
-          ctx.fillText('页码', left + 216 * MM_TO_PX, curY + 10 * MM_TO_PX);
-          ctx.strokeRect(left + 246 * MM_TO_PX, curY + 2 * MM_TO_PX, 20 * MM_TO_PX, 10 * MM_TO_PX);
-          ctx.restore();
-          curY += 18 * MM_TO_PX;
-        }
-
-        const barH = 4.5 * MM_TO_PX;
-        const rowStep = state.gridSpacingMm * MM_TO_PX;
-        let lineIdx = 1;
-
-        if (state.l3PunchMark) {
-          ctx.save();
-          ctx.fillStyle = '#94a3b8';
-          ctx.beginPath(); ctx.arc(left - 18 * MM_TO_PX, top + availH * 0.3, 4 * MM_TO_PX, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(left - 18 * MM_TO_PX, top + availH * 0.7, 4 * MM_TO_PX, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
-        }
-
-        while (curY + barH <= bottom - 10) {
-          if (state.l3LineNum && (lineIdx % 2 !== 0)) {
-            ctx.save();
-            ctx.fillStyle = '#64748b';
-            ctx.font = `${Math.round(9 * (RENDER_DPI / 72))}px sans-serif`;
-            ctx.fillText(`${lineIdx}`, left + 4, curY + barH * 0.75);
-            ctx.restore();
-          }
-          ctx.strokeRect(left + 20, curY, availW - 20, barH);
-          lineIdx++;
-          curY += rowStep;
-        }
-        return;
-      }
-
-      // 24. 巴西书法纸 (Caderno de Caligrafia)
-      if (type === 'brazilian_calligraphy') {
-        const baseH = step;
-        const middleH = baseH * 0.55;
-        const blockH = baseH * 2 + middleH;
-        const groupGap = baseH * 1.5;
-        let curY = top;
-
-        while (curY + blockH <= bottom) {
-          ctx.setLineDash([]);
-          ctx.lineWidth = 1.0;
-          ctx.strokeStyle = baseColor;
-          ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(right, curY); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(left, curY + baseH); ctx.lineTo(right, curY + baseH); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(left, curY + baseH + middleH); ctx.lineTo(right, curY + baseH + middleH); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(left, curY + blockH); ctx.lineTo(right, curY + blockH); ctx.stroke();
-
-          ctx.strokeStyle = '#cbd5e1';
-          ctx.beginPath(); ctx.moveTo(left + 25 * MM_TO_PX, curY); ctx.lineTo(left + 25 * MM_TO_PX, curY + blockH); ctx.stroke();
-          curY += blockH + groupGap;
-        }
-        return;
-      }
-
-      // 25. 练习纸
-      if (type === 'general_practice') {
-        let curY = top;
-        if (state.schoolHeader) {
-          drawHeaderDualLine(ctx, left, curY, right, baseColor);
-          curY += 18 * MM_TO_PX;
-        }
-        const rowH = step * 1.8;
-        const cols = 2;
-        const cellW = availW / cols;
-
-        while (curY + rowH <= bottom) {
-          ctx.setLineDash([]);
-          ctx.lineWidth = 1.4;
-          ctx.strokeStyle = baseColor;
-          ctx.strokeRect(left, curY, availW, rowH);
-
-          ctx.setLineDash([6, 6]);
-          ctx.lineWidth = 0.8;
-          ctx.strokeStyle = '#94a3b8';
-          ctx.beginPath();
-          ctx.moveTo(left, curY + rowH / 2); ctx.lineTo(right, curY + rowH / 2);
-          ctx.moveTo(left + cellW, curY); ctx.lineTo(left + cellW, curY + rowH);
-          ctx.stroke();
-
-          curY += rowH;
-        }
-        return;
-      }
-
-      // 26. 盲文练习纸
-      if (type === 'braille_practice') {
-        const rows = state.brailleRows;
-        const cols = state.brailleCols;
-        const rowBandH = step;
-        const groupGap = (availH - rows * rowBandH) / (rows - 1);
-        let curY = top;
-
-        for (let r = 0; r < rows; r++) {
-          if (state.brailleBox) {
-            ctx.strokeRect(left, curY, availW, rowBandH * 0.75);
-          }
-          if (state.brailleSepLine) {
-            ctx.beginPath(); ctx.moveTo(left, curY + rowBandH); ctx.lineTo(right, curY + rowBandH); ctx.stroke();
-          }
-
-          const cellW = availW / cols;
-          const dotR = 1.8 * MM_TO_PX;
-          for (let c = 0; c < cols; c++) {
-            const cx = left + c * cellW;
-            const cy = curY;
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.strokeRect(cx, cy, cellW, rowBandH * 0.75);
-
-            const dx = cellW * 0.28;
-            const dy = (rowBandH * 0.75) / 4;
-            const centerX = cx + cellW / 2;
-            const centerY = cy + (rowBandH * 0.75) / 2;
-
-            for (let col = -1; col <= 1; col += 2) {
-              for (let row = -1; row <= 1; row++) {
-                ctx.beginPath();
-                ctx.arc(centerX + col * dx * 0.5, centerY + row * dy, dotR, 0, Math.PI * 2);
-                ctx.stroke();
-              }
-            }
-          }
-          curY += rowBandH + groupGap;
-        }
-        return;
-      }
-
-      // 27. 粉色毫米方格纸
-      if (type === 'pink_grid') {
-        const mmStep = Math.max(1, state.gridSpacingMm) * MM_TO_PX;
-        const pinkLight = '#fbcfe8';
-        const pinkMajor = '#f43f5e';
-        const cols = Math.floor(availW / mmStep);
-        const rows = Math.floor(availH / mmStep);
-        const startX = left + (availW - cols * mmStep) / 2;
-        const startY = top + (availH - rows * mmStep) / 2;
-
-        for (let i = 0; i <= cols; i++) {
-          const x = startX + i * mmStep;
-          const isMajor = (i % 5 === 0);
-          ctx.strokeStyle = isMajor ? pinkMajor : pinkLight;
-          ctx.lineWidth = isMajor ? 1.4 : 0.6;
-          ctx.beginPath(); ctx.moveTo(x, startY); ctx.lineTo(x, startY + rows * mmStep); ctx.stroke();
-        }
-        for (let j = 0; j <= rows; j++) {
-          const y = startY + j * mmStep;
-          const isMajor = (j % 5 === 0);
-          ctx.strokeStyle = isMajor ? pinkMajor : pinkLight;
-          ctx.lineWidth = isMajor ? 1.4 : 0.6;
-          ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(startX + cols * mmStep, y); ctx.stroke();
-        }
-        return;
-      }
-
-      // 28. 乐谱纸
-      if (type === 'music_stave') {
-        const staveCount = state.music.staveCount;
-        const lineGapPx = state.music.lineGapMm * MM_TO_PX;
-        const staveHeightPx = lineGapPx * 4;
-        const minGapPx = state.music.staveGapMm * MM_TO_PX;
-        
-        let actualGapPx = minGapPx;
-        if (staveCount > 1) {
-          const remainingSpace = availH - (staveCount * staveHeightPx);
-          actualGapPx = Math.max(minGapPx, remainingSpace / (staveCount - 1));
-        }
-
-        ctx.setLineDash([]);
-        ctx.lineWidth = state.lineWidth * 1.4;
-        ctx.strokeStyle = baseColor;
-        ctx.fillStyle = baseColor;
-
-        let curY = top;
-        for (let s = 0; s < staveCount; s++) {
-          if (curY + staveHeightPx > bottom + 2) break;
-
-          for (let l = 0; l < 5; l++) {
-            const y = curY + l * lineGapPx;
-            ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-          }
-
-          ctx.beginPath(); ctx.moveTo(left, curY); ctx.lineTo(left, curY + staveHeightPx); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(right, curY); ctx.lineTo(right, curY + staveHeightPx); ctx.stroke();
-
-          if (state.music.clef === 'treble') {
-            ctx.font = `${Math.round(lineGapPx * 4.2)}px serif`;
-            ctx.fillText('𝄞', left + 8, curY + staveHeightPx - lineGapPx * 0.8);
-          } else if (state.music.clef === 'bass') {
-            ctx.font = `${Math.round(lineGapPx * 3.4)}px serif`;
-            ctx.fillText('𝄢', left + 8, curY + staveHeightPx - lineGapPx * 1.1);
-          }
-
-          curY += staveHeightPx + actualGapPx;
-        }
-        return;
-      }
-
-      // 默认核心：米字格 / 田字格等
+      // 默认核心：米字格 / 田字格等经典格式
       const cols = Math.floor(availW / step);
       const rows = Math.floor(availH / step);
       const offsetX = (availW - cols * step) / 2;
@@ -2283,7 +1683,7 @@
       }
     }
 
-    // 辅助：绘制吉他/尤克里里和弦框
+    // 辅助：绘制吉他/尤克里里和弦网格框
     function drawChordBox(ctx, x, y, w, h, cols, frets, color) {
       ctx.save();
       ctx.strokeStyle = color;
@@ -2314,37 +1714,6 @@
       ctx.stroke();
     }
 
-    // 辅助：双栏页眉（姓名、日期）
-    function drawHeaderDualLine(ctx, left, y, right, color) {
-      ctx.save();
-      ctx.fillStyle = color;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.2;
-      ctx.font = `${Math.round(12 * (RENDER_DPI / 72))}px sans-serif`;
-      ctx.fillText('姓名', left + 10, y + 10 * MM_TO_PX);
-      ctx.beginPath(); ctx.moveTo(left + 45 * MM_TO_PX, y + 11 * MM_TO_PX); ctx.lineTo(left + 110 * MM_TO_PX, y + 11 * MM_TO_PX); ctx.stroke();
-      ctx.fillText('日期', right - 120 * MM_TO_PX, y + 10 * MM_TO_PX);
-      ctx.beginPath(); ctx.moveTo(right - 85 * MM_TO_PX, y + 11 * MM_TO_PX); ctx.lineTo(right - 10 * MM_TO_PX, y + 11 * MM_TO_PX); ctx.stroke();
-      ctx.restore();
-    }
-
-    // 辅助：四栏页眉（班级、姓名、学号、日期）
-    function drawHeaderQuadLine(ctx, left, y, right, color) {
-      ctx.save();
-      ctx.fillStyle = color;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.1;
-      ctx.font = `${Math.round(11 * (RENDER_DPI / 72))}px sans-serif`;
-      const labels = ['班级', '姓名', '学号', '日期'];
-      const itemW = (right - left) / 4;
-      for (let i = 0; i < 4; i++) {
-        const x = left + i * itemW;
-        ctx.fillText(labels[i], x + 8, y + 10 * MM_TO_PX);
-        ctx.beginPath(); ctx.moveTo(x + 36 * MM_TO_PX, y + 11 * MM_TO_PX); ctx.lineTo(x + itemW - 10 * MM_TO_PX, y + 11 * MM_TO_PX); ctx.stroke();
-      }
-      ctx.restore();
-    }
-
     // 背景微纹理
     function drawBackgroundTexture(ctx, w, h, texType, color, opacity) {
       ctx.save();
@@ -2367,7 +1736,7 @@
       ctx.restore();
     }
 
-    // 打孔定位记号
+    // 打孔记号
     function drawPunchMarkers(ctx, w, h) {
       ctx.save();
       ctx.fillStyle = '#111111';
@@ -2465,16 +1834,12 @@
 
     document.getElementById('btnPrint').onclick = function() { window.print(); };
 
-    // 交互监听与动态切换
+    // 交互监听
     const paperTypeSelect = document.getElementById('paperTypeSelect');
     const labelSpacing = document.getElementById('labelSpacing');
     const rowGridSpacing = document.getElementById('rowGridSpacing');
     const hintSpacingDesc = document.getElementById('hintSpacingDesc');
-    const hintSpacingTip = document.getElementById('hintSpacingTip');
-    const hintSpacingAlert = document.getElementById('hintSpacingAlert');
-    const badgeRecommend = document.getElementById('badgeRecommend');
 
-    // 纸张切换时完整调度各卡片
     paperTypeSelect.onchange = (e) => {
       state.paperType = e.target.value;
       const unitStr = state.unit === 'in' ? 'in' : 'mm';
@@ -2488,274 +1853,70 @@
       document.getElementById('boxPerspectiveOptions').style.display = 'none';
       document.getElementById('boxBaseOptions').style.display = 'none';
       document.getElementById('boxMusicOptions').style.display = 'none';
-      document.getElementById('boxUSKinderOptions').style.display = 'none';
-      document.getElementById('boxLineatur3Options').style.display = 'none';
-      document.getElementById('boxBrailleOptions').style.display = 'none';
-      document.getElementById('boxGenkoOptions').style.display = 'none';
-      document.getElementById('boxSchoolHeaderOptions').style.display = 'none';
 
       rowGridSpacing.style.display = (state.paperType === 'blank') ? 'none' : 'flex';
-      badgeRecommend.style.display = 'block';
 
-      const schoolBox = document.getElementById('boxSchoolHeaderOptions');
-      schoolBox.className = 'sub-settings-box';
-
-      // 根据具体纸张类型适配文案和专属卡片
+      // 根据纸型动态展开卡片与文案
       if (state.paperType === 'guitar_tab') {
         labelSpacing.textContent = `六线谱高度 (${unitStr})`;
-        hintSpacingDesc.textContent = '吉他六线谱组的总高度';
-        hintSpacingTip.textContent = '💡 常用: 22-28mm，包含和弦格和六线谱';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 25mm</span>';
-        document.getElementById('inputGridSpacing').value = 25;
-        state.gridSpacingMm = 25;
+        hintSpacingDesc.textContent = '💡 常用: 22-28mm，包含和弦格和六线谱';
       } else if (state.paperType === 'bass_tab') {
         labelSpacing.textContent = `弦线间距 (${unitStr})`;
-        hintSpacingDesc.textContent = '贝斯四线谱相邻弦线间距';
-        hintSpacingTip.textContent = '💡 常用 3.5-5mm';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 4mm</span>';
-        document.getElementById('inputGridSpacing').value = 4;
-        state.gridSpacingMm = 4;
+        hintSpacingDesc.textContent = '💡 常用 3.5-5mm';
       } else if (state.paperType === 'ukulele_tab') {
         labelSpacing.textContent = `每行系统高度 (${unitStr})`;
-        hintSpacingDesc.textContent = '五线谱+TAB 一组的垂直高度（含小节线）';
-        hintSpacingTip.textContent = '💡 建议 5 组: 约 48-52mm，A4 不拥挤、写谱方便';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 50mm</span>';
+        hintSpacingDesc.textContent = '💡 建议 5 组: 约 48-52mm，A4 不拥挤、写谱方便';
         document.getElementById('boxMusicMeasures').style.display = 'flex';
         document.getElementById('hintMeasuresDesc').textContent = '自动小节线将按此数量均分每行；选「无小节」则不画小节线';
-        document.getElementById('inputGridSpacing').value = 50;
-        state.gridSpacingMm = 50;
       } else if (state.paperType === 'guitar_chord') {
         labelSpacing.textContent = `每组系统高度 (${unitStr})`;
-        hintSpacingDesc.textContent = '和弦图行 + 高音五线谱一组的垂直高度';
-        hintSpacingTip.textContent = '💡 A4 默认约 48mm 可排 5 组；调大则组数减少、组间距变大';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 48mm</span>';
+        hintSpacingDesc.textContent = '💡 A4 默认约 48mm 可排 5 组；调大则组数减少、组间距变大';
         document.getElementById('boxMusicMeasures').style.display = 'flex';
         document.getElementById('hintMeasuresDesc').textContent = '无小节线时仍显示 4 个和弦框；1-3 小节会等分整行宽度，每小节 4 个 6×4 框';
-        document.getElementById('inputGridSpacing').value = 48;
-        state.gridSpacingMm = 48;
       } else if (state.paperType === 'calligraphy_base') {
         labelSpacing.textContent = `格子大小 (${unitStr})`;
-        hintSpacingDesc.textContent = '书法练习格的大小';
-        hintSpacingTip.textContent = '💡 常用: 20-30mm，初学者可用较大格子';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-warn">✖ 建议不小于 15mm</span>';
+        hintSpacingDesc.textContent = '💡 常用: 20-30mm，初学者可用较大格子';
         document.getElementById('boxCalligraphyLayout').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 10;
-        state.gridSpacingMm = 10;
       } else if (state.paperType === 'slant_guide_55') {
         labelSpacing.textContent = `斜线间距 (${unitStr})`;
-        hintSpacingDesc.textContent = '相邻斜线之间的垂直距离';
-        hintSpacingTip.textContent = '💡 Copperplate 常用 6-8mm；越小越密';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 7mm</span>';
+        hintSpacingDesc.textContent = '💡 Copperplate 常用 6-8mm；越小越密';
         document.getElementById('boxSlantGuideOptions').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 7;
-        state.gridSpacingMm = 7;
       } else if (state.paperType === 'slant_grid_koca') {
         labelSpacing.textContent = `格高 / 行距 (${unitStr})`;
-        hintSpacingDesc.textContent = '横线行宽（斜线连内横线与之间距）';
-        hintSpacingTip.textContent = '💡 东欧斜线本常用 4-6mm';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 5mm</span>';
+        hintSpacingDesc.textContent = '💡 东欧斜线本常用 4-6mm';
         document.getElementById('boxKosaOptions').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 5;
-        state.gridSpacingMm = 5;
       } else if (state.paperType === 'cornell') {
         labelSpacing.textContent = `行间距 (${unitStr})`;
-        hintSpacingDesc.textContent = '正文区域的行距';
-        hintSpacingTip.textContent = '💡 常用：7-9mm，便于笔记整理';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 8mm</span>';
-        document.getElementById('inputGridSpacing').value = 7;
-        state.gridSpacingMm = 7;
+        hintSpacingDesc.textContent = '💡 常用：7-9mm，便于笔记整理';
       } else if (state.paperType === 'iso_grid') {
         labelSpacing.textContent = `网格间距 (${unitStr})`;
-        hintSpacingDesc.textContent = '等距网格的间距';
-        hintSpacingTip.textContent = '💡 常用：4-6mm，适合技术绘图';
-        hintSpacingAlert.innerHTML = '';
-        document.getElementById('inputGridSpacing').value = 10;
-        state.gridSpacingMm = 10;
+        hintSpacingDesc.textContent = '💡 常用：4-6mm，适合技术绘图';
       } else if (state.paperType === 'perspective_grid') {
         labelSpacing.textContent = `网格密度 (${unitStr})`;
-        hintSpacingDesc.textContent = '控制透视射线疏密（数值越小线越密）';
-        hintSpacingTip.textContent = '💡 约 4-8mm：适合起稿；数值越大线越疏。';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 6mm</span>';
+        hintSpacingDesc.textContent = '💡 约 4-8mm：适合起稿；数值越大线越疏。';
         document.getElementById('boxPerspectiveOptions').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 6;
-        state.gridSpacingMm = 6;
       } else if (state.paperType === 'hex_grid') {
         labelSpacing.textContent = `六边形大小 (${unitStr})`;
-        hintSpacingDesc.textContent = '六边形网格的边长';
-        hintSpacingTip.textContent = '💡 常用: 5-7mm，适合游戏地图';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-warn">✖ 建议不大于 12mm</span>';
+        hintSpacingDesc.textContent = '💡 常用: 5-7mm，适合游戏地图';
         document.getElementById('boxHexOptions').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 15;
-        state.gridSpacingMm = 15;
       } else if (state.paperType === 'french_grid') {
         labelSpacing.textContent = `格子大小 (${unitStr})`;
-        hintSpacingDesc.textContent = '法式田字格的大小';
-        hintSpacingTip.textContent = '💡 标准: 8mm，法式书写规范';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-warn">✖ 建议不小于 6mm</span>';
-        document.getElementById('inputGridSpacing').value = 2;
-        state.gridSpacingMm = 2;
+        hintSpacingDesc.textContent = '💡 标准: 8mm，法式书写规范';
       } else if (state.paperType === 'storyboard') {
         labelSpacing.textContent = `格子间距 (${unitStr})`;
-        hintSpacingDesc.textContent = '分镜格子之间的间距';
-        hintSpacingTip.textContent = '💡 常用: 8-12mm，适合故事板绘制';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 10mm</span>';
-        document.getElementById('inputGridSpacing').value = 8;
-        state.gridSpacingMm = 8;
-      } else if (state.paperType === 'pinyin_homework') {
-        labelSpacing.textContent = `拼音格行高 (${unitStr})`;
-        hintSpacingDesc.textContent = '拼音练习格的行高';
-        hintSpacingTip.textContent = '💡 常用: 10-12mm，拼音学习';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-warn">✖ 建议不大于 15mm</span>';
-        schoolBox.classList.add('sub-box-yellow');
-        schoolBox.style.display = 'flex';
-        document.getElementById('labelSchoolHeader').textContent = '显示页眉（班级、姓名、学号、日期）';
-        document.getElementById('descSchoolHeader').textContent = '勾选后会在纸张顶部显示班级、姓名、学号、日期等信息';
-        document.getElementById('chkEnglishFrameLabel').style.display = 'none';
-        document.getElementById('descEnglishFrame').style.display = 'none';
-        document.getElementById('inputGridSpacing').value = 20;
-        state.gridSpacingMm = 20;
-      } else if (state.paperType === 'pinyin_tian') {
-        labelSpacing.textContent = `田字格大小 (${unitStr})`;
-        hintSpacingDesc.textContent = '拼音田字格组合的田字格边长';
-        hintSpacingTip.textContent = '💡 常用: 18-22mm，拼音+汉字组合练习';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 20mm</span>';
-        document.getElementById('inputGridSpacing').value = 20;
-        state.gridSpacingMm = 20;
-      } else if (state.paperType === 'composition') {
-        labelSpacing.textContent = `作文纸行高 (${unitStr})`;
-        hintSpacingDesc.textContent = '作文纸的行距';
-        hintSpacingTip.textContent = '💡 常用: 9-11mm，作文书写';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 10mm</span>';
-        schoolBox.classList.add('sub-box-pink');
-        schoolBox.style.display = 'flex';
-        document.getElementById('labelSchoolHeader').textContent = '显示页眉（班级、姓名、学号、日期）';
-        document.getElementById('descSchoolHeader').textContent = '勾选后会在纸张顶部显示班级、姓名、学号、日期等信息';
-        document.getElementById('chkEnglishFrameLabel').style.display = 'none';
-        document.getElementById('descEnglishFrame').style.display = 'none';
-        document.getElementById('inputGridSpacing').value = 8;
-        state.gridSpacingMm = 8;
-      } else if (state.paperType === 'genko_yoshi') {
-        labelSpacing.textContent = `方格边长 (${unitStr})`;
-        hintSpacingDesc.textContent = '每个方格多大，字就占多大一格；一格一字数稿子、练字都清楚。';
-        hintSpacingTip.textContent = '💡 常见 10~12mm；每格有淡色十字虚线，帮你把字写在正中间。';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 11mm</span>';
-        document.getElementById('boxGenkoOptions').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 11;
-        state.gridSpacingMm = 11;
-      } else if (state.paperType === 'arithmetic') {
-        labelSpacing.textContent = `算术格大小 (${unitStr})`;
-        hintSpacingDesc.textContent = '算术练习格的大小';
-        hintSpacingTip.textContent = '💡 常用: 8-12mm，数学练习';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-warn">✖ 建议不小于 8mm</span>';
-        schoolBox.classList.add('sub-box-cyan');
-        schoolBox.style.display = 'flex';
-        document.getElementById('labelSchoolHeader').textContent = '显示页眉（班级、姓名、学号、日期）';
-        document.getElementById('descSchoolHeader').textContent = '勾选后会在纸张顶部显示班级、姓名、学号、日期等信息';
-        document.getElementById('chkEnglishFrameLabel').style.display = 'none';
-        document.getElementById('descEnglishFrame').style.display = 'none';
-        document.getElementById('inputGridSpacing').value = 5;
-        state.gridSpacingMm = 5;
-      } else if (state.paperType === 'english_homework') {
-        labelSpacing.textContent = `四线间距 (${unitStr})`;
-        hintSpacingDesc.textContent = '英语四线三格中单线间距';
-        hintSpacingTip.textContent = '💡 标准: 4-6mm，英文书写练习';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 5mm</span>';
-        schoolBox.style.display = 'flex';
-        document.getElementById('labelSchoolHeader').textContent = '显示页眉（班级、姓名、学号、日期）';
-        document.getElementById('descSchoolHeader').textContent = '勾选后会在纸张顶部显示班级、姓名、学号、日期等信息';
-        document.getElementById('chkEnglishFrameLabel').style.display = 'none';
-        document.getElementById('descEnglishFrame').style.display = 'none';
-        document.getElementById('inputGridSpacing').value = 5;
-        state.gridSpacingMm = 5;
-      } else if (state.paperType === 'english_calligraphy') {
-        labelSpacing.textContent = `一格有多高 (${unitStr})`;
-        hintSpacingDesc.textContent = '调大一点，字可以写得舒展；调小一点，同样一页能练更多行。';
-        hintSpacingTip.textContent = '💡 一般选 4~6 毫米就够用。中间两条是正经写字的线，上下淡淡的虚线帮你留出「出头」和「伸腿」的位置。';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 5mm</span>';
-        schoolBox.style.display = 'flex';
-        document.getElementById('labelSchoolHeader').textContent = '显示页眉（班级、姓名、学号、日期）';
-        document.getElementById('descSchoolHeader').textContent = '平常练字可以关掉，一页能多写几行。要交作业、需要写班级姓名时再打开就行。';
-        document.getElementById('chkEnglishFrameLabel').style.display = 'flex';
-        document.getElementById('descEnglishFrame').style.display = 'block';
-        document.getElementById('inputGridSpacing').value = 5;
-        state.gridSpacingMm = 5;
-      } else if (state.paperType === 'us_kindergarten') {
-        labelSpacing.textContent = `书写带高度 (${unitStr})`;
-        hintSpacingDesc.textContent = '每组线从顶蓝线到红基线的总高度';
-        hintSpacingTip.textContent = '💡 常用 8-10 mm；顶蓝实线、蓝虚线中线、红基线，组间自动留白。';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 9mm</span>';
-        document.getElementById('boxUSKinderOptions').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 9;
-        state.gridSpacingMm = 9;
-      } else if (state.paperType === 'german_lineatur1') {
-        labelSpacing.textContent = `三线格行距 (${unitStr})`;
-        hintSpacingDesc.textContent = '德式三线练习纸每组线之间的等距（行高）';
-        hintSpacingTip.textContent = '💡 常用：4-6mm，德式三线练习';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 5mm</span>';
-        document.getElementById('inputGridSpacing').value = 5;
-        state.gridSpacingMm = 5;
-      } else if (state.paperType === 'german_lineatur_border') {
-        labelSpacing.textContent = `三线格行距 (${unitStr})`;
-        hintSpacingDesc.textContent = '德式三线练习纸（带边框）每组线高';
-        hintSpacingTip.textContent = '💡 常用：4-6mm，德式三线练习';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 5mm</span>';
-        document.getElementById('inputGridSpacing').value = 5;
-        state.gridSpacingMm = 5;
-      } else if (state.paperType === 'german_lineatur3') {
-        labelSpacing.textContent = `行距 (${unitStr})`;
-        hintSpacingDesc.textContent = '上一行书写条顶边到下一行书写条顶边的距离（条高约 4.5 mm，与页眉框同高）';
-        hintSpacingTip.textContent = '💡 常用约 13.5 mm；书写条本身高度固定，只调行与行之间的留白';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 13.5mm</span>';
-        document.getElementById('boxLineatur3Options').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 13.5;
-        state.gridSpacingMm = 13.5;
-      } else if (state.paperType === 'brazilian_calligraphy') {
-        labelSpacing.textContent = `行高基准 (${unitStr})`;
-        hintSpacingDesc.textContent = '三线行高基准（上宽行、中间窄行、下宽行按比例）';
-        hintSpacingTip.textContent = '💡 常用：6-10mm；中间窄行约0.55倍，上下宽行各约1倍';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 8mm</span>';
-        document.getElementById('inputGridSpacing').value = 8;
-        state.gridSpacingMm = 8;
-      } else if (state.paperType === 'general_practice') {
-        labelSpacing.textContent = `练习纸行距 (${unitStr})`;
-        hintSpacingDesc.textContent = '通用练习纸行距';
-        hintSpacingTip.textContent = '💡 常用：7-9mm，日常练习';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 8mm</span>';
-        schoolBox.classList.add('sub-box-pink');
-        schoolBox.style.display = 'flex';
-        document.getElementById('labelSchoolHeader').textContent = '显示页眉（班级、姓名、学号、日期）';
-        document.getElementById('descSchoolHeader').textContent = '勾选后会在纸张顶部显示班级、姓名、学号、日期等信息';
-        document.getElementById('chkEnglishFrameLabel').style.display = 'none';
-        document.getElementById('descEnglishFrame').style.display = 'none';
-        document.getElementById('inputGridSpacing').value = 8;
-        state.gridSpacingMm = 8;
-      } else if (state.paperType === 'braille_practice') {
-        labelSpacing.textContent = `行带高度 (${unitStr})`;
-        hintSpacingDesc.textContent = '每行盲文格占用区域的垂直高度（含行底分隔线）';
-        hintSpacingTip.textContent = '💡 横版 A4 默认约 31mm 可排 6 行；调大则行数减少';
-        hintSpacingAlert.innerHTML = '<span class="hint-alert-ok">✔ 接近推荐值 31mm</span>';
-        document.getElementById('boxBrailleOptions').style.display = 'flex';
-        document.getElementById('inputGridSpacing').value = 31;
-        state.gridSpacingMm = 31;
+        hintSpacingDesc.textContent = '💡 常用: 8-12mm，适合故事板绘制';
       } else if (['lined', 'grid', 'dot'].includes(state.paperType)) {
         labelSpacing.textContent = `格距 (${unitStr})`;
         hintSpacingDesc.textContent = '';
-        hintSpacingTip.textContent = '';
-        hintSpacingAlert.innerHTML = '';
-        badgeRecommend.style.display = 'none';
         document.getElementById('boxBaseOptions').style.display = 'flex';
       } else {
         labelSpacing.textContent = `格距 (${unitStr})`;
         hintSpacingDesc.textContent = '';
-        hintSpacingTip.textContent = '';
-        hintSpacingAlert.innerHTML = '';
-        badgeRecommend.style.display = 'none';
       }
 
       drawPaper();
     };
 
-    // 表单事件交互监听
     document.getElementById('selectHexOrient').onchange = (e) => { state.hexOrient = e.target.value; drawPaper(); };
     document.getElementById('selectMeasures').onchange = (e) => { state.measures = parseInt(e.target.value); drawPaper(); };
     document.getElementById('selectCalligraphyFit').onchange = (e) => { state.calligraphyFit = e.target.value; drawPaper(); };
@@ -2764,49 +1925,9 @@
       document.getElementById('valSlantAngle').textContent = `${e.target.value}°`;
       drawPaper();
     };
-    document.getElementById('inputKosaLines').oninput = (e) => { state.kosaLines = parseInt(e.target.value) || 3; drawPaper(); };
-    document.getElementById('inputKosaGroupGap').oninput = (e) => { state.kosaGroupGap = parseFloat(e.target.value) || 7.5; drawPaper(); };
-    document.getElementById('inputKosaAngle').oninput = (e) => {
-      state.kosaAngle = parseInt(e.target.value);
-      document.getElementById('valKosaAngle').textContent = `${e.target.value}°`;
-      drawPaper();
-    };
-    document.getElementById('inputKosaSlantGap').oninput = (e) => { state.kosaSlantGap = parseFloat(e.target.value) || 5; drawPaper(); };
-    document.getElementById('inputKosaSlantWidth').oninput = (e) => { state.kosaSlantWidth = parseFloat(e.target.value) || 0.35; drawPaper(); };
-    document.getElementById('chkKosaRedLine').onchange = (e) => {
-      state.kosaRedLine = e.target.checked;
-      document.getElementById('rowKosaRedMargin').style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('inputKosaRedMargin').oninput = (e) => { state.kosaRedMarginMm = parseFloat(e.target.value) || 20; drawPaper(); };
-
-    document.querySelectorAll('input[name="usKinderLayout"]').forEach(r => {
-      r.onchange = (e) => { state.usKinderLayout = e.target.value; drawPaper(); };
-    });
-
-    document.getElementById('chkL3Header').onchange = (e) => { state.l3Header = e.target.checked; drawPaper(); };
-    document.getElementById('chkL3LineNum').onchange = (e) => { state.l3LineNum = e.target.checked; drawPaper(); };
-    document.getElementById('chkL3PunchMark').onchange = (e) => { state.l3PunchMark = e.target.checked; drawPaper(); };
-    document.getElementById('chkL3Footer').onchange = (e) => { state.l3Footer = e.target.checked; drawPaper(); };
-
-    document.getElementById('selectBrailleRows').onchange = (e) => { state.brailleRows = parseInt(e.target.value); drawPaper(); };
-    document.getElementById('selectBrailleCols').onchange = (e) => { state.brailleCols = parseInt(e.target.value); drawPaper(); };
-    document.getElementById('chkBrailleBox').onchange = (e) => { state.brailleBox = e.target.checked; drawPaper(); };
-    document.getElementById('chkBrailleSepLine').onchange = (e) => { state.brailleSepLine = e.target.checked; drawPaper(); };
-
-    document.getElementById('chkGenkoHeader').onchange = (e) => { state.genkoHeader = e.target.checked; drawPaper(); };
-    document.getElementById('chkSchoolHeader').onchange = (e) => { state.schoolHeader = e.target.checked; drawPaper(); };
-    document.getElementById('chkEnglishFrame').onchange = (e) => { state.englishFrame = e.target.checked; drawPaper(); };
-    document.getElementById('chkShowDateLine').onchange = (e) => { state.showDateLine = e.target.checked; drawPaper(); };
-
-    document.getElementById('selectPerspType').onchange = (e) => { state.perspType = e.target.value; drawPaper(); };
-    document.getElementById('inputPerspHorizon').oninput = (e) => { state.perspHorizon = parseInt(e.target.value); drawPaper(); };
-    document.getElementById('inputPerspSpread').oninput = (e) => { state.perspSpread = parseInt(e.target.value); drawPaper(); };
+    document.getElementById('chkKosaRedLine').onchange = (e) => { state.kosaRedLine = e.target.checked; drawPaper(); };
     document.getElementById('chkPerspLine').onchange = (e) => { state.perspLine = e.target.checked; drawPaper(); };
-
-    document.getElementById('selectClef').onchange = (e) => { state.music.clef = e.target.value; drawPaper(); };
-    document.getElementById('inputStaveCount').oninput = (e) => { state.music.staveCount = parseInt(e.target.value) || 10; drawPaper(); };
-    document.getElementById('inputStaveGap').oninput = (e) => { state.music.staveGapMm = parseFloat(e.target.value) || 8; drawPaper(); };
+    document.getElementById('chkShowDateLine').onchange = (e) => { state.showDateLine = e.target.checked; drawPaper(); };
 
     // 单位与方向
     const btnUnitMm = document.getElementById('btnUnitMm');
@@ -2831,19 +1952,6 @@
       document.getElementById('lineColorText').value = e.target.value;
       drawPaper();
     };
-    document.getElementById('lineColorText').onchange = (e) => {
-      state.lineColor = e.target.value;
-      document.getElementById('lineColorPicker').value = e.target.value;
-      drawPaper();
-    };
-    document.getElementById('btnResetColor').onclick = () => {
-      state.lineColor = '#8b5a2b';
-      document.getElementById('lineColorPicker').value = '#8b5a2b';
-      document.getElementById('lineColorText').value = '#8b5a2b';
-      drawPaper();
-    };
-
-    document.getElementById('lineDashSelect').onchange = (e) => { state.lineDash = e.target.value; drawPaper(); };
     document.getElementById('inputLineWidth').oninput = (e) => { state.lineWidth = parseFloat(e.target.value) || 0.6; drawPaper(); };
     document.getElementById('inputGridSpacing').oninput = (e) => {
       const val = parseFloat(e.target.value) || 15;
@@ -2851,12 +1959,7 @@
       drawPaper();
     };
 
-    document.getElementById('marginTop').oninput = (e) => { state.marginTopMm = parseFloat(e.target.value) || 0; drawPaper(); };
-    document.getElementById('marginBottom').oninput = (e) => { state.marginBottomMm = parseFloat(e.target.value) || 0; drawPaper(); };
-    document.getElementById('marginLeft').oninput = (e) => { state.marginLeftMm = parseFloat(e.target.value) || 0; drawPaper(); };
-    document.getElementById('marginRight').oninput = (e) => { state.marginRightMm = parseFloat(e.target.value) || 0; drawPaper(); };
-
-    // 背景色 8 块交互
+    // 背景色 8 块
     const bgCustomInput = document.getElementById('bgCustomInput');
     const bgCustomBox = document.getElementById('bgCustomBox');
     const bgPaletteItems = document.querySelectorAll('#bgColorPalette .palette-item');
@@ -2882,141 +1985,11 @@
       document.getElementById('textureSubBox').style.display = state.texture !== 'none' ? 'flex' : 'none';
       drawPaper();
     };
-
-    const texCustomInput = document.getElementById('texCustomInput');
-    const texCustomBox = document.getElementById('texCustomBox');
-    const texPaletteItems = document.querySelectorAll('#texColorPalette .palette-item');
-    texCustomInput.oninput = (e) => {
-      state.textureColor = e.target.value;
-      texCustomBox.style.background = e.target.value;
-      texPaletteItems.forEach(el => el.classList.remove('active'));
-      texCustomBox.classList.add('active');
-      drawPaper();
-    };
-    texPaletteItems.forEach(item => {
-      if (item.id === 'texCustomBox') return;
-      item.onclick = () => {
-        texPaletteItems.forEach(el => el.classList.remove('active'));
-        item.classList.add('active');
-        state.textureColor = item.getAttribute('data-texcolor');
-        drawPaper();
-      };
-    });
-
     document.getElementById('inputTexOpacity').oninput = (e) => {
       state.textureOpacity = parseInt(e.target.value) / 100;
       document.getElementById('texOpacityValText').textContent = `${e.target.value}%`;
       drawPaper();
     };
-
-    // 水印
-    const chkWatermark = document.getElementById('chkEnableWatermark');
-    chkWatermark.onchange = (e) => {
-      state.enableWatermark = e.target.checked;
-      document.getElementById('watermarkBox').style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('txtWatermark').oninput = (e) => { state.watermarkText = e.target.value; drawPaper(); };
-    document.getElementById('inputWmOpacity').oninput = (e) => {
-      state.watermarkOpacity = parseInt(e.target.value) / 100;
-      document.getElementById('wmOpacityText').textContent = `${e.target.value}%`;
-      drawPaper();
-    };
-    document.getElementById('inputWmAngle').oninput = (e) => {
-      state.watermarkAngle = parseInt(e.target.value);
-      document.getElementById('wmAngleText').textContent = `${e.target.value}°`;
-      drawPaper();
-    };
-    document.getElementById('inputWmFontSize').oninput = (e) => {
-      state.watermarkFontSize = parseInt(e.target.value);
-      document.getElementById('wmFontSizeText').textContent = `${e.target.value}px`;
-      drawPaper();
-    };
-    document.getElementById('wmColorPicker').oninput = (e) => {
-      state.watermarkColor = e.target.value;
-      document.getElementById('wmColorText').value = e.target.value;
-      drawPaper();
-    };
-
-    // Logo
-    const chkLogo = document.getElementById('chkEnableLogo');
-    chkLogo.onchange = (e) => {
-      state.enableLogo = e.target.checked;
-      document.getElementById('logoBox').style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('inputLogoFile').onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const img = new Image();
-          img.onload = () => { state.logoImg = img; drawPaper(); };
-          img.src = evt.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    document.getElementById('selectLogoPos').onchange = (e) => { state.logoPos = e.target.value; drawPaper(); };
-    document.getElementById('inputLogoSize').oninput = (e) => {
-      state.logoSizeMm = parseFloat(e.target.value) || 20;
-      drawPaper();
-    };
-    document.getElementById('inputLogoOpacity').oninput = (e) => {
-      state.logoOpacity = parseInt(e.target.value) / 100;
-      document.getElementById('logoOpacityText').textContent = `${e.target.value}%`;
-      drawPaper();
-    };
-
-    // 页面设置
-    const chkPageNum = document.getElementById('chkShowPageNum');
-    chkPageNum.onchange = (e) => {
-      state.showPageNum = e.target.checked;
-      document.getElementById('startPageBox').style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('inputStartPage').oninput = (e) => {
-      state.startPage = parseInt(e.target.value) || 1;
-      drawPaper();
-    };
-
-    // 打孔定位
-    const punchCheckboxes = {
-      us3: document.getElementById('chkPunchUS3'),
-      iso2: document.getElementById('chkPunchISO2'),
-      iso4: document.getElementById('chkPunchISO4'),
-      punch5: document.getElementById('chkPunch5Hole'),
-      top2: document.getElementById('chkPunchTop2'),
-      single: document.getElementById('chkPunchSingle')
-    };
-    Object.keys(punchCheckboxes).forEach(k => {
-      punchCheckboxes[k].onchange = (e) => {
-        state.punch[k] = e.target.checked;
-        const anyChecked = Object.values(state.punch).some(v => v === true);
-        document.getElementById('punchSubBox').style.display = anyChecked ? 'flex' : 'none';
-        drawPaper();
-      };
-    });
-
-    // 侧边栏
-    const chkSidebar = document.getElementById('chkEnableSidebar');
-    chkSidebar.onchange = (e) => {
-      state.enableSidebar = e.target.checked;
-      document.getElementById('sidebarOptionsBox').style.display = e.target.checked ? 'flex' : 'none';
-      drawPaper();
-    };
-    document.getElementById('sidebarPosSelect').onchange = (e) => { state.sidebarPos = e.target.value; drawPaper(); };
-    document.getElementById('sidebarWidth').oninput = (e) => {
-      state.sidebarWidthMm = parseFloat(e.target.value) || 25;
-      drawPaper();
-    };
-    document.getElementById('sidebarColorPicker').oninput = (e) => {
-      state.sidebarColor = e.target.value;
-      document.getElementById('sidebarColorText').value = e.target.value;
-      drawPaper();
-    };
-    document.getElementById('sidebarBgColorPicker').oninput = (e) => { state.sidebarBgColor = e.target.value; drawPaper(); };
-    document.getElementById('btnSidebarBgClear').onclick = () => { state.sidebarBgColor = null; drawPaper(); };
 
     // 缩放
     document.getElementById('btnZoomIn').onclick = () => { state.zoom = Math.min(1.5, state.zoom + 0.05); drawPaper(); };
@@ -3031,7 +2004,7 @@
       drawPaper();
     };
 
-    // 页面初始化完成渲染
+    // 页面加载完成后立即执行首次绘制，保证默认米字格稳定呈现
     window.addEventListener('load', () => {
       setLanguage('zh');
       requestAnimationFrame(() => {
